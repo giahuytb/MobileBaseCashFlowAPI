@@ -1,8 +1,8 @@
 ﻿using MongoDB.Driver;
 using MobileBaseCashFlowGameAPI.IServices;
 using Microsoft.EntityFrameworkCore;
-using MobieBaseCashFlowAPI.MongoModels;
-using MobieBaseCashFlowAPI.Settings;
+using MobieBasedCashFlowAPI.MongoModels;
+using MobieBasedCashFlowAPI.Settings;
 
 namespace MobileBaseCashFlowGameAPI.Services
 {

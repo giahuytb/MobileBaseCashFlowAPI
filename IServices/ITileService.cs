@@ -1,4 +1,4 @@
-﻿using MobieBaseCashFlowAPI.MongoModels;
+﻿using MobieBasedCashFlowAPI.MongoModels;
 
 namespace MobileBaseCashFlowGameAPI.IServices
 {

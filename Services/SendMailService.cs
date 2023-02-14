@@ -3,7 +3,7 @@ using MimeKit;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MobileBaseCashFlowGameAPI.IServices;
-using MobieBaseCashFlowAPI.Settings;
+using MobieBasedCashFlowAPI.Settings;
 
 namespace MobileBaseCashFlowGameAPI.Services
 {

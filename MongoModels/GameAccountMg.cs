@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace MobieBaseCashFlowAPI.MongoModels
+namespace MobieBasedCashFlowAPI.MongoModels
 {
     public class GameAccountMg
     {

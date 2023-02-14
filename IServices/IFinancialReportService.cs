@@ -1,6 +1,6 @@
-﻿using MobieBaseCashFlowAPI.MongoModels;
+﻿using MobieBasedCashFlowAPI.MongoModels;
 
-namespace MobieBaseCashFlowAPI.IServices
+namespace MobieBasedCashFlowAPI.IServices
 {
     public interface IFinancialReportService
     {

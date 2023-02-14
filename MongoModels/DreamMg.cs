@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MobieBaseCashFlowAPI.MongoModels
+namespace MobieBasedCashFlowAPI.MongoModels
 {
     public class DreamMg
     {

@@ -1,10 +1,10 @@
-﻿using MobieBaseCashFlowAPI.IServices;
-using MobieBaseCashFlowAPI.MongoModels;
-using MobieBaseCashFlowAPI.Settings;
+﻿using MobieBasedCashFlowAPI.IServices;
+using MobieBasedCashFlowAPI.MongoModels;
+using MobieBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
 using Org.BouncyCastle.Utilities;
 
-namespace MobieBaseCashFlowAPI.Services
+namespace MobieBasedCashFlowAPI.Services
 {
     public class JobCardService : IJobCardService
     {
