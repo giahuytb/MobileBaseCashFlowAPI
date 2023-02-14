@@ -28,14 +28,18 @@ namespace MobieBasedCashFlowAPI.Controllers
         [HttpGet("role/{id}")]
         public async Task<ActionResult<UserRole>> GetById(string id)
         {
-            var userRole = await _context.UserRoles.FindAsync(id);
-
+            var userRole = await (from role in _context.UserRoles 
+                                  select new
+                                  {
+                                      roleId = role.RoleId, 
+                                      roleName = role.RoleName,
+                                  }).FirstOrDefaultAsync();
             if (userRole == null)
             {
                 return NotFound();
             }
 
-            return userRole;
+            return Ok(userRole);
         }
 
         // POST: api/UserRoles

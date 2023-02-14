@@ -38,7 +38,7 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             }
             else
             {
-                return Ok(new { StatusCode = 200, Message = "Login Successfully", data = result });
+                return Ok(result);
             }
         }
 
@@ -62,7 +62,7 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return BadRequest(new { StatusCode = 404, Message = "Somthing is wrong" });
+                return BadRequest();
             }
         }
 
@@ -75,16 +75,16 @@ namespace MobileBaseCashFlowGameAPI.Controllers
                 var result = await _userService.VerifyEmail(token);
                 if (result.Equals("Success"))
                 {
-                    return Ok(new { StatusCode = 200, MessagePack = "Verify Email successfully" });
+                    return Ok(result);
                 }
                 else
                 {
-                    return BadRequest(new { StatusCode = 400, Message = result });
+                    return BadRequest();
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -97,16 +97,16 @@ namespace MobileBaseCashFlowGameAPI.Controllers
                 var result = await _userService.ForgotPassword(email);
                 if (result)
                 {
-                    return Ok(new { StatusCode = 200, MessagePack = "Send Mail To Reset Password Success" });
+                    return Ok(result);
                 }
                 else
                 {
-                    return BadRequest(new { StatusCode = 400, Message = result });
+                    return BadRequest();
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -119,16 +119,16 @@ namespace MobileBaseCashFlowGameAPI.Controllers
                 var result = await _userService.ResetPassword(request);
                 if (result)
                 {
-                    return Ok(new { StatusCode = 200, MessagePack = "Reset password successfully" });
+                    return Ok(result);
                 }
                 else
                 {
-                    return BadRequest(new { StatusCode = 400, Message = "Invalid token" });
+                    return BadRequest();
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
     }
