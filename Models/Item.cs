@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobieBaseCashFlowAPI.Models
+namespace MobieBasedCashFlowAPI.Models
 {
     public partial class Item
     {

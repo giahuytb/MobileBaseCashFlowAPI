@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace MobieBaseCashFlowAPI.Common
+namespace MobieBasedCashFlowAPI.Common
 {
     public class ValidateInput
     {

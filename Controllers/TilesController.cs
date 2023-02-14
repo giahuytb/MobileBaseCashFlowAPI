@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MobieBaseCashFlowAPI.MongoModels;
+using MobieBasedCashFlowAPI.MongoModels;
 using MobileBaseCashFlowGameAPI.IServices;
 
 namespace MobileBaseCashFlowGameAPI.Controllers

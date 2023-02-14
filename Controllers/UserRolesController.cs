@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MobieBaseCashFlowAPI.Models;
+using MobieBasedCashFlowAPI.Models;
 using MobileBaseCashFlowGameAPI.Common;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace MobieBaseCashFlowAPI.Controllers
+namespace MobieBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,4 +1,4 @@
-﻿namespace MobieBaseCashFlowAPI.Settings
+﻿namespace MobieBasedCashFlowAPI.Settings
 {
     public class MailSettings
     {

@@ -4,19 +4,19 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MobieBaseCashFlowAPI.Models;
+using MobieBasedCashFlowAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Web;
-using MobieBaseCashFlowAPI.Common;
+using MobieBasedCashFlowAPI.Common;
 
 namespace MobileBaseCashFlowGameAPI.Services
 {
 
     public class UserService : IUserService
     {
-        public const string SUCCESS = "Success";
-        public const string FAILED = "Failed";
+        public const string SUCCESS = "success";
+        public const string FAILED = "failed";
 
         private readonly IConfiguration _configuration;
         private readonly ISendMailService _sendMailService;
@@ -36,14 +36,14 @@ namespace MobileBaseCashFlowGameAPI.Services
             var user = await _context.UserAccounts.SingleOrDefaultAsync(x => x.UserName == request.UserName);
             if (user == null)
             {
-                return "User Not Found";
+                return "user not found";
             }
 
             bool isValidPassword = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
             if (!isValidPassword)
             {
-                return "Wrong Password";
+                return "wrong password";
             }
             var roles = await _context.UserRoles.FindAsync(user.RoleId);
 
@@ -114,7 +114,6 @@ namespace MobileBaseCashFlowGameAPI.Services
             {
                 return "your password must be at least 6 character";
             }
-
             else if (request.NickName.Equals(""))
             {
                 return "you need to fill your nickname";
@@ -207,7 +206,7 @@ namespace MobileBaseCashFlowGameAPI.Services
 
             await _context.SaveChangesAsync();
 
-            return "Success";
+            return SUCCESS;
         }
 
         public async Task<bool> ForgotPassword(string email)

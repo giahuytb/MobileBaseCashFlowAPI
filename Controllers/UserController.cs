@@ -28,11 +28,11 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             }
             var result = await _userService.Authenticate(request);
 
-            if (result.Equals("User Not Found"))
+            if (result.Equals("user not found"))
             {
                 return BadRequest("Can not found your account.");
             }
-            else if (result.Equals("Wrong Password"))
+            else if (result.Equals("wrong password"))
             {
                 return BadRequest("Your password is not correct, please try again.");
             }
@@ -53,7 +53,7 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             try
             {
                 var result = await _userService.Register(request);
-                if (result.Equals("Success"))
+                if (result.Equals("success"))
                 {
                     return Ok(new { StatusCode = 201, Message = result });
                 }

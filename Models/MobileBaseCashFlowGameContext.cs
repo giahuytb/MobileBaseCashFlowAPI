@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace MobieBaseCashFlowAPI.Models
+namespace MobieBasedCashFlowAPI.Models
 {
     public partial class MobileBaseCashFlowGameContext : DbContext
     {

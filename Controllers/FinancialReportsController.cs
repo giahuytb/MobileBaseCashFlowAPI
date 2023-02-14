@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MobieBaseCashFlowAPI.IServices;
-using MobieBaseCashFlowAPI.MongoModels;
+using MobieBasedCashFlowAPI.IServices;
+using MobieBasedCashFlowAPI.MongoModels;
 
-namespace MobieBaseCashFlowAPI.Controllers
+namespace MobieBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

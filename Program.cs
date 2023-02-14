@@ -6,10 +6,10 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using MobieBaseCashFlowAPI.IServices;
-using MobieBaseCashFlowAPI.Services;
-using MobieBaseCashFlowAPI.Settings;
-using MobieBaseCashFlowAPI.Models;
+using MobieBasedCashFlowAPI.IServices;
+using MobieBasedCashFlowAPI.Services;
+using MobieBasedCashFlowAPI.Settings;
+using MobieBasedCashFlowAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var secretKey = builder.Configuration["Jwt:Key"];

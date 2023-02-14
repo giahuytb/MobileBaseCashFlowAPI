@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MobileBaseCashFlowGameAPI.IServices;
-using MobieBaseCashFlowAPI.MongoModels;
+using MobieBasedCashFlowAPI.MongoModels;
 
 namespace MobileBaseCashFlowGameAPI.Controllers
 {
