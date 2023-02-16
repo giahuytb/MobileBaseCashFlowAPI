@@ -21,9 +21,9 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             var eventCard = await _eventCardService.GetAsync();
             if (eventCard != null)
             {
-                return Ok(new { StatusCode = 200, Message = "Request was successfully", data = eventCard });
+                return Ok(eventCard);
             }
-            return NotFound(new { StatusCode = 404, Message = "List was empty" });
+            return NotFound("list is empty");
         }
 
         [HttpGet("event/{id:length(24)}")]
@@ -33,9 +33,9 @@ namespace MobileBaseCashFlowGameAPI.Controllers
 
             if (eventCard != null)
             {
-                return Ok(new { StatusCode = 200, Message = "Request was successfully", data = eventCard });
+                return Ok(eventCard);
             }
-            return NotFound(new { StatusCode = 404, Message = "Can not found this event card" });
+            return NotFound("can not find this event card");
         }
 
         [HttpPost("event")]
@@ -48,7 +48,7 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -60,15 +60,15 @@ namespace MobileBaseCashFlowGameAPI.Controllers
                 var eventCard = await _eventCardService.GetAsync(id);
                 if (eventCard is null)
                 {
-                    return NotFound(new { StatusCode = 404, Message = "Can not found this event card" });
+                    return NotFound("can not find this event card");
                 }
                 await _eventCardService.UpdateAsync(id, updateEventCard);
-                return Ok(new { StatusCode = 200, Message = "Update event card successfully" });
+                return Ok("update success");
 
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
     }

@@ -7,7 +7,7 @@ namespace MobieBasedCashFlowAPI.Models
     {
         public GameMatch()
         {
-            Users = new HashSet<UserAccount>();
+            Participants = new HashSet<Participant>();
         }
 
         public string MatchId { get; set; } = null!;
@@ -24,7 +24,6 @@ namespace MobieBasedCashFlowAPI.Models
         public virtual UserAccount? Host { get; set; }
         public virtual UserAccount? LastHost { get; set; }
         public virtual UserAccount? Winer { get; set; }
-
-        public virtual ICollection<UserAccount> Users { get; set; }
+        public virtual ICollection<Participant> Participants { get; set; }
     }
 }

@@ -20,11 +20,11 @@ namespace MobileBaseCashFlowGameAPI.Services
 
         private readonly IConfiguration _configuration;
         private readonly ISendMailService _sendMailService;
-        private readonly MobileBaseCashFlowGameContext _context;
+        private readonly MobileBasedCashFlowGameContext _context;
 
         public UserService(IConfiguration configuration,
                             ISendMailService sendMailService,
-                            MobileBaseCashFlowGameContext context)
+                            MobileBasedCashFlowGameContext context)
         {
             _configuration = configuration;
             _sendMailService = sendMailService;
@@ -38,7 +38,6 @@ namespace MobileBaseCashFlowGameAPI.Services
             {
                 return "user not found";
             }
-
             bool isValidPassword = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
             if (!isValidPassword)
@@ -82,7 +81,7 @@ namespace MobileBaseCashFlowGameAPI.Services
                 Gender = request.Gender,
                 Email = request.Email,
                 Phone = request.Phone,
-                AvatarImageUrl = "",
+                AvatarImageUrl = request.ImageUrl,
                 CreateAt = DateTime.UtcNow,
                 EmailConfirmToken = GenerateEmailConfirmationToken(),
                 RoleId = null,
@@ -91,8 +90,6 @@ namespace MobileBaseCashFlowGameAPI.Services
 
             var checkUser = await _context.UserAccounts.FirstOrDefaultAsync(u => u.UserName == request.UserName);
             var checkMail = await _context.UserAccounts.FirstOrDefaultAsync(u => u.Email == request.Email);
-
-            ValidateInput check = new ValidateInput();
 
             if (checkUser != null)
             {
@@ -132,15 +129,18 @@ namespace MobileBaseCashFlowGameAPI.Services
             }
             else
             {
-                // Find role user in database
-                var userRole = await _context.UserRoles.FirstOrDefaultAsync(x => x.RoleName == "Player");
+                // Find role "Player" in database
+                var roleId = await (from role in _context.UserRoles where role.RoleName == "Player" select new { roleId = role.RoleId }).FirstOrDefaultAsync();
+                // Find gameId in database that match version == "Ver_1"
+                var gameId = await (from game in _context.Games where game.GameVersion == "Ver_1" select new { gameId = game.GameId }).FirstOrDefaultAsync();
 
-                if (userRole != null)
+                if (roleId != null || gameId != null)
                 {
                     try
                     {
                         // Add role to user
-                        user.RoleId = userRole.RoleId;
+                        user.GameId = gameId.gameId;
+                        user.RoleId = roleId.roleId;
                         await _context.UserAccounts.AddAsync(user);
                         await _context.SaveChangesAsync();
                     }
@@ -150,39 +150,40 @@ namespace MobileBaseCashFlowGameAPI.Services
                     }
                     // Create a url path for user to cofirm account in mail
 
-                    var uriBuilder = new UriBuilder(_configuration["ReturnPaths:VerifyEmail"]);
-                    var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-                    query["token"] = user.EmailConfirmToken;
-                    query["userid"] = user.UserId.ToString();
-                    uriBuilder.Query = query.ToString();
-                    var urlString = uriBuilder.ToString();
+                    //var uriBuilder = new UriBuilder(_configuration["ReturnPaths:VerifyEmail"]);
+                    //var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                    //query["token"] = user.EmailConfirmToken;
+                    //query["userid"] = user.UserId.ToString();
+                    //uriBuilder.Query = query.ToString();
+                    //var urlString = uriBuilder.ToString();
 
-                    var htmlBody = string.Format(@"<div style='text-align:center;'>
-                                    <h1>Welcome to our Web Site</h1>
-                                    <h3>Click below button for verify your Email Id</h3>
-                                    <a href ='" + urlString + "' type = 'submit' " +
-                                    "style='display: block;" +
-                                    "text-align: center;" +
-                                    "font-weight: bold;" +
-                                    "background-color: #008CBA;" +
-                                    "font-size: 16px;border-radius: 10px;" +
-                                    "color:#ffffff;" +
-                                    "cursor:pointer;" +
-                                    "width:100%;" +
-                                    "padding:10px;'>" +
-                                    "Confirm Mail" +
-                                    "</a>" +
-                                    "</div>)");
+                    //var htmlBody = string.Format(@"<div style='text-align:center;'>
+                    //                            <h1>Welcome to our Web Site</h1>
+                    //                            <h3>Click below button for verify your Email Id</h3>
+                    //                            <a href ='" + urlString + "' type = 'submit' " +
+                    //                                "style='display: block;" +
+                    //                                "text-align: center;" +
+                    //                                "font-weight: bold;" +
+                    //                                "background-color: #008CBA;" +
+                    //                                "font-size: 16px;border-radius: 10px;" +
+                    //                                "color:#ffffff;" +
+                    //                                "cursor:pointer;" +
+                    //                                "width:100%;" +
+                    //                                "padding:10px;'>" +
+                    //                                "Confirm Mail" +
+                    //                                "</a>" +
+                    //                                "</div>)");
 
-                    MailContent mailContent = new MailContent
-                    {
-                        To = user.Email,
-                        Subject = "Confirm Email",
-                        Body = htmlBody,
-                    };
+                    //MailContent mailContent = new MailContent
+                    //{
+                    //    To = user.Email,
+                    //    Subject = "Confirm Email",
+                    //    Body = htmlBody,
+                    //};
 
-                    // call method to send mail
-                    var mailMessage = await _sendMailService.SendMail(mailContent);
+                    //// call method to send mail
+                    //var mailMessage = await _sendMailService.SendMail(mailContent);
+
                     return SUCCESS;
                 }
             }

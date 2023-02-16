@@ -23,9 +23,9 @@ namespace MobieBasedCashFlowAPI.Controllers
             var financial = await _financialReportService.GetAsync();
             if (financial != null)
             {
-                return Ok(new { StatusCode = 200, Message = "Request was successfully", data = financial });
+                return Ok(financial);
             }
-            return NotFound(new { StatusCode = 404, Message = "List was empty" });
+            return NotFound("list was empty");
         }
 
         [HttpGet("financial/{id}")]
@@ -35,9 +35,9 @@ namespace MobieBasedCashFlowAPI.Controllers
             var financial = await _financialReportService.GetAsync(userId);
             if (financial == null)
             {
-                return NotFound(new { StatusCode = 404, Message = "Can not found this Financial Report" });
+                return NotFound("can not find this financial report");
             }
-            return Ok(new { StatusCode = 200, Message = "Request was successfully", data = financial });
+            return Ok(financial);
         }
 
         [HttpPost("financial")]
@@ -50,7 +50,7 @@ namespace MobieBasedCashFlowAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -63,14 +63,14 @@ namespace MobieBasedCashFlowAPI.Controllers
 
                 if (finanRp is null)
                 {
-                    return NotFound();
+                    return NotFound("can not find this financial report");
                 }
                 await _financialReportService.UpdateAsync(id, financialReport);
-                return Ok(new { StatusCode = 200, Message = "update financial report successfully" });
+                return Ok("update success");
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
     }

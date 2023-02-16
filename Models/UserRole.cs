@@ -12,6 +12,7 @@ namespace MobieBasedCashFlowAPI.Models
 
         public string RoleId { get; set; } = null!;
         public string RoleName { get; set; } = null!;
+        public DateTime CreateAt { get; set; }
 
         public virtual ICollection<UserAccount> UserAccounts { get; set; }
     }
