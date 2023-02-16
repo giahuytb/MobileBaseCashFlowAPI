@@ -10,6 +10,8 @@ using MobieBasedCashFlowAPI.IServices;
 using MobieBasedCashFlowAPI.Services;
 using MobieBasedCashFlowAPI.Settings;
 using MobieBasedCashFlowAPI.Models;
+using Microsoft.AspNetCore.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 var secretKey = builder.Configuration["Jwt:Key"];
@@ -19,11 +21,11 @@ var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var mailSettings = builder.Configuration.GetSection("MailSettings");
 
 builder.Services.AddOptions();
-builder.Services.AddControllers();
 
-//.AddJsonOptions(options => {
-//    options.JsonSerializerOptions.PropertyNamingPolicy = null;
-//});
+builder.Services.AddControllers().AddJsonOptions(options =>
+ {
+     options.JsonSerializerOptions.PropertyNamingPolicy = null;
+ });
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -43,17 +45,19 @@ builder.Services.AddCors(option =>
         });
 });
 
-// Add Database To Project
+// Add Database context To Project
 
-builder.Services.AddDbContext<MobileBaseCashFlowGameContext>(option =>
+builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDb"));
 });
 
 
 // Register Service For SqlServer Database
-builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ISendMailService, SendMailService>();
+
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IItemService, ItemService>();
 
 // Register Service For MongoDatabase
 builder.Services.AddTransient<MongoDbSettings>(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
@@ -116,6 +120,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// use app.Environment.IsProduction() to enable swagger after deploy
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
@@ -123,8 +128,33 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cash Flow Game Api v1");
-        // Set URl as index.html
+        // Set URl as /index.html
         c.RoutePrefix = String.Empty;
+    });
+    app.UseExceptionHandler(exceptionHandlerApp =>
+    {
+        exceptionHandlerApp.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+            // using static System.Net.Mime.MediaTypeNames;
+            context.Response.ContentType = Text.Plain;
+
+            await context.Response.WriteAsync("An exception was thrown.");
+
+            var exceptionHandlerPathFeature =
+                context.Features.Get<IExceptionHandlerPathFeature>();
+
+            if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
+            {
+                await context.Response.WriteAsync(" The file was not found.");
+            }
+
+            if (exceptionHandlerPathFeature?.Path == "/")
+            {
+                await context.Response.WriteAsync(" Page: Home.");
+            }
+        });
     });
 }
 

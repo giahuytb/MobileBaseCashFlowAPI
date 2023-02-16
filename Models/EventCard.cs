@@ -19,6 +19,7 @@ namespace MobieBasedCashFlowAPI.Models
         public string? UpdateBy { get; set; }
         public string? GameId { get; set; }
         public string? EventId { get; set; }
+        public string EventImageUrl { get; set; } = null!;
 
         public virtual GameEvent? Event { get; set; }
         public virtual Game? Game { get; set; }

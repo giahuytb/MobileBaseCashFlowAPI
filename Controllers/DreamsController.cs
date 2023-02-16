@@ -22,9 +22,9 @@ namespace MobieBasedCashFlowAPI.Controllers
             var dream = await _dreamService.GetAsync();
             if (dream != null)
             {
-                return Ok(new { StatusCode = 200, Message = "Request was successfully", data = dream });
+                return Ok(dream);
             }
-            return NotFound(new { StatusCode = 404, Message = "List was empty" });
+            return NotFound("list is empty");
         }
 
         [HttpGet("dream/{id}")]
@@ -33,9 +33,9 @@ namespace MobieBasedCashFlowAPI.Controllers
             var dream = await _dreamService.GetAsync(id);
             if (dream != null)
             {
-                return Ok(new { StatusCode = 200, Message = "Request was successfully", data = dream });
+                return Ok(dream);
             }
-            return NotFound(new { StatusCode = 404, Message = "Can not found this dream" });
+            return NotFound("can not find this dream");
         }
 
         [HttpPost("dream")]
@@ -48,7 +48,7 @@ namespace MobieBasedCashFlowAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -60,14 +60,14 @@ namespace MobieBasedCashFlowAPI.Controllers
                 var dream1 = await _dreamService.GetAsync(id);
                 if (dream1 is null)
                 {
-                    return NotFound(new { StatusCode = 404, Message = "Can not found this dream" });
+                    return NotFound("can not find this dream");
                 }
                 await _dreamService.UpdateAsync(id, dream);
-                return Ok(new { StatusCode = 200, Message = "Update dream successfully" });
+                return Ok("update success");
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
     }

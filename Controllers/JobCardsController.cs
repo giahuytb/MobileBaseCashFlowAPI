@@ -22,24 +22,24 @@ namespace MobieBasedCashFlowAPI.Controllers
         [HttpGet("job")]
         public async Task<ActionResult<JobCardMg>> GetAll()
         {
-            var job = await _jobCardService.GetAsync();
-            if (job != null)
+            var jobCard = await _jobCardService.GetAsync();
+            if (jobCard != null)
             {
-                return Ok(new { StatusCode = 200, Message = "Request was successfully", data = job });
+                return Ok(jobCard);
             }
-            return NotFound(new { StatusCode = 404, Message = "List was empty" });
+            return NotFound("can not find this job card");
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet("job/{id:length(24)}")]
         public async Task<ActionResult<JobCardMg>> GetById(string id)
         {
-            var job = await _jobCardService.GetAsync(id);
-            if (job != null)
+            var jobCard = await _jobCardService.GetAsync(id);
+            if (jobCard != null)
             {
-                return Ok(new { StatusCode = 200, Message = "Request was successfully", data = job });
+                return Ok(jobCard);
             }
-            return NotFound(new { StatusCode = 404, Message = "Can not found this job" });
+            return NotFound("can not find this job card");
         }
 
         [HttpPost("job")]
@@ -52,7 +52,7 @@ namespace MobieBasedCashFlowAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -65,14 +65,14 @@ namespace MobieBasedCashFlowAPI.Controllers
 
                 if (jobCard1 is null)
                 {
-                    return NotFound(new { StatusCode = 404, Message = "Can not found this dream" });
+                    return NotFound("can not find this job card");
                 }
                 await _jobCardService.UpdateAsync(id, jobCard);
-                return Ok(new { StatusCode = 200, Message = "Update job successfully" });
+                return Ok("update success");
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
     }

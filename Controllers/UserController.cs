@@ -55,9 +55,9 @@ namespace MobileBaseCashFlowGameAPI.Controllers
                 var result = await _userService.Register(request);
                 if (result.Equals("success"))
                 {
-                    return Ok(new { StatusCode = 201, Message = result });
+                    return Ok(result);
                 }
-                return BadRequest(new { StatusCode = 404, result });
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
@@ -73,7 +73,7 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             try
             {
                 var result = await _userService.VerifyEmail(token);
-                if (result.Equals("Success"))
+                if (result.Equals("success"))
                 {
                     return Ok(result);
                 }

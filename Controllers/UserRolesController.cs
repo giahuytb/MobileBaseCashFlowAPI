@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MobieBasedCashFlowAPI.Models;
 using MobileBaseCashFlowGameAPI.Common;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,9 +13,9 @@ namespace MobieBasedCashFlowAPI.Controllers
     [ApiController]
     public class UserRolesController : ControllerBase
     {
-        private readonly MobileBaseCashFlowGameContext _context;
+        private readonly MobileBasedCashFlowGameContext _context;
 
-        public UserRolesController(MobileBaseCashFlowGameContext context)
+        public UserRolesController(MobileBasedCashFlowGameContext context)
         {
             _context = context;
         }
@@ -28,22 +29,19 @@ namespace MobieBasedCashFlowAPI.Controllers
         [HttpGet("role/{id}")]
         public async Task<ActionResult<UserRole>> GetById(string id)
         {
-            var userRole = await (from role in _context.UserRoles 
+            var userRole = await (from role in _context.UserRoles.Where( r => r.RoleId == id)
                                   select new
                                   {
-                                      roleId = role.RoleId, 
                                       roleName = role.RoleName,
                                   }).FirstOrDefaultAsync();
             if (userRole == null)
             {
-                return NotFound();
+                return NotFound("Can not find this role");
             }
 
             return Ok(userRole);
         }
 
-        // POST: api/UserRoles
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("role")]
         public async Task<ActionResult<UserRole>> PostUserRole(string roleName)
         {
@@ -51,16 +49,35 @@ namespace MobieBasedCashFlowAPI.Controllers
             {
                 RoleId = Guid.NewGuid() + "",
                 RoleName = roleName,
+                CreateAt = DateTime.Now,
             };
             var check = _context.UserRoles.FirstOrDefaultAsync(r => r.RoleName == roleName);
             if (check.Result != null)
             {
-                return Conflict(new { StatusCode = 409, Message = "This Role Has Already Existed" });
+                return Conflict("This Role Has Already Existed");
             }
             await _context.UserRoles.AddAsync(role);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetById), new { id = role.RoleId }, role);
+        }
+
+        [HttpDelete("role")]
+        public async Task<ActionResult> DeleteRole(string roleId)
+        {
+            try
+            {
+                var role = await _context.UserRoles.FindAsync(roleId);
+                if (role != null)
+                {
+                    _context.UserRoles.Remove(role);
+                    await _context.SaveChangesAsync();
+                    return NoContent();
+                }
+                return NotFound();
+            }catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

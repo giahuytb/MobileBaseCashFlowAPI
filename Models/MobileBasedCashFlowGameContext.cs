@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace MobieBasedCashFlowAPI.Models
 {
-    public partial class MobileBaseCashFlowGameContext : DbContext
+    public partial class MobileBasedCashFlowGameContext : DbContext
     {
-        public MobileBaseCashFlowGameContext()
+        public MobileBasedCashFlowGameContext()
         {
         }
 
-        public MobileBaseCashFlowGameContext(DbContextOptions<MobileBaseCashFlowGameContext> options)
+        public MobileBasedCashFlowGameContext(DbContextOptions<MobileBasedCashFlowGameContext> options)
             : base(options)
         {
         }
@@ -34,11 +34,13 @@ namespace MobieBasedCashFlowAPI.Models
         public virtual DbSet<JobCard> JobCards { get; set; } = null!;
         public virtual DbSet<Leaderboard> Leaderboards { get; set; } = null!;
         public virtual DbSet<LoginHistory> LoginHistories { get; set; } = null!;
+        public virtual DbSet<Participant> Participants { get; set; } = null!;
         public virtual DbSet<Position> Positions { get; set; } = null!;
         public virtual DbSet<Tile> Tiles { get; set; } = null!;
         public virtual DbSet<TileType> TileTypes { get; set; } = null!;
         public virtual DbSet<UserAccount> UserAccounts { get; set; } = null!;
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -180,6 +182,10 @@ namespace MobieBasedCashFlowAPI.Models
                     .HasColumnName("event_id")
                     .IsFixedLength();
 
+                entity.Property(e => e.EventImageUrl)
+                    .HasMaxLength(100)
+                    .HasColumnName("event_image_url");
+
                 entity.Property(e => e.GameId)
                     .HasMaxLength(36)
                     .IsUnicode(false)
@@ -249,7 +255,7 @@ namespace MobieBasedCashFlowAPI.Models
             modelBuilder.Entity<FinacialReport>(entity =>
             {
                 entity.HasKey(e => e.FinacialId)
-                    .HasName("PK__Finacial__717EA3A4AFE5843F");
+                    .HasName("PK__Finacial__717EA3A4D9B9F8F7");
 
                 entity.ToTable("Finacial_report");
 
@@ -449,11 +455,11 @@ namespace MobieBasedCashFlowAPI.Models
             modelBuilder.Entity<GameAccountType>(entity =>
             {
                 entity.HasKey(e => e.AccountTypeId)
-                    .HasName("PK__Game_acc__18186C107FA40689");
+                    .HasName("PK__Game_acc__18186C10C9E35596");
 
                 entity.ToTable("Game_account_type");
 
-                entity.HasIndex(e => e.AccountTypeName, "UQ__Game_acc__2A5C696637A29BBE")
+                entity.HasIndex(e => e.AccountTypeName, "UQ__Game_acc__2A5C6966FEC3691A")
                     .IsUnique();
 
                 entity.Property(e => e.AccountTypeId)
@@ -490,7 +496,7 @@ namespace MobieBasedCashFlowAPI.Models
             modelBuilder.Entity<GameEvent>(entity =>
             {
                 entity.HasKey(e => e.EventId)
-                    .HasName("PK__Game_eve__2370F727EC88212B");
+                    .HasName("PK__Game_eve__2370F727A91F09E9");
 
                 entity.ToTable("Game_event");
 
@@ -530,7 +536,7 @@ namespace MobieBasedCashFlowAPI.Models
             modelBuilder.Entity<GameMatch>(entity =>
             {
                 entity.HasKey(e => e.MatchId)
-                    .HasName("PK__Game_mat__9D7FCBA35055F40C");
+                    .HasName("PK__Game_mat__9D7FCBA3D7973ACA");
 
                 entity.ToTable("Game_match");
 
@@ -619,10 +625,6 @@ namespace MobieBasedCashFlowAPI.Models
                 entity.Property(e => e.CreateAt)
                     .HasColumnType("datetime")
                     .HasColumnName("create_at");
-
-                entity.Property(e => e.UpdateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("update_at");
 
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.Inventories)
@@ -838,6 +840,42 @@ namespace MobieBasedCashFlowAPI.Models
                     .HasConstraintName("FK__Login_his__user___5535A963");
             });
 
+            modelBuilder.Entity<Participant>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.MatchId })
+                    .HasName("pk_participant_id");
+
+                entity.ToTable("Participant");
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .HasColumnName("user_id")
+                    .IsFixedLength();
+
+                entity.Property(e => e.MatchId)
+                    .HasMaxLength(36)
+                    .IsUnicode(false)
+                    .HasColumnName("match_id")
+                    .IsFixedLength();
+
+                entity.Property(e => e.CreateAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_at");
+
+                entity.HasOne(d => d.Match)
+                    .WithMany(p => p.Participants)
+                    .HasForeignKey(d => d.MatchId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Participa__match__5EBF139D");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Participants)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Participa__user___5DCAEF64");
+            });
+
             modelBuilder.Entity<Position>(entity =>
             {
                 entity.ToTable("Position");
@@ -977,14 +1015,14 @@ namespace MobieBasedCashFlowAPI.Models
             modelBuilder.Entity<UserAccount>(entity =>
             {
                 entity.HasKey(e => e.UserId)
-                    .HasName("PK__User_acc__B9BE370F4FDE68EC");
+                    .HasName("PK__User_acc__B9BE370FD1A1F24B");
 
                 entity.ToTable("User_account");
 
-                entity.HasIndex(e => e.NickName, "UQ__User_acc__08E8937AC48B4854")
+                entity.HasIndex(e => e.NickName, "UQ__User_acc__08E8937AFC2E461A")
                     .IsUnique();
 
-                entity.HasIndex(e => e.UserName, "UQ__User_acc__7C9273C4E7604B4C")
+                entity.HasIndex(e => e.UserName, "UQ__User_acc__7C9273C4F0C1FA26")
                     .IsUnique();
 
                 entity.Property(e => e.UserId)
@@ -1075,33 +1113,16 @@ namespace MobieBasedCashFlowAPI.Models
                     .WithMany(p => p.UserAccounts)
                     .HasForeignKey(d => d.RoleId)
                     .HasConstraintName("FK__User_acco__role___403A8C7D");
-
-                entity.HasMany(d => d.Matches)
-                    .WithMany(p => p.Users)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "Participant",
-                        l => l.HasOne<GameMatch>().WithMany().HasForeignKey("MatchId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__Participa__match__5EBF139D"),
-                        r => r.HasOne<UserAccount>().WithMany().HasForeignKey("UserId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK__Participa__user___5DCAEF64"),
-                        j =>
-                        {
-                            j.HasKey("UserId", "MatchId").HasName("pk_participant_id");
-
-                            j.ToTable("Participant");
-
-                            j.IndexerProperty<string>("UserId").HasMaxLength(36).IsUnicode(false).HasColumnName("user_id").IsFixedLength();
-
-                            j.IndexerProperty<string>("MatchId").HasMaxLength(36).IsUnicode(false).HasColumnName("match_id").IsFixedLength();
-                        });
             });
 
             modelBuilder.Entity<UserRole>(entity =>
             {
                 entity.HasKey(e => e.RoleId)
-                    .HasName("PK__User_rol__760965CC410F40A5");
+                    .HasName("PK__User_rol__760965CC1AC66DE6");
 
                 entity.ToTable("User_role");
 
-                entity.HasIndex(e => e.RoleName, "UQ__User_rol__783254B15FA8C127")
+                entity.HasIndex(e => e.RoleName, "UQ__User_rol__783254B10F8C8D55")
                     .IsUnique();
 
                 entity.Property(e => e.RoleId)
@@ -1109,6 +1130,10 @@ namespace MobieBasedCashFlowAPI.Models
                     .IsUnicode(false)
                     .HasColumnName("role_id")
                     .IsFixedLength();
+
+                entity.Property(e => e.CreateAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_at");
 
                 entity.Property(e => e.RoleName)
                     .HasMaxLength(10)

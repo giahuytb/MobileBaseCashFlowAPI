@@ -16,7 +16,7 @@ namespace MobieBasedCashFlowAPI.Models
             GameMatchWiners = new HashSet<GameMatch>();
             Inventories = new HashSet<Inventory>();
             Leaderboards = new HashSet<Leaderboard>();
-            Matches = new HashSet<GameMatch>();
+            Participants = new HashSet<Participant>();
         }
 
         public string UserId { get; set; } = null!;
@@ -48,7 +48,6 @@ namespace MobieBasedCashFlowAPI.Models
         public virtual ICollection<GameMatch> GameMatchWiners { get; set; }
         public virtual ICollection<Inventory> Inventories { get; set; }
         public virtual ICollection<Leaderboard> Leaderboards { get; set; }
-
-        public virtual ICollection<GameMatch> Matches { get; set; }
+        public virtual ICollection<Participant> Participants { get; set; }
     }
 }

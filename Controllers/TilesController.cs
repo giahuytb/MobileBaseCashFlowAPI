@@ -24,9 +24,9 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             var tile = await _tileService.GetAsync();
             if (tile != null)
             {
-                return Ok(new { StatusCode = 200, Message = "Request was successfully", data = tile });
+                return Ok(tile);
             }
-            return NotFound(new { StatusCode = 404, Message = "List was empty" });
+            return NotFound("list is empty");
         }
 
         [HttpGet("tile/{id:length(24)}")]
@@ -35,9 +35,9 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             var tile = await _tileService.GetAsync(id);
             if (tile != null)
             {
-                return Ok(new { StatusCode = 200, Message = "Request was successfully", data = tile });
+                return Ok(tile);
             }
-            return NotFound(new { StatusCode = 404, Message = "Can not found this tile" });
+            return NotFound("can not find this tile");
         }
 
         [HttpPost("tile")]
@@ -50,7 +50,7 @@ namespace MobileBaseCashFlowGameAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -62,14 +62,14 @@ namespace MobileBaseCashFlowGameAPI.Controllers
                 var Tile = await _tileService.GetAsync(id);
                 if (Tile is null)
                 {
-                    return NotFound(new { StatusCode = 404, Message = "Can not found this tile" });
+                    return NotFound("can not find this tile");
                 }
                 await _tileService.UpdateAsync(id, tile);
-                return Ok(new { StatusCode = 200, Message = "Update tile successfully" });
+                return Ok("update success");
             }
             catch (Exception ex)
             {
-                return BadRequest(new { StatusCode = 400, Message = ex.ToString() });
+                return BadRequest(ex.ToString());
             }
         }
 

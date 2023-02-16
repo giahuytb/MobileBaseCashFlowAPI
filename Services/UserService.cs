@@ -20,11 +20,11 @@ namespace MobileBaseCashFlowGameAPI.Services
 
         private readonly IConfiguration _configuration;
         private readonly ISendMailService _sendMailService;
-        private readonly MobileBaseCashFlowGameContext _context;
+        private readonly MobileBasedCashFlowGameContext _context;
 
         public UserService(IConfiguration configuration,
                             ISendMailService sendMailService,
-                            MobileBaseCashFlowGameContext context)
+                            MobileBasedCashFlowGameContext context)
         {
             _configuration = configuration;
             _sendMailService = sendMailService;
@@ -129,10 +129,10 @@ namespace MobileBaseCashFlowGameAPI.Services
             }
             else
             {
-                 // Find role "Player" in database
-                 var roleId = await (from role in _context.UserRoles where role.RoleName == "Player" select new { roleId = role.RoleId }).FirstOrDefaultAsync();
-                 // Find gameId in database that match version == "Ver_1"
-                 var gameId = await (from game in _context.Games where game.GameVersion == "Ver_1" select new { gameId = game.GameId }).FirstOrDefaultAsync();
+                // Find role "Player" in database
+                var roleId = await (from role in _context.UserRoles where role.RoleName == "Player" select new { roleId = role.RoleId }).FirstOrDefaultAsync();
+                // Find gameId in database that match version == "Ver_1"
+                var gameId = await (from game in _context.Games where game.GameVersion == "Ver_1" select new { gameId = game.GameId }).FirstOrDefaultAsync();
 
                 if (roleId != null || gameId != null)
                 {
