@@ -1,17 +1,16 @@
-using MobileBaseCashFlowGameAPI.IServices;
-using MobileBaseCashFlowGameAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using MobieBasedCashFlowAPI.IServices;
-using MobieBasedCashFlowAPI.Services;
-using MobieBasedCashFlowAPI.Settings;
-using MobieBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.Settings;
+using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Se;
+using MobileBasedCashFlowAPI.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
+using MobileBasedCashFlowAPI.MongoServices;
+using MobileBasedCashFlowAPI.IMongoServices;
 
 var builder = WebApplication.CreateBuilder(args);
 var secretKey = builder.Configuration["Jwt:Key"];
@@ -33,8 +32,6 @@ builder.Services.Configure<MailSettings>(mailSettings);
 // Inject data from appsettings to GameDBSettings
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection(nameof(MongoDbSettings)));
 
-
-
 // Enable Cors
 builder.Services.AddCors(option =>
 {
@@ -44,7 +41,6 @@ builder.Services.AddCors(option =>
             policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
         });
 });
-
 // Add Database context To Project
 
 builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
@@ -52,20 +48,22 @@ builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDb"));
 });
 
-
 // Register Service For SqlServer Database
 builder.Services.AddTransient<ISendMailService, SendMailService>();
 
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<IBoardService, BoardService>();
+builder.Services.AddTransient<IDreamService, DreamService>();
+builder.Services.AddTransient<IEventCardService, EventCardService>();
 
 // Register Service For MongoDatabase
 builder.Services.AddTransient<MongoDbSettings>(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
-builder.Services.AddTransient<IEventCardService, EventCardService>();
-builder.Services.AddTransient<ITileService, TileService>();
-builder.Services.AddTransient<IJobCardService, JobCardService>();
-builder.Services.AddTransient<IDreamService, DreamService>();
-builder.Services.AddTransient<IFinancialReportService, FinancialReportService>();
+builder.Services.AddTransient<IMgEventCardService, MgEventCardService>();
+builder.Services.AddTransient<IMgTileService, MgTileService>();
+builder.Services.AddTransient<IMgJobCardService, MgJobCardService>();
+builder.Services.AddTransient<IMgDreamService, MgDreamService>();
+builder.Services.AddTransient<IMgFinancialReportService, MgFinancialReportService>();
 
 // Config Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

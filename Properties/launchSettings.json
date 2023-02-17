@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "MobileBaseCashFlowGameAPI": {
+    "MobileBasedCashFlowAPI": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace MobieBasedCashFlowAPI.Models
+namespace MobileBasedCashFlowAPI.Models
 {
     public partial class MobileBasedCashFlowGameContext : DbContext
     {
@@ -40,8 +40,6 @@ namespace MobieBasedCashFlowAPI.Models
         public virtual DbSet<TileType> TileTypes { get; set; } = null!;
         public virtual DbSet<UserAccount> UserAccounts { get; set; } = null!;
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Board>(entity =>
@@ -54,9 +52,9 @@ namespace MobieBasedCashFlowAPI.Models
                     .HasColumnName("board_id")
                     .IsFixedLength();
 
-                entity.Property(e => e.AmountFatTile).HasColumnName("amount_Fat_tile");
+                entity.Property(e => e.AmountFatTile).HasColumnName("amount_fat_tile");
 
-                entity.Property(e => e.AmountRateTile).HasColumnName("amount_rate_tile");
+                entity.Property(e => e.AmountRatTile).HasColumnName("amount_rat_tile");
 
                 entity.Property(e => e.CreateAt)
                     .HasColumnType("datetime")
@@ -1035,6 +1033,8 @@ namespace MobieBasedCashFlowAPI.Models
                     .HasMaxLength(200)
                     .IsUnicode(false)
                     .HasColumnName("avatar_image_url");
+
+                entity.Property(e => e.Coin).HasColumnName("coin");
 
                 entity.Property(e => e.CreateAt)
                     .HasColumnType("datetime")

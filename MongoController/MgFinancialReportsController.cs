@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MobieBasedCashFlowAPI.IServices;
-using MobieBasedCashFlowAPI.MongoModels;
+using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoModels;
 
-namespace MobieBasedCashFlowAPI.Controllers
+namespace MobileBasedCashFlowAPI.MongoController
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FinancialReportsController : ControllerBase
+    public class MgFinancialReportsController : ControllerBase
     {
-        private readonly IFinancialReportService _financialReportService;
+        private readonly IMgFinancialReportService _financialReportService;
 
-        public FinancialReportsController(IFinancialReportService financialReportService)
+        public MgFinancialReportsController(IMgFinancialReportService financialReportService)
         {
             _financialReportService = financialReportService;
         }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobieBasedCashFlowAPI.Models
+namespace MobileBasedCashFlowAPI.Models
 {
     public partial class UserAccount
     {
@@ -36,6 +36,7 @@ namespace MobieBasedCashFlowAPI.Models
         public DateTime? UpdateAt { get; set; }
         public string? GameId { get; set; }
         public string? RoleId { get; set; }
+        public double? Coin { get; set; }
 
         public virtual Game? Game { get; set; }
         public virtual UserRole? Role { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MobileBaseCashFlowGameAPI.ViewModels
+namespace MobileBasedCashFlowAPI.DTO
 {
     public class RegisterRequest
     {

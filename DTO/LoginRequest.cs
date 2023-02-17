@@ -1,4 +1,4 @@
-﻿namespace MobileBaseCashFlowGameAPI.ViewModels
+﻿namespace MobileBasedCashFlowAPI.DTO
 {
     public class LoginRequest
     {

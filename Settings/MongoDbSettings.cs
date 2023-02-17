@@ -1,4 +1,4 @@
-﻿namespace MobieBasedCashFlowAPI.Settings
+﻿namespace MobileBasedCashFlowAPI.Settings
 {
     public class MongoDbSettings
     {

@@ -1,15 +1,14 @@
-﻿using MobieBasedCashFlowAPI.Models;
-using MobieBasedCashFlowAPI.ViewModels;
+﻿using MobileBasedCashFlowAPI.DTO;
 using System.Collections;
 
-namespace MobieBasedCashFlowAPI.IServices
+namespace MobileBasedCashFlowAPI.IServices
 {
     public interface IItemService
     {
         public Task<IEnumerable> GetAsync();
-        public Task<Object?> GetAsync(string name);
-        public Task<string> CreateAsync(string userId, itemRequest item);
-        public Task<string> UpdateAsync(string ItemId, string userId, itemRequest item);
-        public Task<string> DeleteAsync(string ItemId);
+        public Task<object?> GetAsync(string name);
+        public Task<string> CreateAsync(string userId, ItemRequest item);
+        public Task<string> UpdateAsync(string itemId, string userId, ItemRequest item);
+        public Task<string> DeleteAsync(string itemId);
     }
 }

@@ -1,6 +1,6 @@
-﻿using MobileBaseCashFlowGameAPI.ViewModels;
+﻿using MobileBasedCashFlowAPI.DTO;
 
-namespace MobileBaseCashFlowGameAPI.IServices
+namespace MobileBasedCashFlowAPI.IServices
 {
     public interface IUserService
     {

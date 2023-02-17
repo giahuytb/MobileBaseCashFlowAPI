@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MobieBasedCashFlowAPI.Models;
-using MobileBaseCashFlowGameAPI.Common;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using MobileBasedCashFlowAPI.Models;
 
-namespace MobieBasedCashFlowAPI.Controllers
+namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -29,7 +26,7 @@ namespace MobieBasedCashFlowAPI.Controllers
         [HttpGet("role/{id}")]
         public async Task<ActionResult<UserRole>> GetById(string id)
         {
-            var userRole = await (from role in _context.UserRoles.Where( r => r.RoleId == id)
+            var userRole = await (from role in _context.UserRoles.Where(r => r.RoleId == id)
                                   select new
                                   {
                                       roleName = role.RoleName,
@@ -75,7 +72,9 @@ namespace MobieBasedCashFlowAPI.Controllers
                     return NoContent();
                 }
                 return NotFound();
-            }catch(Exception ex){
+            }
+            catch (Exception ex)
+            {
                 return BadRequest(ex.Message);
             }
         }

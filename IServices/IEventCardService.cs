@@ -1,13 +1,14 @@
-﻿using MobieBasedCashFlowAPI.MongoModels;
+﻿using MobileBasedCashFlowAPI.DTO;
+using System.Collections;
 
-namespace MobileBaseCashFlowGameAPI.IServices
+namespace MobileBasedCashFlowAPI.IServices
 {
     public interface IEventCardService
     {
-        public Task<List<EventCardMg>> GetAsync();
-        public Task<EventCardMg?> GetAsync(string id);
-        public Task CreateAsync(EventCardMg eventCard);
-        public Task UpdateAsync(string id, EventCardMg eventCard);
-        public Task RemoveAsync(string id);
+        public Task<IEnumerable> GetAsync();
+        public Task<object?> GetAsync(string id);
+        public Task<string> CreateAsync(string userId, EventCardRequest eventCard);
+        public Task<string> UpdateAsync(string cardId, string userId, EventCardRequest eventCard);
+        public Task<string> DeleteAsync(string cardId);
     }
 }

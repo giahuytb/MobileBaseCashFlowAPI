@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MobileBaseCashFlowGameAPI.IServices;
-using MobieBasedCashFlowAPI.MongoModels;
+using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoModels;
 
-namespace MobileBaseCashFlowGameAPI.Controllers
+namespace MobileBasedCashFlowAPI.MongoController
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EventCardsController : ControllerBase
+    public class MgEventCardsController : ControllerBase
     {
-        private readonly IEventCardService _eventCardService;
+        private readonly IMgEventCardService _eventCardService;
 
-        public EventCardsController(IEventCardService eventCardService)
+        public MgEventCardsController(IMgEventCardService eventCardService)
         {
             _eventCardService = eventCardService;
         }

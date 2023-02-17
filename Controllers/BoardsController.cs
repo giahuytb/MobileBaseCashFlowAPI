@@ -10,22 +10,22 @@ namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DreamsController : ControllerBase
+    public class BoardsController : ControllerBase
     {
-        private readonly IDreamService _dreamService;
+        private readonly IBoardService _boardService;
 
-        public DreamsController(IDreamService dreamService)
+        public BoardsController(IBoardService boardService)
         {
-            _dreamService = dreamService;
+            _boardService = boardService;
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("dream")]
-        public async Task<ActionResult<IEnumerable>> GetALl()
+        [HttpGet("board")]
+        public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
             {
-                var result = await _dreamService.GetAsync();
+                var result = await _boardService.GetAsync();
                 if (result == null)
                 {
                     return NotFound("list is empty");
@@ -38,13 +38,13 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("dream/{name}")]
         //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<Dream>> GetByName(string name)
+        [HttpGet("item/{name}")]
+        public async Task<ActionResult<Item>> GetByName(string name)
         {
             try
             {
-                var result = await _dreamService.GetAsync(name);
+                var result = await _boardService.GetAsync(name);
                 if (result != null)
                 {
                     return Ok(result);
@@ -58,8 +58,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("dream")]
-        public async Task<ActionResult> PostDream(DreamRequest dream)
+        [HttpPost("item")]
+        public async Task<ActionResult> PostBoard(BoardRequest board)
         {
             try
             {
@@ -67,9 +67,9 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login again ");
+                    return BadRequest("User id not Found , please login again ");
                 }
-                var result = await _dreamService.CreateAsync(userId, dream);
+                var result = await _boardService.CreateAsync(userId, board);
 
                 return Ok(result);
             }
@@ -80,8 +80,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("dream")]
-        public async Task<ActionResult> UpdateDream(string id, DreamRequest dream)
+        [HttpPut("board")]
+        public async Task<ActionResult> UpdateBoard(string id, BoardRequest board)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login again");
                 }
-                var result = await _dreamService.UpdateAsync(id, userId, dream);
+                var result = await _boardService.UpdateAsync(id, userId, board);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -99,12 +99,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("dream")]
-        public async Task<ActionResult> DeleteDream(string id)
+        [HttpDelete("board")]
+        public async Task<ActionResult> DeleteBoard(string id)
         {
             try
             {
-                var result = await _dreamService.DeleteAsync(id);
+                var result = await _boardService.DeleteAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -112,6 +112,5 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
     }
 }

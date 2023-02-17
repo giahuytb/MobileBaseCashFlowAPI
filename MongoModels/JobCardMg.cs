@@ -1,8 +1,8 @@
-﻿//using MobieBasedCashFlowAPI.SubModels;
+﻿//using MobileBasedCashFlowAPI.SubModels;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MobieBasedCashFlowAPI.MongoModels
+namespace MobileBasedCashFlowAPI.MongoModels
 {
     public class JobCardMg
     {

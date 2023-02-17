@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MobileBaseCashFlowGameAPI.Common
+namespace MobileBasedCashFlowAPI.Common
 {
     public class PaginatedList<T>: List<T>
     {

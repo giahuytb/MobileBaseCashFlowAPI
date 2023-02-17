@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MobieBasedCashFlowAPI.IServices;
-using MobieBasedCashFlowAPI.Models;
-using MobieBasedCashFlowAPI.ViewModels;
 using System.Collections;
 using System.Security.Claims;
 
-namespace MobieBasedCashFlowAPI.Controllers
+using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.DTO;
+
+namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,7 +23,7 @@ namespace MobieBasedCashFlowAPI.Controllers
 
         [HttpGet("item")]
         //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<IEnumerable>> Get()
+        public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _itemService.GetAsync();
 
@@ -31,7 +32,7 @@ namespace MobieBasedCashFlowAPI.Controllers
 
         [HttpGet("item/{name}")]
         //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<Item>> GetById(string name)
+        public async Task<ActionResult<Item>> GetByName(string name)
         {
             try
             {
@@ -41,7 +42,8 @@ namespace MobieBasedCashFlowAPI.Controllers
                     return Ok(result);
                 }
                 return NotFound();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -49,7 +51,7 @@ namespace MobieBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost("item")]
-        public async Task<ActionResult> PostItem(itemRequest item)
+        public async Task<ActionResult> PostItem(ItemRequest item)
         {
             try
             {
@@ -59,9 +61,9 @@ namespace MobieBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found , please login again ");
                 }
-                var item1 = await _itemService.CreateAsync(userId, item);
+                var result = await _itemService.CreateAsync(userId, item);
 
-                return CreatedAtAction(nameof(GetById), new { name = item.ItemName }, item);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -71,14 +73,14 @@ namespace MobieBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("item")]
-        public async Task<ActionResult> UpdateItem(string id, itemRequest item)
+        public async Task<ActionResult> UpdateItem(string id, ItemRequest item)
         {
             try
             {
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found , please login again ");
+                    return BadRequest("User id not Found, please login again ");
                 }
                 var result = await _itemService.UpdateAsync(id, userId, item);
                 return Ok(result);

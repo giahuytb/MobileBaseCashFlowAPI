@@ -1,8 +1,8 @@
-﻿using MobieBasedCashFlowAPI.MongoModels;
+﻿using MobileBasedCashFlowAPI.MongoModels;
 
-namespace MobileBaseCashFlowGameAPI.IServices
+namespace MobileBasedCashFlowAPI.IMongoServices
 {
-    public interface ITileService
+    public interface IMgTileService
     {
         public Task<List<TileMg>> GetAsync();
         public Task<TileMg?> GetAsync(string id);

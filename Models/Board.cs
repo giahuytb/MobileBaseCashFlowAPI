@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobieBasedCashFlowAPI.Models
+namespace MobileBasedCashFlowAPI.Models
 {
     public partial class Board
     {
@@ -11,7 +11,7 @@ namespace MobieBasedCashFlowAPI.Models
         }
 
         public string BoardId { get; set; } = null!;
-        public int AmountRateTile { get; set; }
+        public int AmountRatTile { get; set; }
         public int AmountFatTile { get; set; }
         public double DementionBoard { get; set; }
         public double RadiusRatTile { get; set; }
