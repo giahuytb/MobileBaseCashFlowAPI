@@ -1,16 +1,16 @@
-﻿using MobileBaseCashFlowGameAPI.IServices;
-using MobileBaseCashFlowGameAPI.ViewModels;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MobieBasedCashFlowAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
-using System.Web;
-using MobieBasedCashFlowAPI.Common;
 
-namespace MobileBaseCashFlowGameAPI.Services
+using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.DTO;
+
+namespace MobileBasedCashFlowAPI.Services
 {
 
     public class UserService : IUserService
@@ -44,12 +44,15 @@ namespace MobileBaseCashFlowGameAPI.Services
             {
                 return "wrong password";
             }
-            var roles = await _context.UserRoles.FindAsync(user.RoleId);
+            // find role name by id
+            var role = await _context.UserRoles
+                                .Where(r => r.RoleId == user.RoleId)
+                                .Select(r => new { roleName = r.RoleName }).FirstOrDefaultAsync();
 
             var claims = new[]
             {
                 new Claim(ClaimTypes.Email , user.Email),
-                new Claim(ClaimTypes.Role , roles.RoleName),
+                new Claim(ClaimTypes.Role , role.roleName),
                 new Claim("NickName" , user.NickName),
                 new Claim("UserName" , user.UserName),
                 new Claim("Id" , user.UserId.ToString()),
@@ -57,7 +60,6 @@ namespace MobileBaseCashFlowGameAPI.Services
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(
@@ -74,7 +76,7 @@ namespace MobileBaseCashFlowGameAPI.Services
         {
             var user = new UserAccount()
             {
-                UserId = Guid.NewGuid() + "",
+                UserId = Guid.NewGuid().ToString(),
                 UserName = request.UserName,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 NickName = request.NickName,
@@ -130,11 +132,15 @@ namespace MobileBaseCashFlowGameAPI.Services
             else
             {
                 // Find role "Player" in database
-                var roleId = await (from role in _context.UserRoles where role.RoleName == "Player" select new { roleId = role.RoleId }).FirstOrDefaultAsync();
+                var roleId = await (from role in _context.UserRoles
+                                    where role.RoleName == "Player"
+                                    select new { roleId = role.RoleId }).FirstOrDefaultAsync();
                 // Find gameId in database that match version == "Ver_1"
-                var gameId = await (from game in _context.Games where game.GameVersion == "Ver_1" select new { gameId = game.GameId }).FirstOrDefaultAsync();
+                var gameId = await (from game in _context.Games
+                                    where game.GameVersion == "Ver_1"
+                                    select new { gameId = game.GameId }).FirstOrDefaultAsync();
 
-                if (roleId != null || gameId != null)
+                if (roleId != null && gameId != null)
                 {
                     try
                     {

@@ -1,13 +1,14 @@
-﻿using MobieBasedCashFlowAPI.MongoModels;
+﻿using MobileBasedCashFlowAPI.DTO;
+using System.Collections;
 
-namespace MobieBasedCashFlowAPI.IServices
+namespace MobileBasedCashFlowAPI.IServices
 {
     public interface IDreamService
     {
-        public Task<List<DreamMg>> GetAsync();
-        public Task<DreamMg?> GetAsync(string id);
-        public Task CreateAsync(DreamMg dream);
-        public Task UpdateAsync(string id, DreamMg dream);
-        public Task RemoveAsync(string id);
+        public Task<IEnumerable> GetAsync();
+        public Task<object?> GetAsync(string id);
+        public Task<string> CreateAsync(string userId, DreamRequest dream);
+        public Task<string> UpdateAsync(string dreamId, string userId, DreamRequest dream);
+        public Task<string> DeleteAsync(string dreamId);
     }
 }

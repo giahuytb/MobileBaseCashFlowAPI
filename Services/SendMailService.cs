@@ -1,11 +1,12 @@
-﻿using MobileBaseCashFlowGameAPI.ViewModels;
-using MimeKit;
+﻿using MimeKit;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
-using MobileBaseCashFlowGameAPI.IServices;
-using MobieBasedCashFlowAPI.Settings;
 
-namespace MobileBaseCashFlowGameAPI.Services
+using MobileBasedCashFlowAPI.Settings;
+using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.IServices;
+
+namespace MobileBasedCashFlowGameAPI.Services
 {
 
     public class SendMailService : ISendMailService
@@ -13,14 +14,14 @@ namespace MobileBaseCashFlowGameAPI.Services
         private readonly MailSettings _mailSettings;
 
         public SendMailService(IOptions<MailSettings> mailSettings)
-        {   
+        {
             _mailSettings = mailSettings.Value;
-        }   
+        }
         public async Task<bool> SendMail(MailContent mailContent)
         {
             var email = new MimeMessage();
             email.Sender = new MailboxAddress(_mailSettings.UserName, _mailSettings.From);
-            email.From.Add( new MailboxAddress(_mailSettings.UserName, _mailSettings.From));
+            email.From.Add(new MailboxAddress(_mailSettings.UserName, _mailSettings.From));
 
             email.To.Add(new MailboxAddress(mailContent.To, mailContent.To));
             email.Subject = mailContent.Subject;
@@ -29,14 +30,14 @@ namespace MobileBaseCashFlowGameAPI.Services
             builder.HtmlBody = mailContent.Body;
             email.Body = builder.ToMessageBody();
 
-            using var smtp = new MailKit.Net.Smtp.SmtpClient(); 
-            try 
+            using var smtp = new MailKit.Net.Smtp.SmtpClient();
+            try
             {
                 smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
                 await smtp.AuthenticateAsync(_mailSettings.From, _mailSettings.Password);
-                await smtp.SendAsync(email);              
+                await smtp.SendAsync(email);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return false;

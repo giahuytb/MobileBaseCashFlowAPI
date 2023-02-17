@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobieBasedCashFlowAPI.Models
+namespace MobileBasedCashFlowAPI.Models
 {
     public partial class Friendship
     {
@@ -9,7 +9,6 @@ namespace MobieBasedCashFlowAPI.Models
         {
             FriendshipStatuses = new HashSet<FriendshipStatus>();
         }
-
         public string RequesterId { get; set; } = null!;
         public string AddresseeId { get; set; } = null!;
         public DateTime CreateAt { get; set; }

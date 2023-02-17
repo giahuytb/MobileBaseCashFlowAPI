@@ -1,8 +1,8 @@
-﻿using MobieBasedCashFlowAPI.MongoModels;
+﻿using MobileBasedCashFlowAPI.MongoModels;
 
-namespace MobieBasedCashFlowAPI.IServices
+namespace MobileBasedCashFlowAPI.IMongoServices
 {
-    public interface IJobCardService
+    public interface IMgJobCardService
     {
         public Task<List<JobCardMg>> GetAsync();
         public Task<JobCardMg?> GetAsync(string id);

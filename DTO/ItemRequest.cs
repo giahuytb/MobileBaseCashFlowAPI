@@ -1,6 +1,6 @@
-﻿namespace MobieBasedCashFlowAPI.ViewModels
+﻿namespace MobileBasedCashFlowAPI.DTO
 {
-    public class itemRequest
+    public class ItemRequest
     {
         public string ItemName { get; set; } = null!;
         public string ItemImageUrl { get; set; } = null!;

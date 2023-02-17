@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MobieBasedCashFlowAPI.Models
+namespace MobileBasedCashFlowAPI.Models
 {
     public partial class Dream
     {

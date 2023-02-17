@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MobieBasedCashFlowAPI.MongoModels;
-using MobileBaseCashFlowGameAPI.IServices;
+using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoModels;
 
-namespace MobileBaseCashFlowGameAPI.Controllers
+namespace MobileBasedCashFlowAPI.MongoController
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TilesController : ControllerBase
+    public class MgTilesController : ControllerBase
     {
-        private readonly ITileService _tileService;
+        private readonly IMgTileService _tileService;
 
-        public TilesController(ITileService tileService)
+        public MgTilesController(IMgTileService tileService)
         {
             _tileService = tileService;
         }

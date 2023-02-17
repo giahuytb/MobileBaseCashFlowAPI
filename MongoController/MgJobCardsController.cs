@@ -2,19 +2,19 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MobieBasedCashFlowAPI.IServices;
-using MobieBasedCashFlowAPI.MongoModels;
+using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoModels;
 using System.Data;
 
-namespace MobieBasedCashFlowAPI.Controllers
+namespace MobileBasedCashFlowAPI.MongoController
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class JobCardsController : ControllerBase
+    public class MgJobCardsController : ControllerBase
     {
-        private readonly IJobCardService _jobCardService;
+        private readonly IMgJobCardService _jobCardService;
 
-        public JobCardsController(IJobCardService jobCardService)
+        public MgJobCardsController(IMgJobCardService jobCardService)
         {
             _jobCardService = jobCardService;
         }

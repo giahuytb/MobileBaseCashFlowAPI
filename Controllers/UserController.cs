@@ -1,11 +1,10 @@
-﻿using MobileBaseCashFlowGameAPI.Common;
-using MobileBaseCashFlowGameAPI.IServices;
-using MobileBaseCashFlowGameAPI.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MobileBaseCashFlowGameAPI.Controllers
+using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.DTO;
+
+namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

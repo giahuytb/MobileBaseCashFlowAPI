@@ -1,12 +1,13 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using MobieBasedCashFlowAPI.Common;
-using MobieBasedCashFlowAPI.IServices;
-using MobieBasedCashFlowAPI.Models;
-using MobieBasedCashFlowAPI.ViewModels;
 using System.Collections;
 
-namespace MobieBasedCashFlowAPI.Services
+using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.DTO;
+
+namespace MobileBasedCashFlowAPI.Services
 {
     public class ItemService : IItemService
     {
@@ -40,6 +41,7 @@ namespace MobieBasedCashFlowAPI.Services
         {
             var item = await _context.Items.Select(i => new
             {
+                itemId = i.ItemId,
                 itemName = i.ItemName,
                 itemImageUrl = i.ItemImageUrl,
                 itemPrice = i.ItemPrice,
@@ -49,13 +51,26 @@ namespace MobieBasedCashFlowAPI.Services
             return item;
         }
 
-        public async Task<string> CreateAsync(string userId, itemRequest item)
+        public async Task<string> CreateAsync(string userId, ItemRequest item)
         {
+           
             try
             {
+                var checkName =  await _context.Items
+                                .Where(d => d.ItemName == item.ItemName)
+                                .Select(d => new { itemName = d.ItemName }).FirstOrDefaultAsync();
+                if (checkName != null)
+                {
+                    return "This Item name is existed";
+                }
+                if (!ValidateInput.isNumber(item.ItemPrice.ToString()) || item.ItemPrice <= 0)
+                {
+                    return "Price must be mumber and bigger than 0";
+                }
+
                 var item1 = new Item()
                 {
-                    ItemId = Guid.NewGuid() + "",
+                    ItemId = Guid.NewGuid().ToString(),
                     ItemName = item.ItemName,
                     ItemImageUrl = item.ItemImageUrl,
                     ItemPrice = item.ItemPrice,
@@ -64,11 +79,7 @@ namespace MobieBasedCashFlowAPI.Services
                     CreateAt = DateTime.Now,
                     CreateBy = userId,
                 };
-                var checkName = await _context.Items.Where(i => i.ItemName == item.ItemName).FirstOrDefaultAsync();
-                if (checkName != null)
-                {
-                    return "This Item is existed";
-                }
+
                 _context.Items.Add(item1);
                 await _context.SaveChangesAsync();
                 return SUCCESS;
@@ -80,14 +91,16 @@ namespace MobieBasedCashFlowAPI.Services
 
         }
 
-        public async Task<string> UpdateAsync(string id, string userId, itemRequest item)
+        public async Task<string> UpdateAsync(string id, string userId, ItemRequest item)
         {
             var oldItem = await _context.Items.FirstOrDefaultAsync(i => id == i.ItemId);
             if (oldItem != null)
             {
                 try
                 {
-                    var checkName = await _context.Items.Where(i => i.ItemName == item.ItemName).FirstOrDefaultAsync();
+                    var checkName = await _context.Items
+                                .Where(d => d.ItemName == item.ItemName)
+                                .Select(d => new { itemName = d.ItemName }).FirstOrDefaultAsync();
                     if (checkName != null)
                     {
                         return "This Item name is existed";
@@ -122,9 +135,9 @@ namespace MobieBasedCashFlowAPI.Services
             return FAILED;
         }
 
-        public async Task<string> DeleteAsync(string ItemId)
+        public async Task<string> DeleteAsync(string itemId)
         {
-            var item = await _context.Items.FindAsync(ItemId);
+            var item = await _context.Items.FindAsync(itemId);
             if (item == null)
             {
                 return NOTFOUND;

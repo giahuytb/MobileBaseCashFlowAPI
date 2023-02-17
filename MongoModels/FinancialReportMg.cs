@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace MobieBasedCashFlowAPI.MongoModels
+namespace MobileBasedCashFlowAPI.MongoModels
 {
     public class FinancialReportMg
     {

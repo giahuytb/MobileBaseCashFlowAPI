@@ -1,4 +1,4 @@
-﻿namespace MobileBaseCashFlowGameAPI.Common
+﻿namespace MobileBasedCashFlowAPI.Common
 {
     public class ApiResult
     {

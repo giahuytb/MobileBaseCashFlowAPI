@@ -1,15 +1,15 @@
-﻿using MobieBasedCashFlowAPI.IServices;
-using MobieBasedCashFlowAPI.MongoModels;
-using MobieBasedCashFlowAPI.Settings;
+﻿using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoModels;
+using MobileBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
 
-namespace MobieBasedCashFlowAPI.Services
+namespace MobileBasedCashFlowAPI.MongoServices
 {
-    public class FinancialReportService: IFinancialReportService
+    public class MgFinancialReportService : IMgFinancialReportService
     {
         private readonly IMongoCollection<FinancialReportMg> _finacial;
 
-        public FinancialReportService(MongoDbSettings settings)
+        public MgFinancialReportService(MongoDbSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);

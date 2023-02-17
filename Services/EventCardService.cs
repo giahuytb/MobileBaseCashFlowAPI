@@ -1,45 +1,204 @@
-﻿using MongoDB.Driver;
-using MobileBaseCashFlowGameAPI.IServices;
-using Microsoft.EntityFrameworkCore;
-using MobieBasedCashFlowAPI.MongoModels;
-using MobieBasedCashFlowAPI.Settings;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections;
 
-namespace MobileBaseCashFlowGameAPI.Services
+using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.MongoModels;
+
+namespace MobileBasedCashFlowAPI.Services
 {
     public class EventCardService : IEventCardService
     {
-        private readonly IMongoCollection<EventCardMg> _eventCard;
-        public EventCardService(MongoDbSettings settings)
+        public const string SUCCESS = "success";
+        public const string FAILED = "failed";
+        public const string NOTFOUND = "not found";
+        private readonly MobileBasedCashFlowGameContext _context;
+
+        public EventCardService(MobileBasedCashFlowGameContext context)
         {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
-            _eventCard = database.GetCollection<EventCardMg>("Event_card");
+            _context = context;
+        }
+        public async Task<IEnumerable> GetAsync()
+        {
+            try
+            {
+                var eventCard = await (from evc in _context.EventCards
+                                       select new
+                                       {
+                                           eventId = evc.EventId,
+                                           cardName = evc.CardName,
+                                           cost = evc.Cost,
+                                           downPay = evc.DownPay,
+                                           dept = evc.Dept,
+                                           cashFlow = evc.CashFlow,
+                                           tradingRange = evc.TradingRange,
+                                           description = evc.Description,
+                                           eventImageUrl = evc.EventImageUrl,
+                                           createAt = evc.CreateAt,
+                                       }).ToListAsync();
+                return eventCard;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
-        public async Task<List<EventCardMg>> GetAsync()
+        public async Task<object?> GetAsync(string id)
         {
-            return await _eventCard.Find(_ => true).ToListAsync();
-        }
-            
-        public async Task<EventCardMg?> GetAsync(string id)
-        {
-            return await _eventCard.Find(evt => evt._id == id).FirstOrDefaultAsync();
-        }
-            
-        public async Task CreateAsync(EventCardMg eventCard)
-        {
-            await _eventCard.InsertOneAsync(eventCard);
-        }
-            
-        public async Task UpdateAsync(string id, EventCardMg updatedEventCard)
-        {
-            await _eventCard.ReplaceOneAsync(x => x._id == id, updatedEventCard);
+            try
+            {
+                var eventCard = await _context.EventCards.Select(evc => new
+                {
+                    eventId = evc.EventId,
+                    cardName = evc.CardName,
+                    cost = evc.Cost,
+                    downPay = evc.DownPay,
+                    dept = evc.Dept,
+                    cashFlow = evc.CashFlow,
+                    tradingRange = evc.TradingRange,
+                    description = evc.Description,
+                    eventImageUrl = evc.EventImageUrl,
+                    createAt = evc.CreateAt,
+                }).Where(i => i.eventId == id).FirstOrDefaultAsync();
+                return eventCard;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
-
-        public async Task RemoveAsync(string id) 
+        public async Task<string> CreateAsync(string userId, EventCardRequest eventCard)
         {
-            await _eventCard.DeleteOneAsync(x => x._id == id);
+            var gameId = await (from game in _context.Games
+                                where game.GameVersion == "Ver_1"
+                                select new { gameId = game.GameId }).FirstOrDefaultAsync();
+
+            var gameEventId = await (from gameEvt in _context.GameEvents
+                                     where gameEvt.EventName == "DownSide"
+                                     select new { eventId = gameEvt.EventId }).FirstOrDefaultAsync();
+
+            if (gameId == null)
+            {
+                return "can not find this game version";
+            }
+            else if (gameEventId == null)
+            {
+                return "can not found this event name";
+            }
+            else if (!ValidateInput.isNumber(eventCard.Cost.ToString()) || eventCard.Cost <= 0)
+            {
+                return "Cost must be mumber and bigger than 0";
+            }
+            else if (!ValidateInput.isNumber(eventCard.DownPay.ToString()) || eventCard.DownPay <= 0)
+            {
+                return "DownPay must be mumber and bigger than 0";
+            }
+            else if (!ValidateInput.isNumber(eventCard.Dept.ToString()) || eventCard.Dept <= 0)
+            {
+                return "Dept must be mumber and bigger than 0";
+            }
+            else if (!ValidateInput.isNumber(eventCard.CashFlow.ToString()) || eventCard.CashFlow <= 0)
+            {
+                return "Cash Flow must be mumber and bigger than 0";
+            }
+            try
+            {
+                var eventCard1 = new EventCard()
+                {
+                    EventCardId = Guid.NewGuid().ToString(),
+                    CardName = eventCard.CardName,
+                    Cost = eventCard.Cost,
+                    DownPay = eventCard.DownPay,
+                    Dept = eventCard.Dept,
+                    CashFlow = eventCard.CashFlow,
+                    TradingRange = eventCard.TradingRange,
+                    Description = eventCard.Description,
+                    EventImageUrl = eventCard.EventImageUrl,
+                    CreateAt = DateTime.Now,
+
+                    GameId = gameId.gameId,
+                    EventId = gameEventId.eventId,
+                };
+
+                _context.EventCards.Add(eventCard1);
+                await _context.SaveChangesAsync();
+                return SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+
+        public async Task<string> UpdateAsync(string cardId, string userId, EventCardRequest eventCard)
+        {
+            var oldEventCard = await _context.EventCards.FirstOrDefaultAsync(d => d.EventCardId == cardId);
+            if (oldEventCard != null)
+            {
+                try
+                {
+                    if (!ValidateInput.isNumber(eventCard.Cost.ToString()) || eventCard.Cost <= 0)
+                    {
+                        return "Cost must be mumber and bigger than 0";
+                    }
+                    if (!ValidateInput.isNumber(eventCard.DownPay.ToString()) || eventCard.DownPay <= 0)
+                    {
+                        return "DownPay must be mumber and bigger than 0";
+                    }
+                    if (!ValidateInput.isNumber(eventCard.Dept.ToString()) || eventCard.Dept <= 0)
+                    {
+                        return "Dept must be mumber and bigger than 0";
+                    }
+                    if (!ValidateInput.isNumber(eventCard.CashFlow.ToString()) || eventCard.CashFlow <= 0)
+                    {
+                        return "Cash Flow must be mumber and bigger than 0";
+                    }
+                    oldEventCard.CardName = eventCard.CardName;
+                    oldEventCard.Cost = eventCard.Cost;
+                    oldEventCard.DownPay = eventCard.DownPay;
+                    oldEventCard.Dept = eventCard.Cost;
+                    oldEventCard.CashFlow = eventCard.CashFlow;
+                    oldEventCard.TradingRange = eventCard.TradingRange;
+                    oldEventCard.Description = eventCard.Description;
+                    oldEventCard.EventImageUrl = eventCard.EventImageUrl;
+                    oldEventCard.UpdateAt = DateTime.Now;
+                    oldEventCard.UpdateBy = userId;
+
+                    await _context.SaveChangesAsync();
+                    return SUCCESS;
+                }
+                catch (Exception ex)
+                {
+                    if (!EventCardExists(cardId))
+                    {
+                        return NOTFOUND;
+                    }
+                    return ex.ToString();
+                }
+            }
+            return FAILED;
+        }
+
+        public async Task<string> DeleteAsync(string cardId)
+        {
+            var eventCard = await _context.EventCards.FindAsync(cardId);
+            if (eventCard == null)
+            {
+                return NOTFOUND;
+            }
+            _context.EventCards.Remove(eventCard);
+            await _context.SaveChangesAsync();
+
+            return SUCCESS;
+        }
+
+        public bool EventCardExists(string id)
+        {
+            return _context.EventCards.Any(d => d.EventCardId == id);
         }
     }
 }
