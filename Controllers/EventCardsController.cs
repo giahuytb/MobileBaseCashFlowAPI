@@ -1,34 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections;
-using System.Security.Claims;
-
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
+using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DreamsController : ControllerBase
+    public class EventCardsController : ControllerBase
     {
-        private readonly IDreamService _dreamService;
+        private readonly IEventCardService _eventCardService;
 
-        public DreamsController(IDreamService dreamService)
+        public EventCardsController(IEventCardService eventCardService)
         {
-            _dreamService = dreamService;
+            _eventCardService = eventCardService;
         }
 
-        //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("dream")]
+        [HttpGet("eventcard")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
             try
             {
-                var result = await _dreamService.GetAsync();
+                var result = await _eventCardService.GetAsync();
                 if (result == null)
                 {
-                    return NotFound("list is empty");
+                    return NotFound("List is empty");
                 }
                 return Ok(result);
             }
@@ -38,18 +37,18 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("dream/{id}")]
+        [HttpGet("eventcard/{id}")]
         //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<Dream>> GetById(string id)
+        public async Task<ActionResult<EventCard>> GetById(string id)
         {
             try
             {
-                var result = await _dreamService.GetAsync(id);
+                var result = await _eventCardService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find this dream");
+                return NotFound("Can not found this event card");
             }
             catch (Exception ex)
             {
@@ -58,8 +57,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("dream")]
-        public async Task<ActionResult> PostDream(DreamRequest dream)
+        [HttpPost("eventcard")]
+        public async Task<ActionResult> PostEventCard(EventCardRequest eventCard)
         {
             try
             {
@@ -67,9 +66,9 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login");
+                    return BadRequest("User id not Found, please login again ");
                 }
-                var result = await _dreamService.CreateAsync(userId, dream);
+                var result = await _eventCardService.CreateAsync(userId, eventCard);
 
                 return Ok(result);
             }
@@ -80,17 +79,17 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("dream")]
-        public async Task<ActionResult> UpdateDream(string id, DreamRequest dream)
+        [HttpPut("eventcard")]
+        public async Task<ActionResult> UpdateEventCard(string id, EventCardRequest eventCard)
         {
             try
             {
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login");
+                    return BadRequest("User id not Found, please login again");
                 }
-                var result = await _dreamService.UpdateAsync(id, userId, dream);
+                var result = await _eventCardService.UpdateAsync(id, userId, eventCard);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -99,12 +98,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("dream")]
-        public async Task<ActionResult> DeleteDream(string id)
+        [HttpDelete("eventcard")]
+        public async Task<ActionResult> DeleteEventCard(string id)
         {
             try
             {
-                var result = await _dreamService.DeleteAsync(id);
+                var result = await _eventCardService.DeleteAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -112,6 +111,5 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
     }
 }

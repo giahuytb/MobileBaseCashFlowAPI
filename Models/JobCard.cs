@@ -7,7 +7,7 @@ namespace MobileBasedCashFlowAPI.Models
     {
         public JobCard()
         {
-            FinacialReports = new HashSet<FinacialReport>();
+            FinancialReports = new HashSet<FinancialReport>();
             JobAccounts = new HashSet<JobAccount>();
         }
 
@@ -20,7 +20,7 @@ namespace MobileBasedCashFlowAPI.Models
         public DateTime? UpdateAt { get; set; }
         public string? UpdateBy { get; set; }
 
-        public virtual ICollection<FinacialReport> FinacialReports { get; set; }
+        public virtual ICollection<FinancialReport> FinancialReports { get; set; }
         public virtual ICollection<JobAccount> JobAccounts { get; set; }
     }
 }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace MobileBasedCashFlowAPI.Models
 {
-    public partial class FinacialReport
+    public partial class FinancialReport
     {
-        public FinacialReport()
+        public FinancialReport()
         {
-            FinacialAccounts = new HashSet<FinacialAccount>();
+            FinancialAccounts = new HashSet<FinancialAccount>();
         }
 
         public string FinacialId { get; set; } = null!;
@@ -20,6 +20,6 @@ namespace MobileBasedCashFlowAPI.Models
 
         public virtual JobCard? JobCard { get; set; }
         public virtual UserAccount? User { get; set; }
-        public virtual ICollection<FinacialAccount> FinacialAccounts { get; set; }
+        public virtual ICollection<FinancialAccount> FinancialAccounts { get; set; }
     }
 }

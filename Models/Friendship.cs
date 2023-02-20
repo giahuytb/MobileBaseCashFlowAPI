@@ -9,6 +9,7 @@ namespace MobileBasedCashFlowAPI.Models
         {
             FriendshipStatuses = new HashSet<FriendshipStatus>();
         }
+
         public string RequesterId { get; set; } = null!;
         public string AddresseeId { get; set; } = null!;
         public DateTime CreateAt { get; set; }

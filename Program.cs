@@ -3,14 +3,16 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using MobileBasedCashFlowAPI.Settings;
-using MobileBasedCashFlowAPI.IServices;
-using MobileBasedCashFlowAPI.Se;
-using MobileBasedCashFlowAPI.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
+using Microsoft.EntityFrameworkCore;
+
+using MobileBasedCashFlowAPI.Services;
 using MobileBasedCashFlowAPI.MongoServices;
 using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.Settings;
+using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var secretKey = builder.Configuration["Jwt:Key"];
@@ -56,6 +58,10 @@ builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<IBoardService, BoardService>();
 builder.Services.AddTransient<IDreamService, DreamService>();
 builder.Services.AddTransient<IEventCardService, EventCardService>();
+builder.Services.AddTransient<IFinancialReportService, FinancialReportService>();
+builder.Services.AddTransient<ITileTypeService, TileTypeService>();
+builder.Services.AddTransient<ITileService, TileService>();
+
 
 // Register Service For MongoDatabase
 builder.Services.AddTransient<MongoDbSettings>(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
@@ -113,7 +119,7 @@ builder.Services.AddSwaggerGen(c =>
             new List<string>()
          }}
         );
-    }
+}
 );
 
 var app = builder.Build();

@@ -1,31 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections;
-using System.Security.Claims;
-
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
+using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DreamsController : ControllerBase
+    public class FinancialReportsController : ControllerBase
     {
-        private readonly IDreamService _dreamService;
+        private readonly IFinancialReportService _financialReportService;
 
-        public DreamsController(IDreamService dreamService)
+        public FinancialReportsController(IFinancialReportService financialReportService)
         {
-            _dreamService = dreamService;
+            _financialReportService = financialReportService;
         }
 
-        //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("dream")]
+        [HttpGet("financialreport")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
             try
             {
-                var result = await _dreamService.GetAsync();
+                var result = await _financialReportService.GetAsync();
                 if (result == null)
                 {
                     return NotFound("list is empty");
@@ -38,18 +37,18 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("dream/{id}")]
+        [HttpGet("financialreport/{id}")]
         //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<Dream>> GetById(string id)
+        public async Task<ActionResult<FinancialReport>> GetById(string id)
         {
             try
             {
-                var result = await _dreamService.GetAsync(id);
+                var result = await _financialReportService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find this dream");
+                return NotFound("Can not find this financial report");
             }
             catch (Exception ex)
             {
@@ -58,8 +57,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("dream")]
-        public async Task<ActionResult> PostDream(DreamRequest dream)
+        [HttpPost("financialreport")]
+        public async Task<ActionResult> PostEventCard(FinancialReportRequest financialReport)
         {
             try
             {
@@ -69,7 +68,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _dreamService.CreateAsync(userId, dream);
+                var result = await _financialReportService.CreateAsync(userId, financialReport);
 
                 return Ok(result);
             }
@@ -80,8 +79,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("dream")]
-        public async Task<ActionResult> UpdateDream(string id, DreamRequest dream)
+        [HttpPut("financialreport")]
+        public async Task<ActionResult> UpdateEventCard(string id, FinancialReportRequest financialReport)
         {
             try
             {
@@ -90,7 +89,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _dreamService.UpdateAsync(id, userId, dream);
+                var result = await _financialReportService.UpdateAsync(id, userId, financialReport);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -99,12 +98,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("dream")]
-        public async Task<ActionResult> DeleteDream(string id)
+        [HttpDelete("financialreport")]
+        public async Task<ActionResult> DeleteEventCard(string id)
         {
             try
             {
-                var result = await _dreamService.DeleteAsync(id);
+                var result = await _financialReportService.DeleteAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -112,6 +111,5 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
     }
 }

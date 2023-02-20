@@ -39,17 +39,17 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("item/{name}")]
-        public async Task<ActionResult<Item>> GetByName(string name)
+        [HttpGet("item/{id}")]
+        public async Task<ActionResult<Item>> GetById(string id)
         {
             try
             {
-                var result = await _boardService.GetAsync(name);
+                var result = await _boardService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("list is empty");
+                return NotFound("Can not find this board");
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found , please login again ");
+                    return BadRequest("User id not Found, please login");
                 }
                 var result = await _boardService.CreateAsync(userId, board);
 
@@ -88,7 +88,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login again");
+                    return BadRequest("User id not Found, please login");
                 }
                 var result = await _boardService.UpdateAsync(id, userId, board);
                 return Ok(result);

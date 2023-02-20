@@ -37,7 +37,7 @@ namespace MobileBasedCashFlowAPI.Services
             return item;
         }
 
-        public async Task<Object?> GetAsync(string name)
+        public async Task<Object?> GetAsync(string id)
         {
             var item = await _context.Items.Select(i => new
             {
@@ -47,16 +47,16 @@ namespace MobileBasedCashFlowAPI.Services
                 itemPrice = i.ItemPrice,
                 description = i.Description,
                 isInShop = i.IsInShop,
-            }).Where(i => i.itemName == name).FirstOrDefaultAsync();
+            }).Where(i => i.itemId == id).FirstOrDefaultAsync();
             return item;
         }
 
         public async Task<string> CreateAsync(string userId, ItemRequest item)
         {
-           
+
             try
             {
-                var checkName =  await _context.Items
+                var checkName = await _context.Items
                                 .Where(d => d.ItemName == item.ItemName)
                                 .Select(d => new { itemName = d.ItemName }).FirstOrDefaultAsync();
                 if (checkName != null)

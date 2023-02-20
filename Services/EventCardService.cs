@@ -50,19 +50,22 @@ namespace MobileBasedCashFlowAPI.Services
         {
             try
             {
-                var eventCard = await _context.EventCards.Select(evc => new
-                {
-                    eventId = evc.EventId,
-                    cardName = evc.CardName,
-                    cost = evc.Cost,
-                    downPay = evc.DownPay,
-                    dept = evc.Dept,
-                    cashFlow = evc.CashFlow,
-                    tradingRange = evc.TradingRange,
-                    description = evc.Description,
-                    eventImageUrl = evc.EventImageUrl,
-                    createAt = evc.CreateAt,
-                }).Where(i => i.eventId == id).FirstOrDefaultAsync();
+                var eventCard = await _context.EventCards
+                    .Select(evc => new
+                    {
+                        eventId = evc.EventId,
+                        cardName = evc.CardName,
+                        cost = evc.Cost,
+                        downPay = evc.DownPay,
+                        dept = evc.Dept,
+                        cashFlow = evc.CashFlow,
+                        tradingRange = evc.TradingRange,
+                        description = evc.Description,
+                        eventImageUrl = evc.EventImageUrl,
+                        createAt = evc.CreateAt,
+                    })
+                    .Where(i => i.eventId == id)
+                    .FirstOrDefaultAsync();
                 return eventCard;
             }
             catch (Exception ex)
@@ -74,12 +77,14 @@ namespace MobileBasedCashFlowAPI.Services
         public async Task<string> CreateAsync(string userId, EventCardRequest eventCard)
         {
             var gameId = await (from game in _context.Games
-                                where game.GameVersion == "Ver_1"
-                                select new { gameId = game.GameId }).FirstOrDefaultAsync();
+                                where game.GameVersion == eventCard.GameVersion
+                                select new { gameId = game.GameId })
+                                .FirstOrDefaultAsync();
 
             var gameEventId = await (from gameEvt in _context.GameEvents
-                                     where gameEvt.EventName == "DownSide"
-                                     select new { eventId = gameEvt.EventId }).FirstOrDefaultAsync();
+                                     where gameEvt.EventName == eventCard.GameEventName
+                                     select new { eventId = gameEvt.EventId })
+                                     .FirstOrDefaultAsync();
 
             if (gameId == null)
             {

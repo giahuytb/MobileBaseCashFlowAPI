@@ -23,7 +23,7 @@ namespace MobileBasedCashFlowAPI.Services
         {
             try
             {
-                var financialReport = await (from finan in _context.FinacialReports
+                var financialReport = await (from finan in _context.FinancialReports
                                              join job in _context.JobCards
                                              on finan.JobCardId equals job.JobCardId
                                              select new
@@ -46,7 +46,7 @@ namespace MobileBasedCashFlowAPI.Services
         {
             try
             {
-                var financialReport = await _context.FinacialReports
+                var financialReport = await _context.FinancialReports
                     .Join(_context.JobCards, finan => finan.JobCardId, job => job.JobCardId, (finan, job) => new { finan, job })
                     .Select(m => new
                     {
@@ -67,12 +67,24 @@ namespace MobileBasedCashFlowAPI.Services
                 return ex.Message;
             }
         }
+
         public async Task<string> CreateAsync(string userId, FinancialReportRequest financialReport)
         {
-
+            if (!ValidateInput.isNumber(financialReport.ChildrenAmount.ToString()) || financialReport.ChildrenAmount < 0)
+            {
+                return "Children amount must be mumber, equal or bigger than 0";
+            }
+            else if (!ValidateInput.isNumber(financialReport.IncomePerMonth.ToString()) || financialReport.IncomePerMonth <= 0)
+            {
+                return "Income per month must be mumber and bigger than 0";
+            }
+            else if (!ValidateInput.isNumber(financialReport.ExpensePerMonth.ToString()) || financialReport.ExpensePerMonth <= 0)
+            {
+                return "Expense per month must be mumber and bigger than 0";
+            }
             try
             {
-                var finan = new FinacialReport()
+                var finan = new FinancialReport()
                 {
                     FinacialId = Guid.NewGuid().ToString(),
                     ChildrenAmount = financialReport.ChildrenAmount,
@@ -83,7 +95,7 @@ namespace MobileBasedCashFlowAPI.Services
                     CreateAt = DateTime.Now,
                 };
 
-                _context.FinacialReports.Add(finan);
+                _context.FinancialReports.Add(finan);
                 await _context.SaveChangesAsync();
                 return SUCCESS;
             }
@@ -93,14 +105,59 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public Task<string> UpdateAsync(string fianacialId, string userId, FinancialReportRequest financialReport)
+        public async Task<string> UpdateAsync(string fianacialId, string userId, FinancialReportRequest financialReport)
         {
-            throw new NotImplementedException();
+            var oldFinancial = await _context.FinancialReports.FirstOrDefaultAsync(i => i.FinacialId == fianacialId);
+            if (oldFinancial != null)
+            {
+                try
+                {
+                    if (!ValidateInput.isNumber(financialReport.ChildrenAmount.ToString()) || financialReport.ChildrenAmount < 0)
+                    {
+                        return "Children amount must be mumber, equal or bigger than 0";
+                    }
+                    else if (!ValidateInput.isNumber(financialReport.IncomePerMonth.ToString()) || financialReport.IncomePerMonth <= 0)
+                    {
+                        return "Income per month must be mumber and bigger than 0";
+                    }
+                    else if (!ValidateInput.isNumber(financialReport.ExpensePerMonth.ToString()) || financialReport.ExpensePerMonth <= 0)
+                    {
+                        return "Expense per month must be mumber and bigger than 0";
+                    }
+                    oldFinancial.ChildrenAmount = financialReport.ChildrenAmount;
+                    oldFinancial.IncomePerMonth = financialReport.IncomePerMonth;
+                    oldFinancial.ExpensePerMonth = financialReport.ExpensePerMonth;
+
+                    await _context.SaveChangesAsync();
+                    return SUCCESS;
+                }
+                catch (Exception ex)
+                {
+                    if (!FinancialReportExists(fianacialId))
+                    {
+                        return NOTFOUND;
+                    }
+                    return ex.ToString();
+                }
+            }
+            return FAILED;
         }
-        public Task<string> DeleteAsync(string fianacialId)
+        public async Task<string> DeleteAsync(string fianacialId)
         {
-            throw new NotImplementedException();
+            var financialReport = await _context.FinancialReports.FindAsync(fianacialId);
+            if (financialReport == null)
+            {
+                return NOTFOUND;
+            }
+            _context.FinancialReports.Remove(financialReport);
+            await _context.SaveChangesAsync();
+
+            return SUCCESS;
         }
 
+        private bool FinancialReportExists(string id)
+        {
+            return _context.FinancialReports.Any(e => e.FinacialId == id);
+        }
     }
 }
