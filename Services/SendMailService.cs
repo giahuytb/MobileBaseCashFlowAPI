@@ -6,7 +6,7 @@ using MobileBasedCashFlowAPI.Settings;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 
-namespace MobileBasedCashFlowGameAPI.Services
+namespace MobileBasedCashFlowAPI.Services
 {
 
     public class SendMailService : ISendMailService

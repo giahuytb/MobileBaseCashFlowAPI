@@ -19,8 +19,8 @@ namespace MobileBasedCashFlowAPI.Models
         public virtual DbSet<Board> Boards { get; set; } = null!;
         public virtual DbSet<Dream> Dreams { get; set; } = null!;
         public virtual DbSet<EventCard> EventCards { get; set; } = null!;
-        public virtual DbSet<FinacialAccount> FinacialAccounts { get; set; } = null!;
-        public virtual DbSet<FinacialReport> FinacialReports { get; set; } = null!;
+        public virtual DbSet<FinancialAccount> FinancialAccounts { get; set; } = null!;
+        public virtual DbSet<FinancialReport> FinancialReports { get; set; } = null!;
         public virtual DbSet<Friendship> Friendships { get; set; } = null!;
         public virtual DbSet<FriendshipStatus> FriendshipStatuses { get; set; } = null!;
         public virtual DbSet<Game> Games { get; set; } = null!;
@@ -40,6 +40,8 @@ namespace MobileBasedCashFlowAPI.Models
         public virtual DbSet<TileType> TileTypes { get; set; } = null!;
         public virtual DbSet<UserAccount> UserAccounts { get; set; } = null!;
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Board>(entity =>
@@ -216,12 +218,12 @@ namespace MobileBasedCashFlowAPI.Models
                     .HasConstraintName("FK__Event_car__game___6383C8BA");
             });
 
-            modelBuilder.Entity<FinacialAccount>(entity =>
+            modelBuilder.Entity<FinancialAccount>(entity =>
             {
                 entity.HasKey(e => new { e.FinacialId, e.GameAccountId })
                     .HasName("pk_FinacialAccount_id");
 
-                entity.ToTable("Finacial_account");
+                entity.ToTable("Financial_account");
 
                 entity.Property(e => e.FinacialId)
                     .HasMaxLength(36)
@@ -238,24 +240,24 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.Property(e => e.Value).HasColumnName("value");
 
                 entity.HasOne(d => d.Finacial)
-                    .WithMany(p => p.FinacialAccounts)
+                    .WithMany(p => p.FinancialAccounts)
                     .HasForeignKey(d => d.FinacialId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Finacial___finac__05D8E0BE");
 
                 entity.HasOne(d => d.GameAccount)
-                    .WithMany(p => p.FinacialAccounts)
+                    .WithMany(p => p.FinancialAccounts)
                     .HasForeignKey(d => d.GameAccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Finacial___game___06CD04F7");
             });
 
-            modelBuilder.Entity<FinacialReport>(entity =>
+            modelBuilder.Entity<FinancialReport>(entity =>
             {
                 entity.HasKey(e => e.FinacialId)
                     .HasName("PK__Finacial__717EA3A4D9B9F8F7");
 
-                entity.ToTable("Finacial_report");
+                entity.ToTable("Financial_report");
 
                 entity.Property(e => e.FinacialId)
                     .HasMaxLength(36)
@@ -286,12 +288,12 @@ namespace MobileBasedCashFlowAPI.Models
                     .IsFixedLength();
 
                 entity.HasOne(d => d.JobCard)
-                    .WithMany(p => p.FinacialReports)
+                    .WithMany(p => p.FinancialReports)
                     .HasForeignKey(d => d.JobCardId)
                     .HasConstraintName("FK__Finacial___job_c__797309D9");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.FinacialReports)
+                    .WithMany(p => p.FinancialReports)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__Finacial___user___787EE5A0");
             });

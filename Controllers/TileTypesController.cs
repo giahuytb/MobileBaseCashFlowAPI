@@ -1,47 +1,55 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
-using System.Security.Claims;
-
+using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Services;
+using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ItemsController : ControllerBase
+    public class TileTypesController : ControllerBase
     {
-        private readonly IItemService _itemService;
+        private readonly ITileTypeService _tileTypeService;
 
-        public ItemsController(IItemService itemService)
+        public TileTypesController(ITileTypeService tileTypeService)
         {
-            _itemService = itemService;
+            _tileTypeService = tileTypeService;
         }
 
-        [HttpGet("item")]
-        //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("board")]
         public async Task<ActionResult<IEnumerable>> GetAll()
-        {
-            var result = await _itemService.GetAsync();
-
-            return Ok(result);
-        }
-
-        [HttpGet("item/{id}")]
-        //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<Item>> GetById(string name)
         {
             try
             {
-                var result = await _itemService.GetAsync(name);
+                var result = await _tileTypeService.GetAsync();
+                if (result == null)
+                {
+                    return NotFound("list is empty");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("item/{name}")]
+        public async Task<ActionResult<Item>> GetById(string id)
+        {
+            try
+            {
+                var result = await _tileTypeService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound();
+                return NotFound("Can not find this item");
             }
             catch (Exception ex)
             {
@@ -51,7 +59,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost("item")]
-        public async Task<ActionResult> PostItem(ItemRequest item)
+        public async Task<ActionResult> PostBoard(TileTypeRequest tileType)
         {
             try
             {
@@ -61,7 +69,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _itemService.CreateAsync(userId, item);
+                var result = await _tileTypeService.CreateAsync(userId, tileType);
 
                 return Ok(result);
             }
@@ -72,8 +80,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("item")]
-        public async Task<ActionResult> UpdateItem(string id, ItemRequest item)
+        [HttpPut("board")]
+        public async Task<ActionResult> UpdateBoard(string id, TileTypeRequest tileType)
         {
             try
             {
@@ -82,7 +90,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _itemService.UpdateAsync(id, userId, item);
+                var result = await _tileTypeService.UpdateAsync(id, userId, tileType);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -91,12 +99,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("item")]
-        public async Task<ActionResult> DeleteItem(string id)
+        [HttpDelete("board")]
+        public async Task<ActionResult> DeleteBoard(string id)
         {
             try
             {
-                var result = await _itemService.DeleteAsync(id);
+                var result = await _tileTypeService.DeleteAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -104,5 +112,6 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }

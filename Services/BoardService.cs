@@ -47,16 +47,16 @@ namespace MobileBasedCashFlowAPI.Services
             try
             {
                 var board = await _context.Boards
-                    .Select(i => new
-                {
-                    boardId = i.BoardId,
-                    amountFatTile = i.AmountFatTile,
-                    amountRateTile = i.AmountRatTile,
-                    dementionBoard = i.DementionBoard,
-                    radiusRatTile = i.RadiusRatTile,
-                    createAt = i.CreateAt,
-                })
-                .Where(i => i.boardId == id)
+                    .Select(b => new
+                    {
+                        boardId = b.BoardId,
+                        amountFatTile = b.AmountFatTile,
+                        amountRateTile = b.AmountRatTile,
+                        dementionBoard = b.DementionBoard,
+                        radiusRatTile = b.RadiusRatTile,
+                        createAt = b.CreateAt,
+                    })
+                .Where(b => b.boardId == id)
                 .FirstOrDefaultAsync();
                 return board;
             }
@@ -69,7 +69,7 @@ namespace MobileBasedCashFlowAPI.Services
         public async Task<string> CreateAsync(string userId, BoardRequest board)
         {
             var gameId = await (from game in _context.Games
-                                where game.GameVersion == "Ver_1"
+                                where game.GameVersion == board.GameVersion
                                 select new { gameId = game.GameId }).FirstOrDefaultAsync();
 
             if (gameId == null)

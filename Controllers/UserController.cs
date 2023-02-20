@@ -27,11 +27,11 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
             var result = await _userService.Authenticate(request);
 
-            if (result.Equals("user not found"))
+            if (result.Equals("User not found"))
             {
                 return BadRequest("Can not found your account.");
             }
-            else if (result.Equals("wrong password"))
+            else if (result.Equals("Wrong password"))
             {
                 return BadRequest("Your password is not correct, please try again.");
             }

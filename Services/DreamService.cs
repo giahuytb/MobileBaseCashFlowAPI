@@ -44,15 +44,18 @@ namespace MobileBasedCashFlowAPI.Services
         {
             try
             {
-                var board = await _context.Dreams.Select(b => new
-                {
-                    dreamId = b.DreamId,
-                    dreamName = b.DreamName,
-                    description = b.Description,
-                    cost = b.Cost,
-                    dreamImageUrl = b.DreamImageUrl,
-                    createAt = b.CreateAt,
-                }).Where(d => d.dreamId == id).FirstOrDefaultAsync();
+                var board = await _context.Dreams
+                    .Select(b => new
+                    {
+                        dreamId = b.DreamId,
+                        dreamName = b.DreamName,
+                        description = b.Description,
+                        cost = b.Cost,
+                        dreamImageUrl = b.DreamImageUrl,
+                        createAt = b.CreateAt,
+                    })
+                    .Where(d => d.dreamId == id)
+                    .FirstOrDefaultAsync();
                 if (board != null)
                 {
                     return board;
@@ -71,7 +74,8 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 var checkName = await _context.Dreams
                                 .Where(d => d.DreamName == dream.DreamName)
-                                .Select(d => new { dreamName = d.DreamName }).FirstOrDefaultAsync();
+                                .Select(d => new { dreamName = d.DreamName })
+                                .FirstOrDefaultAsync();
                 if (checkName != null)
                 {
                     return "This Dream name is existed";
@@ -102,7 +106,7 @@ namespace MobileBasedCashFlowAPI.Services
         }
 
         public async Task<string> UpdateAsync(string dreamId, string userId, DreamRequest dream)
-        {          
+        {
             var oldDream = await _context.Dreams.FirstOrDefaultAsync(d => d.DreamId == dreamId);
             if (oldDream != null)
             {
@@ -110,7 +114,8 @@ namespace MobileBasedCashFlowAPI.Services
                 {
                     var checkName = await _context.Dreams
                                 .Where(d => d.DreamName == dream.DreamName)
-                                .Select(d => new { dreamName = d.DreamName }).FirstOrDefaultAsync();
+                                .Select(d => new { dreamName = d.DreamName })
+                                .FirstOrDefaultAsync();
                     if (checkName != null)
                     {
                         return "This Dream name is existed";

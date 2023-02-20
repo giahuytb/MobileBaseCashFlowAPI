@@ -7,7 +7,7 @@ namespace MobileBasedCashFlowAPI.Models
     {
         public UserAccount()
         {
-            FinacialReports = new HashSet<FinacialReport>();
+            FinancialReports = new HashSet<FinancialReport>();
             FriendshipAddressees = new HashSet<Friendship>();
             FriendshipRequesters = new HashSet<Friendship>();
             FriendshipStatuses = new HashSet<FriendshipStatus>();
@@ -40,7 +40,7 @@ namespace MobileBasedCashFlowAPI.Models
 
         public virtual Game? Game { get; set; }
         public virtual UserRole? Role { get; set; }
-        public virtual ICollection<FinacialReport> FinacialReports { get; set; }
+        public virtual ICollection<FinancialReport> FinancialReports { get; set; }
         public virtual ICollection<Friendship> FriendshipAddressees { get; set; }
         public virtual ICollection<Friendship> FriendshipRequesters { get; set; }
         public virtual ICollection<FriendshipStatus> FriendshipStatuses { get; set; }

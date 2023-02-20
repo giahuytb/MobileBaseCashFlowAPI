@@ -36,13 +36,13 @@ namespace MobileBasedCashFlowAPI.Services
             var user = await _context.UserAccounts.SingleOrDefaultAsync(x => x.UserName == request.UserName);
             if (user == null)
             {
-                return "user not found";
+                return "User not found";
             }
             bool isValidPassword = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
             if (!isValidPassword)
             {
-                return "wrong password";
+                return "Wrong password";
             }
             // find role name by id
             var role = await _context.UserRoles
@@ -103,19 +103,19 @@ namespace MobileBasedCashFlowAPI.Services
             }
             else if (request.Email.Equals(""))
             {
-                return "you need to fill your email";
+                return "You need to fill your email";
             }
             else if (request.UserName.Equals(""))
             {
-                return "you need to fill your username";
+                return "You need to fill your username";
             }
             else if (request.Password.Equals("") || request.Password.Length < 6)
             {
-                return "your password must be at least 6 character";
+                return "Your password must be at least 6 character";
             }
             else if (request.NickName.Equals(""))
             {
-                return "you need to fill your nickname";
+                return "You need to fill your nickname";
             }
             else if (!ValidateInput.isPhone(request.Phone))
             {
@@ -123,7 +123,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
             else if (request.ConfirmPassword.Equals(""))
             {
-                return "please confirm your password";
+                return "Please confirm your password";
             }
             else if (!request.Password.Equals(request.ConfirmPassword))
             {

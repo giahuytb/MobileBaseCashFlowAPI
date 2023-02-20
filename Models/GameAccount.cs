@@ -7,7 +7,7 @@ namespace MobileBasedCashFlowAPI.Models
     {
         public GameAccount()
         {
-            FinacialAccounts = new HashSet<FinacialAccount>();
+            FinancialAccounts = new HashSet<FinancialAccount>();
             JobAccounts = new HashSet<JobAccount>();
         }
 
@@ -20,7 +20,7 @@ namespace MobileBasedCashFlowAPI.Models
         public string? AccountTypeId { get; set; }
 
         public virtual GameAccountType? AccountType { get; set; }
-        public virtual ICollection<FinacialAccount> FinacialAccounts { get; set; }
+        public virtual ICollection<FinancialAccount> FinancialAccounts { get; set; }
         public virtual ICollection<JobAccount> JobAccounts { get; set; }
     }
 }

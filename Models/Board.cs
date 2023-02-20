@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿
 namespace MobileBasedCashFlowAPI.Models
 {
     public partial class Board
