@@ -46,7 +46,8 @@ namespace MobileBasedCashFlowAPI.Services
         {
             try
             {
-                var board = await _context.Boards.Select(i => new
+                var board = await _context.Boards
+                    .Select(i => new
                 {
                     boardId = i.BoardId,
                     amountFatTile = i.AmountFatTile,
@@ -54,7 +55,9 @@ namespace MobileBasedCashFlowAPI.Services
                     dementionBoard = i.DementionBoard,
                     radiusRatTile = i.RadiusRatTile,
                     createAt = i.CreateAt,
-                }).Where(i => i.boardId == id).FirstOrDefaultAsync();
+                })
+                .Where(i => i.boardId == id)
+                .FirstOrDefaultAsync();
                 return board;
             }
             catch (Exception ex)
