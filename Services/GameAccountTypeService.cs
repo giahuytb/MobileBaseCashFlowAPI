@@ -66,6 +66,7 @@ namespace MobileBasedCashFlowAPI.Services
                     AccountTypeId = Guid.NewGuid().ToString(),
                     AccountTypeName = gameAccountType.AccountTypeName,
                     CreateAt = DateTime.Now,
+                    CreateBy = userId,
                 };
 
                 _context.GameAccountTypes.Add(accountType);

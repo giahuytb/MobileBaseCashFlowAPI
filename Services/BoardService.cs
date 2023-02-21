@@ -76,7 +76,7 @@ namespace MobileBasedCashFlowAPI.Services
 
                 if (gameId == null)
                 {
-                    return "can not find this game versuin";
+                    return "can not find this game version";
                 }
                 else if (!ValidateInput.isNumber(board.AmountFatTile.ToString()) || board.AmountFatTile <= 0)
                 {

@@ -62,6 +62,7 @@ builder.Services.AddTransient<IGameAccountService, GameAccountService>();
 builder.Services.AddTransient<IGameAccountTypeService, GameAccountTypeService>();
 builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<IJobCardService, JobCardService>();
+builder.Services.AddTransient<ILeaderboardService, LeaderboardService>();
 builder.Services.AddTransient<ITileService, TileService>();
 builder.Services.AddTransient<ITileTypeService, TileTypeService>();
 
