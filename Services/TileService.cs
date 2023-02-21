@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
@@ -72,17 +73,75 @@ namespace MobileBasedCashFlowAPI.Services
         }
         public async Task<string> CreateAsync(string userId, TileRequest tile)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var tile1 = new Tile()
+                {
+                    TileId = Guid.NewGuid().ToString(),
+                    IsRatRace = tile.IsRatRace,
+                    EventId = tile.TileTypeId,
+                    DreamId = tile.DreamId,
+                    TileTypeId = tile.TileTypeId,
+                    BoardId = tile.BoardId,
+                    CreateAt = DateTime.Now,
+                    CreateBy = userId,
+                };
+
+                _context.Tiles.Add(tile1);
+                await _context.SaveChangesAsync();
+                return SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
         }
 
         public async Task<string> UpdateAsync(string tileId, string userId, TileRequest tile)
         {
-            throw new NotImplementedException();
+            var oldTile = await _context.Tiles.FirstOrDefaultAsync(i => i.TileId == tileId);
+            if (oldTile != null)
+            {
+                try
+                {
+                    oldTile.IsRatRace = tile.IsRatRace;
+                    oldTile.BoardId = tile.BoardId;
+                    oldTile.EventId = tile.EventId;
+                    oldTile.BoardId = tile.BoardId;
+                    oldTile.TileTypeId = tile.TileTypeId;
+                    oldTile.UpdateAt = DateTime.Now;
+                    oldTile.UpdateBy = userId;
+
+                    await _context.SaveChangesAsync();
+                    return SUCCESS;
+                }
+                catch (Exception ex)
+                {
+                    if (!TileExists(tileId))
+                    {
+                        return NOTFOUND;
+                    }
+                    return ex.ToString();
+                }
+            }
+            return FAILED;
         }
 
         public async Task<string> DeleteAsync(string tileId)
         {
-            throw new NotImplementedException();
+            var tile = await _context.Tiles.FindAsync(tileId);
+            if (tile == null)
+            {
+                return NOTFOUND;
+            }
+            _context.Tiles.Remove(tile);
+            await _context.SaveChangesAsync();
+
+            return SUCCESS;
+        }
+        private bool TileExists(string id)
+        {
+            return _context.Tiles.Any(e => e.TileId == id);
         }
 
     }

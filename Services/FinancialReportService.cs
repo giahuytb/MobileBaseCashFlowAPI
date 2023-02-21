@@ -59,8 +59,7 @@ namespace MobileBasedCashFlowAPI.Services
                     })
                     .Where(i => i.financialReportId == id)
                     .FirstOrDefaultAsync();
-                return financialReport; ;
-
+                return financialReport;
             }
             catch (Exception ex)
             {
