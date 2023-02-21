@@ -1,31 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections;
-using System.Security.Claims;
-
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.Services;
+using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BoardsController : ControllerBase
+    public class TilesController : ControllerBase
     {
-        private readonly IBoardService _boardService;
+        private readonly ITileService _tileService;
 
-        public BoardsController(IBoardService boardService)
+        public TilesController(ITileService tileService)
         {
-            _boardService = boardService;
+            _tileService = tileService;
         }
 
-        //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("board")]
+        [HttpGet("tile")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
             {
-                var result = await _boardService.GetAsync();
+                var result = await _tileService.GetAsync();
                 if (result == null)
                 {
                     return NotFound("list is empty");
@@ -39,17 +39,17 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("board/{id}")]
-        public async Task<ActionResult<Board>> GetById(string id)
+        [HttpGet("tile/{id}")]
+        public async Task<ActionResult<Item>> GetById(string id)
         {
             try
             {
-                var result = await _boardService.GetAsync(id);
+                var result = await _tileService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find this board");
+                return NotFound("Can not find this tile");
             }
             catch (Exception ex)
             {
@@ -58,8 +58,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("board")]
-        public async Task<ActionResult> PostBoard(BoardRequest board)
+        [HttpPost("tile")]
+        public async Task<ActionResult> PostTile(TileRequest tile)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _boardService.CreateAsync(userId, board);
+                var result = await _tileService.CreateAsync(userId, tile);
 
                 return Ok(result);
             }
@@ -80,8 +80,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("board/{id}")]
-        public async Task<ActionResult> UpdateBoard(string id, BoardRequest board)
+        [HttpPut("tile/{id}")]
+        public async Task<ActionResult> UpdateTile(string id, TileRequest tile)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _boardService.UpdateAsync(id, userId, board);
+                var result = await _tileService.UpdateAsync(id, userId, tile);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -99,12 +99,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("board/{id}")]
-        public async Task<ActionResult> DeleteBoard(string id)
+        [HttpDelete("tile/{id}")]
+        public async Task<ActionResult> DeleteTile(string id)
         {
             try
             {
-                var result = await _boardService.DeleteAsync(id);
+                var result = await _tileService.DeleteAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)

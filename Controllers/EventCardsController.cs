@@ -19,7 +19,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             _eventCardService = eventCardService;
         }
 
-        [HttpGet("eventcard")]
+        [HttpGet("event-card")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
             try
@@ -37,7 +37,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("eventcard/{id}")]
+        [HttpGet("event-card/{id}")]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<EventCard>> GetById(string id)
         {
@@ -57,7 +57,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("eventcard")]
+        [HttpPost("event-card")]
         public async Task<ActionResult> PostEventCard(EventCardRequest eventCard)
         {
             try
@@ -79,7 +79,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("eventcard")]
+        [HttpPut("event-card/{id}")]
         public async Task<ActionResult> UpdateEventCard(string id, EventCardRequest eventCard)
         {
             try
@@ -98,7 +98,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("eventcard")]
+        [HttpDelete("event-card/{id}")]
         public async Task<ActionResult> DeleteEventCard(string id)
         {
             try

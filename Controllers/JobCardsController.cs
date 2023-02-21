@@ -1,31 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections;
-using System.Security.Claims;
-
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
+using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BoardsController : ControllerBase
+    public class JobCardsController : ControllerBase
     {
-        private readonly IBoardService _boardService;
+        private readonly IJobCardService _jobCardService;
 
-        public BoardsController(IBoardService boardService)
+        public JobCardsController(IJobCardService jobCardService)
         {
-            _boardService = boardService;
+            _jobCardService = jobCardService;
         }
 
-        //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("board")]
+        [HttpGet("job-card")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
             {
-                var result = await _boardService.GetAsync();
+                var result = await _jobCardService.GetAsync();
                 if (result == null)
                 {
                     return NotFound("list is empty");
@@ -39,17 +38,17 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("board/{id}")]
-        public async Task<ActionResult<Board>> GetById(string id)
+        [HttpGet("job-card/{id}")]
+        public async Task<ActionResult<JobCard>> GetById(string id)
         {
             try
             {
-                var result = await _boardService.GetAsync(id);
+                var result = await _jobCardService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find this board");
+                return NotFound("Can not find this job card");
             }
             catch (Exception ex)
             {
@@ -58,8 +57,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("board")]
-        public async Task<ActionResult> PostBoard(BoardRequest board)
+        [HttpPost("job-card")]
+        public async Task<ActionResult> PostJobCard(JobCardRequest jobCard)
         {
             try
             {
@@ -69,7 +68,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _boardService.CreateAsync(userId, board);
+                var result = await _jobCardService.CreateAsync(userId, jobCard);
 
                 return Ok(result);
             }
@@ -80,8 +79,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("board/{id}")]
-        public async Task<ActionResult> UpdateBoard(string id, BoardRequest board)
+        [HttpPut("job-card/{id}")]
+        public async Task<ActionResult> UpdateJobCard(string id, JobCardRequest jobCard)
         {
             try
             {
@@ -90,7 +89,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _boardService.UpdateAsync(id, userId, board);
+                var result = await _jobCardService.UpdateAsync(id, userId, jobCard);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -99,12 +98,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("board/{id}")]
-        public async Task<ActionResult> DeleteBoard(string id)
+        [HttpDelete("job-card/{id}")]
+        public async Task<ActionResult> DeleteTileType(string id)
         {
             try
             {
-                var result = await _boardService.DeleteAsync(id);
+                var result = await _jobCardService.DeleteAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)

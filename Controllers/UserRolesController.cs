@@ -1,7 +1,5 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 using MobileBasedCashFlowAPI.Models;
 
 namespace MobileBasedCashFlowAPI.Controllers
@@ -59,7 +57,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = role.RoleId }, role);
         }
 
-        [HttpDelete("role")]
+        [HttpDelete("role/{id}")]
         public async Task<ActionResult> DeleteRole(string roleId)
         {
             try

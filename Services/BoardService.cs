@@ -42,7 +42,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public async Task<Object?> GetAsync(string id)
+        public async Task<object?> GetAsync(string id)
         {
             try
             {
@@ -56,8 +56,8 @@ namespace MobileBasedCashFlowAPI.Services
                         radiusRatTile = b.RadiusRatTile,
                         createAt = b.CreateAt,
                     })
-                .Where(b => b.boardId == id)
-                .FirstOrDefaultAsync();
+                    .Where(b => b.boardId == id)
+                    .FirstOrDefaultAsync();
                 return board;
             }
             catch (Exception ex)
@@ -68,25 +68,24 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> CreateAsync(string userId, BoardRequest board)
         {
-            var gameId = await (from game in _context.Games
-                                where game.GameVersion == board.GameVersion
-                                select new { gameId = game.GameId }).FirstOrDefaultAsync();
-
-            if (gameId == null)
-            {
-                return "can not find this game versuin";
-            }
-            else if (!ValidateInput.isNumber(board.AmountFatTile.ToString()) || board.AmountFatTile <= 0)
-            {
-                return "Amount fat tile must be mumber and bigger than 0";
-            }
-            else if (!ValidateInput.isNumber(board.AmountRatTile.ToString()) || board.AmountRatTile <= 0)
-            {
-                return "Amount rate tile must be mumber and bigger than 0";
-            }
-
             try
             {
+                var gameId = await (from game in _context.Games
+                                    where game.GameVersion == board.GameVersion
+                                    select new { gameId = game.GameId }).FirstOrDefaultAsync();
+
+                if (gameId == null)
+                {
+                    return "can not find this game versuin";
+                }
+                else if (!ValidateInput.isNumber(board.AmountFatTile.ToString()) || board.AmountFatTile <= 0)
+                {
+                    return "Amount fat tile must be mumber and bigger than 0";
+                }
+                else if (!ValidateInput.isNumber(board.AmountRatTile.ToString()) || board.AmountRatTile <= 0)
+                {
+                    return "Amount rate tile must be mumber and bigger than 0";
+                }
                 var board1 = new Board()
                 {
                     BoardId = Guid.NewGuid().ToString(),

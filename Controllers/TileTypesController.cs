@@ -20,7 +20,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             _tileTypeService = tileTypeService;
         }
 
-        [HttpGet("board")]
+        [HttpGet("tile-type")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
@@ -39,7 +39,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("item/{name}")]
+        [HttpGet("tile-type/{id}")]
         public async Task<ActionResult<Item>> GetById(string id)
         {
             try
@@ -49,7 +49,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find this item");
+                return NotFound("Can not find this tile type");
             }
             catch (Exception ex)
             {
@@ -58,8 +58,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("item")]
-        public async Task<ActionResult> PostBoard(TileTypeRequest tileType)
+        [HttpPost("tile-type")]
+        public async Task<ActionResult> PostTileType(TileTypeRequest tileType)
         {
             try
             {
@@ -80,8 +80,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("board")]
-        public async Task<ActionResult> UpdateBoard(string id, TileTypeRequest tileType)
+        [HttpPut("tile-type/{id}")]
+        public async Task<ActionResult> UpdateTileType(string id, TileTypeRequest tileType)
         {
             try
             {
@@ -99,8 +99,8 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("board")]
-        public async Task<ActionResult> DeleteBoard(string id)
+        [HttpDelete("tile-type/{id}")]
+        public async Task<ActionResult> DeleteTileType(string id)
         {
             try
             {

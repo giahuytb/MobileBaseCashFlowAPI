@@ -1,31 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections;
-using System.Security.Claims;
-
+﻿
+using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.Services;
+using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BoardsController : ControllerBase
+    public class GameAccountTypesController : ControllerBase
     {
-        private readonly IBoardService _boardService;
+        private readonly IGameAccountTypeService _gameAccountTypeService;
 
-        public BoardsController(IBoardService boardService)
+        public GameAccountTypesController(IGameAccountTypeService gameAccountTypeService)
         {
-            _boardService = boardService;
+            _gameAccountTypeService = gameAccountTypeService;
         }
 
-        //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("board")]
+        [HttpGet("account-type")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
             {
-                var result = await _boardService.GetAsync();
+                var result = await _gameAccountTypeService.GetAsync();
                 if (result == null)
                 {
                     return NotFound("list is empty");
@@ -39,17 +39,17 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("board/{id}")]
-        public async Task<ActionResult<Board>> GetById(string id)
+        [HttpGet("account-type/{id}")]
+        public async Task<ActionResult<GameAccountType>> GetById(string id)
         {
             try
             {
-                var result = await _boardService.GetAsync(id);
+                var result = await _gameAccountTypeService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find this board");
+                return NotFound("Can not find this account type");
             }
             catch (Exception ex)
             {
@@ -58,8 +58,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("board")]
-        public async Task<ActionResult> PostBoard(BoardRequest board)
+        [HttpPost("account-type")]
+        public async Task<ActionResult> PostAccountType(GameAccountTypeRequest gameAccountType)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _boardService.CreateAsync(userId, board);
+                var result = await _gameAccountTypeService.CreateAsync(userId, gameAccountType);
 
                 return Ok(result);
             }
@@ -80,8 +80,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("board/{id}")]
-        public async Task<ActionResult> UpdateBoard(string id, BoardRequest board)
+        [HttpPut("account-type/{id}")]
+        public async Task<ActionResult> UpdateAccountType(string id, GameAccountTypeRequest gameAccountType)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _boardService.UpdateAsync(id, userId, board);
+                var result = await _gameAccountTypeService.UpdateAsync(id, userId, gameAccountType);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -99,12 +99,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("board/{id}")]
-        public async Task<ActionResult> DeleteBoard(string id)
+        [HttpDelete("account-type/{id}")]
+        public async Task<ActionResult> DeleteAccountType(string id)
         {
             try
             {
-                var result = await _boardService.DeleteAsync(id);
+                var result = await _gameAccountTypeService.DeleteAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)

@@ -80,7 +80,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("dream")]
+        [HttpPut("dream/{id}")]
         public async Task<ActionResult> UpdateDream(string id, DreamRequest dream)
         {
             try
@@ -99,7 +99,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("dream")]
+        [HttpDelete("dream/{id}")]
         public async Task<ActionResult> DeleteDream(string id)
         {
             try

@@ -19,7 +19,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             _financialReportService = financialReportService;
         }
 
-        [HttpGet("financialreport")]
+        [HttpGet("financial-report")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
             try
@@ -37,7 +37,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("financialreport/{id}")]
+        [HttpGet("financial-report/{id}")]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<FinancialReport>> GetById(string id)
         {
@@ -57,7 +57,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("financialreport")]
+        [HttpPost("financial-report")]
         public async Task<ActionResult> PostEventCard(FinancialReportRequest financialReport)
         {
             try
@@ -79,7 +79,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("financialreport")]
+        [HttpPut("financial-report/{id}")]
         public async Task<ActionResult> UpdateEventCard(string id, FinancialReportRequest financialReport)
         {
             try
@@ -98,7 +98,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("financialreport")]
+        [HttpDelete("financial-report/{id}")]
         public async Task<ActionResult> DeleteEventCard(string id)
         {
             try

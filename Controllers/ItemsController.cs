@@ -72,7 +72,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("item")]
+        [HttpPut("item/{id}")]
         public async Task<ActionResult> UpdateItem(string id, ItemRequest item)
         {
             try
@@ -91,7 +91,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("item")]
+        [HttpDelete("item/{id")]
         public async Task<ActionResult> DeleteItem(string id)
         {
             try
