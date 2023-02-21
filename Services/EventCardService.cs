@@ -124,6 +124,7 @@ namespace MobileBasedCashFlowAPI.Services
                     Description = eventCard.Description,
                     EventImageUrl = eventCard.EventImageUrl,
                     CreateAt = DateTime.Now,
+                    CreateBy = userId,
 
                     GameId = gameId.gameId,
                     EventId = gameEventId.eventId,
