@@ -12,8 +12,6 @@ namespace MobileBasedCashFlowAPI.Services
     public class ItemService : IItemService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public ItemService(MobileBasedCashFlowGameContext context)
@@ -125,14 +123,10 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!ItemExists(id))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this item";
         }
 
         public async Task<string> DeleteAsync(string itemId)
@@ -140,17 +134,12 @@ namespace MobileBasedCashFlowAPI.Services
             var item = await _context.Items.FindAsync(itemId);
             if (item == null)
             {
-                return NOTFOUND;
+                return "Can not find this item";
             }
             _context.Items.Remove(item);
             await _context.SaveChangesAsync();
 
             return SUCCESS;
-        }
-
-        private bool ItemExists(string id)
-        {
-            return _context.Items.Any(e => e.ItemId == id);
         }
 
     }

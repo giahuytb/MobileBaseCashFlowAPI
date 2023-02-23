@@ -5,15 +5,12 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.MongoModels;
 
 namespace MobileBasedCashFlowAPI.Services
 {
     public class EventCardService : IEventCardService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public EventCardService(MobileBasedCashFlowGameContext context)
@@ -142,7 +139,7 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> UpdateAsync(string cardId, string userId, EventCardRequest eventCard)
         {
-            var oldEventCard = await _context.EventCards.FirstOrDefaultAsync(d => d.EventCardId == cardId);
+            var oldEventCard = await _context.EventCards.Where(d => d.EventCardId == cardId).FirstOrDefaultAsync();
             if (oldEventCard != null)
             {
                 try
@@ -179,14 +176,10 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!EventCardExists(cardId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this event card";
         }
 
         public async Task<string> DeleteAsync(string cardId)
@@ -194,7 +187,7 @@ namespace MobileBasedCashFlowAPI.Services
             var eventCard = await _context.EventCards.FindAsync(cardId);
             if (eventCard == null)
             {
-                return NOTFOUND;
+                return "Can not find this event card";
             }
             _context.EventCards.Remove(eventCard);
             await _context.SaveChangesAsync();
@@ -202,9 +195,5 @@ namespace MobileBasedCashFlowAPI.Services
             return SUCCESS;
         }
 
-        public bool EventCardExists(string id)
-        {
-            return _context.EventCards.Any(d => d.EventCardId == id);
-        }
     }
 }

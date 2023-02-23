@@ -26,7 +26,6 @@ namespace MobileBasedCashFlowAPI.Controllers
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _itemService.GetAsync();
-
             return Ok(result);
         }
 
@@ -83,6 +82,10 @@ namespace MobileBasedCashFlowAPI.Controllers
                     return BadRequest("User id not Found, please login");
                 }
                 var result = await _itemService.UpdateAsync(id, userId, item);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
             }
             catch (Exception ex)
@@ -97,6 +100,10 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _itemService.DeleteAsync(id);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
             }
             catch (Exception ex)

@@ -10,8 +10,6 @@ namespace MobileBasedCashFlowAPI.Services
     public class JobCardService : IJobCardService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
         private MobileBasedCashFlowGameContext _context;
 
         public JobCardService(MobileBasedCashFlowGameContext context)
@@ -111,14 +109,10 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!JobCardExists(jobCardId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this job card";
         }
 
         public async Task<string> DeleteAsync(string jobCardId)
@@ -126,17 +120,12 @@ namespace MobileBasedCashFlowAPI.Services
             var jobCard = await _context.JobCards.FindAsync(jobCardId);
             if (jobCard == null)
             {
-                return NOTFOUND;
+                return "Can not find this job card";
             }
             _context.JobCards.Remove(jobCard);
             await _context.SaveChangesAsync();
 
             return SUCCESS;
-        }
-
-        private bool JobCardExists(string id)
-        {
-            return _context.JobCards.Any(e => e.JobCardId == id);
         }
 
     }

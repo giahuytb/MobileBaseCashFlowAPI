@@ -11,15 +11,12 @@ namespace MobileBasedCashFlowAPI.Services
     public class BoardService : IBoardService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public BoardService(MobileBasedCashFlowGameContext context)
         {
             _context = context;
         }
-
         public async Task<IEnumerable> GetAsync()
         {
             try
@@ -58,7 +55,12 @@ namespace MobileBasedCashFlowAPI.Services
                     })
                     .Where(b => b.boardId == id)
                     .FirstOrDefaultAsync();
-                return board;
+                if (board != null)
+                {
+                    return board;
+                }
+                return null;
+
             }
             catch (Exception ex)
             {
@@ -110,7 +112,7 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> UpdateAsync(string boardId, string userId, BoardRequest board)
         {
-            var oldBoard = await _context.Boards.FirstOrDefaultAsync(i => i.BoardId == boardId);
+            var oldBoard = await _context.Boards.Where(i => i.BoardId == boardId).FirstOrDefaultAsync();
             if (oldBoard != null)
             {
                 try
@@ -135,32 +137,24 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!BoardExists(boardId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this board";
         }
 
         public async Task<string> DeleteAsync(string boardId)
         {
             var board = await _context.Boards.FindAsync(boardId);
-            if (board == null)
+            if (board != null)
             {
-                return NOTFOUND;
+                _context.Boards.Remove(board);
+                await _context.SaveChangesAsync();
+
+                return SUCCESS;
             }
-            _context.Boards.Remove(board);
-            await _context.SaveChangesAsync();
-
-            return SUCCESS;
+            return "Can not find this board";
         }
 
-        private bool BoardExists(string id)
-        {
-            return _context.Boards.Any(e => e.BoardId == id);
-        }
     }
 }

@@ -9,6 +9,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.DTO;
+using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
@@ -17,6 +18,7 @@ namespace MobileBasedCashFlowAPI.Services
     {
         public const string SUCCESS = "success";
         public const string FAILED = "failed";
+        public const string NOTFOUND = "not found";
 
         private readonly IConfiguration _configuration;
         private readonly ISendMailService _sendMailService;
@@ -109,9 +111,9 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 return "You need to fill your username";
             }
-            else if (request.Password.Equals("") || request.Password.Length < 6)
+            else if (request.Password.Equals("") || request.Password.Length < 8)
             {
-                return "Your password must be at least 6 character";
+                return "Your password must be at least 8 character";
             }
             else if (request.NickName.Equals(""))
             {
@@ -251,6 +253,69 @@ namespace MobileBasedCashFlowAPI.Services
         public string GenerateEmailConfirmationToken()
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        }
+
+        public async Task<IEnumerable> GetAsync()
+        {
+            try
+            {
+                var users = await (from user in _context.UserAccounts
+                                   join role in _context.UserRoles on user.RoleId equals role.RoleId
+                                   select new
+                                   {
+                                       userId = user.UserId,
+                                       userName = user.UserName,
+                                       userRole = role.RoleName,
+                                   }).ToListAsync();
+                return users;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> EditProfile(string userId, EditProfileRequest request)
+        {
+            var oldProfile = await _context.UserAccounts.FirstOrDefaultAsync(i => i.UserId == userId);
+            if (oldProfile != null)
+            {
+                try
+                {
+                    if (request.NickName.Equals(""))
+                    {
+                        return "You need to fill your nickname";
+                    }
+                    else if (!ValidateInput.isPhone(request.Phone))
+                    {
+                        return "You need to enter the the correct phone with 10 number";
+                    }
+
+                    oldProfile.NickName = request.NickName;
+                    oldProfile.Gender = request.Gender;
+                    oldProfile.Phone = request.Phone;
+                    oldProfile.Email = request.Email;
+                    oldProfile.AvatarImageUrl = request.ImageUrl;
+                    oldProfile.UpdateAt = DateTime.Now;
+
+                    await _context.SaveChangesAsync();
+                    return SUCCESS;
+                }
+                catch (Exception ex)
+                {
+                    if (!UserExists(userId))
+                    {
+                        return NOTFOUND;
+                    }
+                    return ex.ToString();
+                }
+            }
+            return FAILED;
+        }
+
+        private bool UserExists(string id)
+        {
+            return _context.UserAccounts.Any(e => e.UserId == id);
         }
     }
 }

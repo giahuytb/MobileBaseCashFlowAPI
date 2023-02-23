@@ -27,10 +27,6 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _leaderboardService.GetAsync();
-                if (result == null)
-                {
-                    return NotFound("list is empty");
-                }
                 return Ok(result);
             }
             catch (Exception ex)
@@ -92,6 +88,10 @@ namespace MobileBasedCashFlowAPI.Controllers
                     return BadRequest("User id not Found, please login");
                 }
                 var result = await _leaderboardService.UpdateAsync(id, userId, leaderboard);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
             }
             catch (Exception ex)
@@ -106,6 +106,10 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _leaderboardService.DeleteAsync(id);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
             }
             catch (Exception ex)

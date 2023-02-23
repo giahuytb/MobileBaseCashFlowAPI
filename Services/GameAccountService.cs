@@ -104,30 +104,22 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!GameAccountExists(gameAccountId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this game account";
         }
         public async Task<string> DeleteAsync(string gameAccountId)
         {
             var acc = await _context.GameAccounts.FindAsync(gameAccountId);
             if (acc == null)
             {
-                return NOTFOUND;
+                return "Can not find this game account";
             }
             _context.GameAccounts.Remove(acc);
             await _context.SaveChangesAsync();
 
             return SUCCESS;
-        }
-        private bool GameAccountExists(string id)
-        {
-            return _context.GameAccounts.Any(e => e.GameAccountId == id);
         }
 
     }

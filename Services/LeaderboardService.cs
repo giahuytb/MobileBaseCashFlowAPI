@@ -11,8 +11,7 @@ namespace MobileBasedCashFlowAPI.Services
     public class LeaderboardService : ILeaderboardService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
+
         private readonly MobileBasedCashFlowGameContext _context;
         public LeaderboardService(MobileBasedCashFlowGameContext context)
         {
@@ -79,14 +78,6 @@ namespace MobileBasedCashFlowAPI.Services
                 {
                     return "can not find this game version";
                 }
-                //else if (!ValidateInput.isNumber(board.AmountFatTile.ToString()) || board.AmountFatTile <= 0)
-                //{
-                //    return "Amount fat tile must be mumber and bigger than 0";
-                //}
-                //else if (!ValidateInput.isNumber(board.AmountRatTile.ToString()) || board.AmountRatTile <= 0)
-                //{
-                //    return "Amount rate tile must be mumber and bigger than 0";
-                //}
                 var leaderboard1 = new Leaderboard()
                 {
                     LeaderBoardId = Guid.NewGuid().ToString(),
@@ -134,14 +125,10 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!LeaderboardExists(leaderboardId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this leaderboard";
         }
 
         public async Task<string> DeleteAsync(string leaderboardId)
@@ -149,7 +136,7 @@ namespace MobileBasedCashFlowAPI.Services
             var leaderboard = await _context.Leaderboards.FindAsync(leaderboardId);
             if (leaderboard == null)
             {
-                return NOTFOUND;
+                return "Can not find this leaderboard";
             }
             _context.Leaderboards.Remove(leaderboard);
             await _context.SaveChangesAsync();
@@ -157,10 +144,6 @@ namespace MobileBasedCashFlowAPI.Services
             return SUCCESS;
         }
 
-        public bool LeaderboardExists(string id)
-        {
-            return _context.Leaderboards.Any(d => d.LeaderBoardId == id);
-        }
 
     }
 }
