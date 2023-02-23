@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
@@ -10,8 +9,7 @@ namespace MobileBasedCashFlowAPI.Services
     public class TileService : ITileService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
+
         private readonly MobileBasedCashFlowGameContext _context;
 
         public TileService(MobileBasedCashFlowGameContext context)
@@ -117,14 +115,10 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!TileExists(tileId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this tile";
         }
 
         public async Task<string> DeleteAsync(string tileId)
@@ -132,16 +126,12 @@ namespace MobileBasedCashFlowAPI.Services
             var tile = await _context.Tiles.FindAsync(tileId);
             if (tile == null)
             {
-                return NOTFOUND;
+                return "Can not find this tile";
             }
             _context.Tiles.Remove(tile);
             await _context.SaveChangesAsync();
 
             return SUCCESS;
-        }
-        private bool TileExists(string id)
-        {
-            return _context.Tiles.Any(e => e.TileId == id);
         }
 
     }

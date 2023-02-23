@@ -10,22 +10,22 @@ namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GameAccountsController : ControllerBase
+    public class GameEventsController : ControllerBase
     {
-        private readonly IGameAccountService _gameAccountService;
+        private readonly IGameEventService _gameEventService;
 
-        public GameAccountsController(IGameAccountService gameAccountService)
+        public GameEventsController(IGameEventService gameEventService)
         {
-            _gameAccountService = gameAccountService;
+            _gameEventService = gameEventService;
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("game-account")]
+        [HttpGet("game-event")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
             {
-                var result = await _gameAccountService.GetAsync();
+                var result = await _gameEventService.GetAsync();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -35,17 +35,17 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("game-account/{id}")]
-        public async Task<ActionResult<GameAccount>> GetById(string id)
+        [HttpGet("game-event/{id}")]
+        public async Task<ActionResult<GameEvent>> GetById(string id)
         {
             try
             {
-                var result = await _gameAccountService.GetAsync(id);
+                var result = await _gameEventService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find this game account");
+                return NotFound("Can not find this game event");
             }
             catch (Exception ex)
             {
@@ -54,8 +54,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("game-account")]
-        public async Task<ActionResult> PostGameAccount(GameAccountRequest gameAccount)
+        [HttpPost("game-event")]
+        public async Task<ActionResult> PostGameEvent(GameEventRequest gameEvent)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _gameAccountService.CreateAsync(userId, gameAccount);
+                var result = await _gameEventService.CreateAsync(userId, gameEvent);
 
                 return Ok(result);
             }
@@ -76,8 +76,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("game-account/{id}")]
-        public async Task<ActionResult> UpdateGameAccount(string id, GameAccountRequest gameAccount)
+        [HttpPut("game-event/{id}")]
+        public async Task<ActionResult> UpdateGameEvent(string id, GameEventRequest gameEvent)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _gameAccountService.UpdateAsync(id, userId, gameAccount);
+                var result = await _gameEventService.UpdateAsync(id, userId, gameEvent);
                 if (result != "success")
                 {
                     return BadRequest(result);
@@ -99,12 +99,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("game-account/{id}")]
-        public async Task<ActionResult> DeleteGameAccount(string id)
+        [HttpDelete("game-event/{id}")]
+        public async Task<ActionResult> DeleteGameEvent(string id)
         {
             try
             {
-                var result = await _gameAccountService.DeleteAsync(id);
+                var result = await _gameEventService.DeleteAsync(id);
                 if (result != "success")
                 {
                     return BadRequest(result);

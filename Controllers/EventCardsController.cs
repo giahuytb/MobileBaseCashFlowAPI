@@ -25,10 +25,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _eventCardService.GetAsync();
-                if (result == null)
-                {
-                    return NotFound("List is empty");
-                }
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -90,6 +87,10 @@ namespace MobileBasedCashFlowAPI.Controllers
                     return BadRequest("User id not Found, please login again");
                 }
                 var result = await _eventCardService.UpdateAsync(id, userId, eventCard);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
             }
             catch (Exception ex)
@@ -104,6 +105,10 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _eventCardService.DeleteAsync(id);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
             }
             catch (Exception ex)

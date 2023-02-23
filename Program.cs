@@ -53,15 +53,24 @@ builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
 // Register Service For SqlServer Database
 builder.Services.AddTransient<ISendMailService, SendMailService>();
 builder.Services.AddTransient<IUserService, UserService>();
-
 builder.Services.AddTransient<IBoardService, BoardService>();
+
 builder.Services.AddTransient<IDreamService, DreamService>();
 builder.Services.AddTransient<IEventCardService, EventCardService>();
+builder.Services.AddTransient<IFinancialAccountService, FinancialAccountService>();
+
 builder.Services.AddTransient<IFinancialReportService, FinancialReportService>();
 builder.Services.AddTransient<IGameAccountService, GameAccountService>();
 builder.Services.AddTransient<IGameAccountTypeService, GameAccountTypeService>();
+
+builder.Services.AddTransient<IGameEventService, GameEventService>();
+builder.Services.AddTransient<IGameService, GameService>();
+builder.Services.AddTransient<IInventoryService, InventoryService>();
+
 builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<IJobAccountService, JobAccountService>();
 builder.Services.AddTransient<IJobCardService, JobCardService>();
+
 builder.Services.AddTransient<ILeaderboardService, LeaderboardService>();
 builder.Services.AddTransient<ITileService, TileService>();
 builder.Services.AddTransient<ITileTypeService, TileTypeService>();

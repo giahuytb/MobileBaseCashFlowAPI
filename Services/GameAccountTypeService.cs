@@ -10,8 +10,6 @@ namespace MobileBasedCashFlowAPI.Services
     public class GameAccountTypeService : IGameAccountTypeService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public GameAccountTypeService(MobileBasedCashFlowGameContext context)
@@ -95,14 +93,10 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!AccountTypeExists(accountTypeId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this game account type";
         }
 
         public async Task<string> DeleteAsync(string accountTypeId)
@@ -110,7 +104,7 @@ namespace MobileBasedCashFlowAPI.Services
             var accountType = await _context.GameAccountTypes.FindAsync(accountTypeId);
             if (accountType == null)
             {
-                return NOTFOUND;
+                return "Can not find this game account type";
             }
             _context.GameAccountTypes.Remove(accountType);
             await _context.SaveChangesAsync();
@@ -118,10 +112,6 @@ namespace MobileBasedCashFlowAPI.Services
             return SUCCESS;
         }
 
-        private bool AccountTypeExists(string id)
-        {
-            return _context.GameAccountTypes.Any(e => e.AccountTypeId == id);
-        }
 
     }
 }

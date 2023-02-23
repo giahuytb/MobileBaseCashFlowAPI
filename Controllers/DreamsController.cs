@@ -26,10 +26,6 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _dreamService.GetAsync();
-                if (result == null)
-                {
-                    return NotFound("list is empty");
-                }
                 return Ok(result);
             }
             catch (Exception ex)
@@ -91,7 +87,12 @@ namespace MobileBasedCashFlowAPI.Controllers
                     return BadRequest("User id not Found, please login");
                 }
                 var result = await _dreamService.UpdateAsync(id, userId, dream);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
+
             }
             catch (Exception ex)
             {
@@ -105,6 +106,10 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _dreamService.DeleteAsync(id);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
             }
             catch (Exception ex)

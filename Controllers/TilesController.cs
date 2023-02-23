@@ -26,10 +26,6 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _tileService.GetAsync();
-                if (result == null)
-                {
-                    return NotFound("list is empty");
-                }
                 return Ok(result);
             }
             catch (Exception ex)
@@ -40,7 +36,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("tile/{id}")]
-        public async Task<ActionResult<Item>> GetById(string id)
+        public async Task<ActionResult<Tile>> GetById(string id)
         {
             try
             {
@@ -91,6 +87,10 @@ namespace MobileBasedCashFlowAPI.Controllers
                     return BadRequest("User id not Found, please login");
                 }
                 var result = await _tileService.UpdateAsync(id, userId, tile);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
             }
             catch (Exception ex)
@@ -105,6 +105,10 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _tileService.DeleteAsync(id);
+                if (result != "success")
+                {
+                    return BadRequest(result);
+                }
                 return Ok(result);
             }
             catch (Exception ex)

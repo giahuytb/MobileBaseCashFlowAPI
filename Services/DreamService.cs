@@ -11,8 +11,6 @@ namespace MobileBasedCashFlowAPI.Services
     public class DreamService : IDreamService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public DreamService(MobileBasedCashFlowGameContext context)
@@ -60,7 +58,7 @@ namespace MobileBasedCashFlowAPI.Services
                 {
                     return board;
                 }
-                return NOTFOUND;
+                return null;
             }
             catch (Exception ex)
             {
@@ -78,7 +76,7 @@ namespace MobileBasedCashFlowAPI.Services
                                 .FirstOrDefaultAsync();
                 if (checkName != null)
                 {
-                    return "This Dream name is existed";
+                    return "This dream name is existed";
                 }
                 if (!ValidateInput.isNumber(dream.Cost.ToString()) || dream.Cost <= 0)
                 {
@@ -107,7 +105,7 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> UpdateAsync(string dreamId, string userId, DreamRequest dream)
         {
-            var oldDream = await _context.Dreams.FirstOrDefaultAsync(d => d.DreamId == dreamId);
+            var oldDream = await _context.Dreams.Where(d => d.DreamId == dreamId).FirstOrDefaultAsync();
             if (oldDream != null)
             {
                 try
@@ -118,7 +116,7 @@ namespace MobileBasedCashFlowAPI.Services
                                 .FirstOrDefaultAsync();
                     if (checkName != null)
                     {
-                        return "This Dream name is existed";
+                        return "This dream name is existed";
                     }
                     if (!ValidateInput.isNumber(dream.Cost.ToString()) || dream.Cost <= 0)
                     {
@@ -136,32 +134,24 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!DreamExists(dreamId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this dream";
         }
 
         public async Task<string> DeleteAsync(string dreamId)
         {
             var dream = await _context.Dreams.FindAsync(dreamId);
-            if (dream == null)
+            if (dream != null)
             {
-                return NOTFOUND;
+                _context.Dreams.Remove(dream);
+                await _context.SaveChangesAsync();
+
+                return SUCCESS;
             }
-            _context.Dreams.Remove(dream);
-            await _context.SaveChangesAsync();
-
-            return SUCCESS;
+            return "Can not find this dream";
         }
 
-        public bool DreamExists(string id)
-        {
-            return _context.Dreams.Any(d => d.DreamId == id);
-        }
     }
 }

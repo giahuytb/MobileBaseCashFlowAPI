@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.MongoModels;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
@@ -10,8 +10,7 @@ namespace MobileBasedCashFlowAPI.Services
     public class TileTypeService : ITileTypeService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
+
         private readonly MobileBasedCashFlowGameContext _context;
 
         public TileTypeService(MobileBasedCashFlowGameContext context)
@@ -93,23 +92,23 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!TileTypeExists(tileTypeId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
-        }
-        public Task<string> DeleteAsync(string tileTypeId)
-        {
-            throw new NotImplementedException();
+            return "Can not find this tile type";
         }
 
-        private bool TileTypeExists(string id)
+        public async Task<string> DeleteAsync(string tileTypeId)
         {
-            return _context.TileTypes.Any(e => e.TileTypeId == id);
+            var tile = await _context.Tiles.FindAsync(tileTypeId);
+            if (tile == null)
+            {
+                return "Can not find this tile type";
+            }
+            _context.Tiles.Remove(tile);
+            await _context.SaveChangesAsync();
+
+            return SUCCESS;
         }
 
     }

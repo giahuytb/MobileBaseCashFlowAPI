@@ -11,8 +11,6 @@ namespace MobileBasedCashFlowAPI.Services
     public class FinancialReportService : IFinancialReportService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public FinancialReportService(MobileBasedCashFlowGameContext context)
@@ -106,7 +104,7 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> UpdateAsync(string fianacialId, string userId, FinancialReportRequest financialReport)
         {
-            var oldFinancial = await _context.FinancialReports.FirstOrDefaultAsync(i => i.FinacialId == fianacialId);
+            var oldFinancial = await _context.FinancialReports.Where(i => i.FinacialId == fianacialId).FirstOrDefaultAsync();
             if (oldFinancial != null)
             {
                 try
@@ -132,21 +130,17 @@ namespace MobileBasedCashFlowAPI.Services
                 }
                 catch (Exception ex)
                 {
-                    if (!FinancialReportExists(fianacialId))
-                    {
-                        return NOTFOUND;
-                    }
                     return ex.ToString();
                 }
             }
-            return FAILED;
+            return "Can not find this financial report";
         }
         public async Task<string> DeleteAsync(string fianacialId)
         {
             var financialReport = await _context.FinancialReports.FindAsync(fianacialId);
             if (financialReport == null)
             {
-                return NOTFOUND;
+                return "Can not find this financial report";
             }
             _context.FinancialReports.Remove(financialReport);
             await _context.SaveChangesAsync();
@@ -154,9 +148,6 @@ namespace MobileBasedCashFlowAPI.Services
             return SUCCESS;
         }
 
-        private bool FinancialReportExists(string id)
-        {
-            return _context.FinancialReports.Any(e => e.FinacialId == id);
-        }
+
     }
 }

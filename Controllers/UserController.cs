@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Services;
+using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -130,5 +132,24 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.ToString());
             }
         }
+
+        [HttpGet("user")]
+        public async Task<ActionResult<IEnumerable>> GetALl()
+        {
+            try
+            {
+                var result = await _userService.GetAsync();
+                if (result == null)
+                {
+                    return NotFound("list is empty");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

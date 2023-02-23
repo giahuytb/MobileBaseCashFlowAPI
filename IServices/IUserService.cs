@@ -1,4 +1,5 @@
 ﻿using MobileBasedCashFlowAPI.DTO;
+using System.Collections;
 
 namespace MobileBasedCashFlowAPI.IServices
 {
@@ -9,5 +10,8 @@ namespace MobileBasedCashFlowAPI.IServices
         Task<string> VerifyEmail(string token);
         Task<bool> ForgotPassword(string email);
         Task<bool> ResetPassword(ResetPasswordRequest request);
+        Task<IEnumerable> GetAsync();
+        public Task<string> EditProfile(string userId, EditProfileRequest request);
+
     }
 }
