@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.EntityFrameworkCore;
 
-using MobileBasedCashFlowAPI.Services;
 using MobileBasedCashFlowAPI.MongoServices;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.Settings;
+
+using MobileBasedCashFlowAPI.Services;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
 
@@ -50,7 +51,7 @@ builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDb"));
 });
 
-// Register Service For SqlServer Database
+//Register Service For SqlServer Database
 builder.Services.AddTransient<ISendMailService, SendMailService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IBoardService, BoardService>();
@@ -64,6 +65,7 @@ builder.Services.AddTransient<IGameAccountService, GameAccountService>();
 builder.Services.AddTransient<IGameAccountTypeService, GameAccountTypeService>();
 
 builder.Services.AddTransient<IGameEventService, GameEventService>();
+builder.Services.AddTransient<IGameMatchService, GameMatchService>();
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IInventoryService, InventoryService>();
 

@@ -12,13 +12,13 @@ namespace MobileBasedCashFlowAPI.Models
         public double Dept { get; set; }
         public double CashFlow { get; set; }
         public string TradingRange { get; set; } = null!;
-        public string Description { get; set; } = null!;
         public DateTime CreateAt { get; set; }
         public string CreateBy { get; set; } = null!;
         public DateTime? UpdateAt { get; set; }
         public string? UpdateBy { get; set; }
         public string? GameId { get; set; }
         public string? EventId { get; set; }
+        public string Description { get; set; } = null!;
         public string EventImageUrl { get; set; } = null!;
 
         public virtual GameEvent? Event { get; set; }

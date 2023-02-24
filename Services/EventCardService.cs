@@ -24,16 +24,16 @@ namespace MobileBasedCashFlowAPI.Services
                 var eventCard = await (from evc in _context.EventCards
                                        select new
                                        {
-                                           eventId = evc.EventId,
-                                           cardName = evc.CardName,
-                                           cost = evc.Cost,
-                                           downPay = evc.DownPay,
-                                           dept = evc.Dept,
-                                           cashFlow = evc.CashFlow,
-                                           tradingRange = evc.TradingRange,
-                                           description = evc.Description,
-                                           eventImageUrl = evc.EventImageUrl,
-                                           createAt = evc.CreateAt,
+                                           evc.EventId,
+                                           evc.CardName,
+                                           evc.Cost,
+                                           evc.DownPay,
+                                           evc.Dept,
+                                           evc.CashFlow,
+                                           evc.TradingRange,
+                                           evc.Description,
+                                           evc.EventImageUrl,
+                                           evc.CreateAt,
                                        }).ToListAsync();
                 return eventCard;
             }
@@ -50,18 +50,18 @@ namespace MobileBasedCashFlowAPI.Services
                 var eventCard = await _context.EventCards
                     .Select(evc => new
                     {
-                        eventId = evc.EventId,
-                        cardName = evc.CardName,
-                        cost = evc.Cost,
-                        downPay = evc.DownPay,
-                        dept = evc.Dept,
-                        cashFlow = evc.CashFlow,
-                        tradingRange = evc.TradingRange,
-                        description = evc.Description,
-                        eventImageUrl = evc.EventImageUrl,
-                        createAt = evc.CreateAt,
+                        evc.EventId,
+                        evc.CardName,
+                        evc.Cost,
+                        evc.DownPay,
+                        evc.Dept,
+                        evc.CashFlow,
+                        evc.TradingRange,
+                        evc.Description,
+                        evc.EventImageUrl,
+                        evc.CreateAt,
                     })
-                    .Where(i => i.eventId == id)
+                    .Where(i => i.EventId == id)
                     .FirstOrDefaultAsync();
                 return eventCard;
             }
@@ -74,7 +74,7 @@ namespace MobileBasedCashFlowAPI.Services
         public async Task<string> CreateAsync(string userId, EventCardRequest eventCard)
         {
             var gameId = await (from game in _context.Games
-                                where game.GameVersion == eventCard.GameVersion
+                                where game.GameVersion == "Ver_1"
                                 select new { gameId = game.GameId })
                                 .FirstOrDefaultAsync();
 

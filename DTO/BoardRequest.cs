@@ -6,6 +6,5 @@
         public int AmountFatTile { get; set; }
         public double DementionBoard { get; set; }
         public double RadiusRatTile { get; set; }
-        public string GameVersion { get; set; } = null!;
     }
 }

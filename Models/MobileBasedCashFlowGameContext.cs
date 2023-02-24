@@ -117,7 +117,7 @@ namespace MobileBasedCashFlowAPI.Models
                     .IsFixedLength();
 
                 entity.Property(e => e.Description)
-                    .HasMaxLength(100)
+                    .HasMaxLength(500)
                     .HasColumnName("description");
 
                 entity.Property(e => e.DreamImageUrl)
@@ -171,7 +171,7 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.Property(e => e.Dept).HasColumnName("dept");
 
                 entity.Property(e => e.Description)
-                    .HasMaxLength(100)
+                    .HasMaxLength(500)
                     .HasColumnName("description");
 
                 entity.Property(e => e.DownPay).HasColumnName("down_pay");
@@ -183,7 +183,7 @@ namespace MobileBasedCashFlowAPI.Models
                     .IsFixedLength();
 
                 entity.Property(e => e.EventImageUrl)
-                    .HasMaxLength(100)
+                    .HasMaxLength(200)
                     .HasColumnName("event_image_url");
 
                 entity.Property(e => e.GameId)
@@ -576,10 +576,10 @@ namespace MobileBasedCashFlowAPI.Models
 
                 entity.Property(e => e.TotalRound).HasColumnName("total_round");
 
-                entity.Property(e => e.WinerId)
+                entity.Property(e => e.WinnerId)
                     .HasMaxLength(36)
                     .IsUnicode(false)
-                    .HasColumnName("winer_id")
+                    .HasColumnName("winner_id")
                     .IsFixedLength();
 
                 entity.HasOne(d => d.Game)
@@ -597,9 +597,9 @@ namespace MobileBasedCashFlowAPI.Models
                     .HasForeignKey(d => d.LastHostId)
                     .HasConstraintName("FK__Game_matc__last___59FA5E80");
 
-                entity.HasOne(d => d.Winer)
-                    .WithMany(p => p.GameMatchWiners)
-                    .HasForeignKey(d => d.WinerId)
+                entity.HasOne(d => d.Winner)
+                    .WithMany(p => p.GameMatchWinners)
+                    .HasForeignKey(d => d.WinnerId)
                     .HasConstraintName("FK__Game_matc__winer__5812160E");
             });
 
@@ -660,7 +660,7 @@ namespace MobileBasedCashFlowAPI.Models
                     .IsFixedLength();
 
                 entity.Property(e => e.Description)
-                    .HasMaxLength(100)
+                    .HasMaxLength(500)
                     .HasColumnName("description");
 
                 entity.Property(e => e.IsInShop).HasColumnName("is_in_shop");
@@ -743,14 +743,14 @@ namespace MobileBasedCashFlowAPI.Models
                     .HasColumnName("create_by")
                     .IsFixedLength();
 
-                entity.Property(e => e.JobImageUrl)
+                entity.Property(e => e.JobCardImageUrl)
                     .HasMaxLength(200)
                     .IsUnicode(false)
-                    .HasColumnName("job_image_url");
+                    .HasColumnName("job_card_image_url");
 
-                entity.Property(e => e.JobName)
+                entity.Property(e => e.JobCardName)
                     .HasMaxLength(50)
-                    .HasColumnName("job_name");
+                    .HasColumnName("job_card_name");
 
                 entity.Property(e => e.UpdateAt)
                     .HasColumnType("datetime")
@@ -791,7 +791,7 @@ namespace MobileBasedCashFlowAPI.Models
 
                 entity.Property(e => e.Score).HasColumnName("score");
 
-                entity.Property(e => e.TimeFeriod).HasColumnName("time_feriod");
+                entity.Property(e => e.TimePeriod).HasColumnName("time_period");
 
                 entity.Property(e => e.TimePeriodFrom)
                     .HasColumnType("date")

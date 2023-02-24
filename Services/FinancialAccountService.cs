@@ -25,9 +25,9 @@ namespace MobileBasedCashFlowAPI.Services
                                           join account in _context.GameAccounts on finAcc.GameAccountId equals account.GameAccountId
                                           select new
                                           {
-                                              financialReportId = finAcc.FinacialId,
-                                              accountName = account.GameAccountName,
-                                              value = finAcc.Value,
+                                              finAcc.FinacialId,
+                                              account.GameAccountName,
+                                              finAcc.Value,
                                           }).ToListAsync();
                 return finanAccount;
             }
@@ -46,19 +46,19 @@ namespace MobileBasedCashFlowAPI.Services
                                        join account in _context.GameAccounts on finAcc.GameAccountId equals account.GameAccountId
                                        select new
                                        {
-                                           financialReportId = finAcc.FinacialId,
-                                           accountId = account.GameAccountId,
-                                           accountName = account.GameAccountName,
-                                           value = finAcc.Value,
+                                           finAcc.FinacialId,
+                                           account.GameAccountId,
+                                           account.GameAccountName,
+                                           finAcc.Value,
                                        }).ToListAsync();
 
                 if (searchBy.Equals("financial"))
                 {
-                    allFinAcc = allFinAcc.Where(i => i.financialReportId == id).ToList();
+                    allFinAcc = allFinAcc.Where(i => i.FinacialId == id).ToList();
                 }
                 else if (searchBy.Equals("account"))
                 {
-                    allFinAcc = allFinAcc.Where(i => i.accountId == id).ToList();
+                    allFinAcc = allFinAcc.Where(i => i.GameAccountId == id).ToList();
                 }
                 else
                 {

@@ -23,11 +23,11 @@ namespace MobileBasedCashFlowAPI.Services
                 var jobCard = await (from j in _context.JobCards
                                      select new
                                      {
-                                         jobCardId = j.JobCardId,
-                                         jobCardName = j.JobName,
-                                         jobImageUrl = j.JobImageUrl,
-                                         childrenCost = j.ChildrenCost,
-                                         createAt = j.CreateAt,
+                                         j.JobCardId,
+                                         j.JobCardName,
+                                         j.JobCardImageUrl,
+                                         j.ChildrenCost,
+                                         j.CreateAt,
                                      }).ToListAsync();
                 return jobCard;
             }
@@ -44,13 +44,13 @@ namespace MobileBasedCashFlowAPI.Services
                 var jobCard = await _context.JobCards
                     .Select(j => new
                     {
-                        jobCardId = j.JobCardId,
-                        jobCardName = j.JobName,
-                        jobImageUrl = j.JobImageUrl,
-                        childrenCost = j.ChildrenCost,
-                        createAt = j.CreateAt,
+                        j.JobCardId,
+                        j.JobCardName,
+                        j.JobCardImageUrl,
+                        j.ChildrenCost,
+                        j.CreateAt,
                     })
-                    .Where(b => b.jobCardId == id)
+                    .Where(b => b.JobCardId == id)
                     .FirstOrDefaultAsync();
                 return jobCard;
             }
@@ -70,8 +70,8 @@ namespace MobileBasedCashFlowAPI.Services
                 var jobCard1 = new JobCard()
                 {
                     JobCardId = Guid.NewGuid().ToString(),
-                    JobName = jobCard.JobName,
-                    JobImageUrl = jobCard.JobImageUrl,
+                    JobCardName = jobCard.JobName,
+                    JobCardImageUrl = jobCard.JobImageUrl,
                     ChildrenCost = jobCard.ChildrenCost,
                     CreateAt = DateTime.Now,
                     CreateBy = userId,
@@ -98,8 +98,8 @@ namespace MobileBasedCashFlowAPI.Services
                     {
                         return "Children cost must be mumber and bigger than 0";
                     }
-                    oldJobCard.JobName = jobCard.JobName;
-                    oldJobCard.JobImageUrl = jobCard.JobImageUrl;
+                    oldJobCard.JobCardName = jobCard.JobName;
+                    oldJobCard.JobCardImageUrl = jobCard.JobImageUrl;
                     oldJobCard.ChildrenCost = jobCard.ChildrenCost;
                     oldJobCard.UpdateAt = DateTime.Now;
                     oldJobCard.UpdateBy = userId;

@@ -25,9 +25,9 @@ namespace MobileBasedCashFlowAPI.Services
                                      join account in _context.GameAccounts on jobAcc.GameAccountId equals account.GameAccountId
                                      select new
                                      {
-                                         jobName = job.JobName,
-                                         accountName = account.GameAccountName,
-                                         value = jobAcc.Value,
+                                         job.JobCardName,
+                                         account.GameAccountName,
+                                         jobAcc.Value,
                                      }).ToListAsync();
                 return JobCard;
             }
@@ -46,20 +46,20 @@ namespace MobileBasedCashFlowAPI.Services
                                         join account in _context.GameAccounts on jobAcc.GameAccountId equals account.GameAccountId
                                         select new
                                         {
-                                            jobCardId = jobAcc.JobCardId,
-                                            accountId = jobAcc.GameAccountId,
-                                            jobName = job.JobName,
-                                            accountName = account.GameAccountName,
-                                            value = jobAcc.Value,
+                                            jobAcc.JobCardId,
+                                            jobAcc.GameAccountId,
+                                            job.JobCardName,
+                                            account.GameAccountName,
+                                            jobAcc.Value,
                                         }).ToListAsync();
 
                 if (searchBy.Equals("jobCard"))
                 {
-                    allJobCard = allJobCard.Where(i => i.jobCardId == id).ToList();
+                    allJobCard = allJobCard.Where(i => i.JobCardId == id).ToList();
                 }
                 else if (searchBy.Equals("account"))
                 {
-                    allJobCard = allJobCard.Where(i => i.accountId == id).ToList();
+                    allJobCard = allJobCard.Where(i => i.GameAccountId == id).ToList();
                 }
                 else
                 {

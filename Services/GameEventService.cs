@@ -26,10 +26,10 @@ namespace MobileBasedCashFlowAPI.Services
                 var gameEvent = await (from evt in _context.GameEvents
                                        select new
                                        {
-                                           gameEventId = evt.EventId,
-                                           dreamName = evt.EventName,
-                                           description = evt.IsEventTile,
-                                           createAt = evt.CreateAt,
+                                           evt.EventId,
+                                           evt.EventName,
+                                           evt.IsEventTile,
+                                           evt.CreateAt,
                                        }).ToListAsync();
                 return gameEvent;
             }
@@ -46,12 +46,12 @@ namespace MobileBasedCashFlowAPI.Services
                 var gameEvent = await _context.GameEvents
                     .Select(evt => new
                     {
-                        gameEventId = evt.EventId,
-                        dreamName = evt.EventName,
-                        description = evt.IsEventTile,
-                        createAt = evt.CreateAt,
+                        evt.EventId,
+                        evt.EventName,
+                        evt.IsEventTile,
+                        evt.CreateAt,
                     })
-                    .Where(d => d.gameEventId == id)
+                    .Where(d => d.EventId == id)
                     .FirstOrDefaultAsync();
                 return gameEvent;
 

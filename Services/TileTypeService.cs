@@ -24,9 +24,9 @@ namespace MobileBasedCashFlowAPI.Services
                 var tiletype = await (from t in _context.TileTypes
                                       select new
                                       {
-                                          tileTypeId = t.TileTypeId,
-                                          tileTypeName = t.TileTypeName,
-                                          createAt = t.CreateAt,
+                                          t.TileTypeId,
+                                          t.TileTypeName,
+                                          t.CreateAt,
                                       }).ToListAsync();
                 return tiletype;
             }
@@ -42,11 +42,11 @@ namespace MobileBasedCashFlowAPI.Services
                 var board = await _context.TileTypes
                     .Select(t => new
                     {
-                        tileTypeId = t.TileTypeId,
-                        tileTypeName = t.TileTypeName,
-                        createAt = t.CreateAt,
+                        t.TileTypeId,
+                        t.TileTypeName,
+                        t.CreateAt,
                     })
-                    .Where(t => t.tileTypeId == id)
+                    .Where(t => t.TileTypeId == id)
                     .FirstOrDefaultAsync();
                 return board;
             }

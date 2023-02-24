@@ -24,12 +24,12 @@ namespace MobileBasedCashFlowAPI.Services
                 var board = await (from b in _context.Boards
                                    select new
                                    {
-                                       boardId = b.BoardId,
-                                       amountFatTile = b.AmountFatTile,
-                                       amountRateTile = b.AmountRatTile,
-                                       dementionBoard = b.DementionBoard,
-                                       radiusRatTile = b.RadiusRatTile,
-                                       createAt = b.CreateAt,
+                                       b.BoardId,
+                                       b.AmountFatTile,
+                                       b.AmountRatTile,
+                                       b.DementionBoard,
+                                       b.RadiusRatTile,
+                                       b.CreateAt,
                                    }).ToListAsync();
                 return board;
             }
@@ -46,14 +46,14 @@ namespace MobileBasedCashFlowAPI.Services
                 var board = await _context.Boards
                     .Select(b => new
                     {
-                        boardId = b.BoardId,
-                        amountFatTile = b.AmountFatTile,
-                        amountRateTile = b.AmountRatTile,
-                        dementionBoard = b.DementionBoard,
-                        radiusRatTile = b.RadiusRatTile,
-                        createAt = b.CreateAt,
+                        b.BoardId,
+                        b.AmountFatTile,
+                        b.AmountRatTile,
+                        b.DementionBoard,
+                        b.RadiusRatTile,
+                        b.CreateAt,
                     })
-                    .Where(b => b.boardId == id)
+                    .Where(b => b.BoardId == id)
                     .FirstOrDefaultAsync();
                 if (board != null)
                 {
@@ -73,7 +73,7 @@ namespace MobileBasedCashFlowAPI.Services
             try
             {
                 var gameId = await (from game in _context.Games
-                                    where game.GameVersion == board.GameVersion
+                                    where game.GameVersion == "Ver_1"
                                     select new { gameId = game.GameId }).FirstOrDefaultAsync();
 
                 if (gameId == null)

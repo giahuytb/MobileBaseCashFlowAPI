@@ -10,8 +10,6 @@ namespace MobileBasedCashFlowAPI.Services
     public class GameAccountService : IGameAccountService
     {
         public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public GameAccountService(MobileBasedCashFlowGameContext context)
@@ -28,10 +26,10 @@ namespace MobileBasedCashFlowAPI.Services
                                          on acc.AccountTypeId equals accType.AccountTypeId
                                          select new
                                          {
-                                             gameAccountId = acc.GameAccountId,
-                                             gameAccountName = acc.GameAccountName,
-                                             gameAccountTypeName = accType.AccountTypeName,
-                                             createAt = acc.CreateAt,
+                                             acc.GameAccountId,
+                                             acc.GameAccountName,
+                                             accType.AccountTypeName,
+                                             acc.CreateAt,
                                          }).ToListAsync();
                 return gameAccount;
             }
@@ -50,12 +48,12 @@ namespace MobileBasedCashFlowAPI.Services
                                          on acc.AccountTypeId equals accType.AccountTypeId
                                          select new
                                          {
-                                             gameAccountId = acc.GameAccountId,
-                                             gameAccountName = acc.GameAccountName,
-                                             gameAccountTypeName = accType.AccountTypeName,
-                                             createAt = acc.CreateAt,
+                                             acc.GameAccountId,
+                                             acc.GameAccountName,
+                                             accType.AccountTypeName,
+                                             acc.CreateAt,
                                          })
-                                         .Where(a => a.gameAccountId == id)
+                                         .Where(a => a.GameAccountId == id)
                                          .FirstOrDefaultAsync();
                 return gameAccount;
             }
