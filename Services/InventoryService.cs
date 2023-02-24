@@ -26,9 +26,9 @@ namespace MobileBasedCashFlowAPI.Services
                                        join item in _context.Items on invent.ItemId equals item.ItemId
                                        select new
                                        {
-                                           userName = user.UserName,
-                                           itemName = item.ItemName,
-                                           createAt = invent.CreateAt,
+                                           user.UserName,
+                                           item.ItemName,
+                                           invent.CreateAt,
                                        }).ToListAsync();
                 return inventory;
             }
@@ -48,20 +48,20 @@ namespace MobileBasedCashFlowAPI.Services
                                           join item in _context.Items on invent.ItemId equals item.ItemId
                                           select new
                                           {
-                                              userId = user.UserId,
-                                              userName = user.UserName,
-                                              itemId = invent.ItemId,
-                                              itemName = item.ItemName,
-                                              createAt = invent.CreateAt,
+                                              user.UserId,
+                                              user.UserName,
+                                              invent.ItemId,
+                                              item.ItemName,
+                                              invent.CreateAt,
                                           }).ToListAsync();
 
                 if (searchBy.Equals("user"))
                 {
-                    AllInventory = AllInventory.Where(i => i.userId == id).ToList();
+                    AllInventory = AllInventory.Where(i => i.UserId == id).ToList();
                 }
                 else if (searchBy.Equals("item"))
                 {
-                    AllInventory = AllInventory.Where(i => i.itemId == id).ToList();
+                    AllInventory = AllInventory.Where(i => i.ItemId == id).ToList();
                 }
                 else
                 {

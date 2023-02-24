@@ -12,7 +12,7 @@ namespace MobileBasedCashFlowAPI.Models
 
         public string MatchId { get; set; } = null!;
         public int MaxNumberPlayer { get; set; }
-        public string? WinerId { get; set; }
+        public string? WinnerId { get; set; }
         public string? HostId { get; set; }
         public string? LastHostId { get; set; }
         public DateTime StartTime { get; set; }
@@ -23,7 +23,7 @@ namespace MobileBasedCashFlowAPI.Models
         public virtual Game? Game { get; set; }
         public virtual UserAccount? Host { get; set; }
         public virtual UserAccount? LastHost { get; set; }
-        public virtual UserAccount? Winer { get; set; }
+        public virtual UserAccount? Winner { get; set; }
         public virtual ICollection<Participant> Participants { get; set; }
     }
 }

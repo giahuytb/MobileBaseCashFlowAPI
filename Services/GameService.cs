@@ -24,10 +24,10 @@ namespace MobileBasedCashFlowAPI.Services
                 var game = await (from g in _context.Games
                                   select new
                                   {
-                                      gameId = g.GameId,
-                                      gameVersion = g.GameVersion,
-                                      backgroundImageUrl = g.BackgroundImageUrl,
-                                      createAt = g.CreateAt,
+                                      g.GameId,
+                                      g.GameVersion,
+                                      g.BackgroundImageUrl,
+                                      g.CreateAt,
                                   }).ToListAsync();
                 return game;
             }
@@ -43,12 +43,12 @@ namespace MobileBasedCashFlowAPI.Services
                 var game = await _context.Games
                     .Select(g => new
                     {
-                        gameId = g.GameId,
-                        gameVersion = g.GameVersion,
-                        backgroundImageUrl = g.BackgroundImageUrl,
-                        createAt = g.CreateAt,
+                        g.GameId,
+                        g.GameVersion,
+                        g.BackgroundImageUrl,
+                        g.CreateAt,
                     })
-                    .Where(b => b.gameId == id)
+                    .Where(b => b.GameId == id)
                     .FirstOrDefaultAsync();
                 return game;
             }

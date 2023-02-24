@@ -1,31 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections;
-using System.Security.Claims;
-
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.Services;
+using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BoardsController : ControllerBase
+    public class GameMatchsController : ControllerBase
     {
-        private readonly IBoardService _boardService;
+        private readonly IGameMatchService _gameMatchService;
 
-        public BoardsController(IBoardService boardService)
+        public GameMatchsController(IGameMatchService gameMatchService)
         {
-            _boardService = boardService;
+            _gameMatchService = gameMatchService;
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("board")]
+        [HttpGet("match")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
             {
-                var result = await _boardService.GetAsync();
+                var result = await _gameMatchService.GetAsync();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -35,12 +36,12 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("board/{id}")]
-        public async Task<ActionResult<Board>> GetById(string id)
+        [HttpGet("match/{id}")]
+        public async Task<ActionResult<GameMatch>> GetById(string id)
         {
             try
             {
-                var result = await _boardService.GetAsync(id);
+                var result = await _gameMatchService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);
@@ -54,8 +55,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("board")]
-        public async Task<ActionResult> PostBoard(BoardRequest board)
+        [HttpPost("match")]
+        public async Task<ActionResult> PostBoard(GameMatchRequest request)
         {
             try
             {
@@ -65,7 +66,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _boardService.CreateAsync(userId, board);
+                var result = await _gameMatchService.CreateAsync(userId, request);
 
                 return Ok(result);
             }
@@ -76,8 +77,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("board/{id}")]
-        public async Task<ActionResult> UpdateBoard(string id, BoardRequest board)
+        [HttpPut("match/{id}")]
+        public async Task<ActionResult> UpdateBoard(string id, GameMatchRequest request)
         {
             try
             {
@@ -86,7 +87,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _boardService.UpdateAsync(id, userId, board);
+                var result = await _gameMatchService.UpdateAsync(id, userId, request);
                 if (result != "success")
                 {
                     return BadRequest(result);
@@ -99,12 +100,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("board/{id}")]
+        [HttpDelete("match/{id}")]
         public async Task<ActionResult> DeleteBoard(string id)
         {
             try
             {
-                var result = await _boardService.DeleteAsync(id);
+                var result = await _gameMatchService.DeleteAsync(id);
                 if (result != "success")
                 {
                     return BadRequest(result);
@@ -116,6 +117,5 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
     }
 }

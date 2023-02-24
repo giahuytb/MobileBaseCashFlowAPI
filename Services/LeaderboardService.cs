@@ -26,12 +26,12 @@ namespace MobileBasedCashFlowAPI.Services
                                          on l.GameId equals game.GameId
                                          select new
                                          {
-                                             leaderboardId = l.LeaderBoardId,
-                                             timePeriod = l.TimeFeriod,
-                                             timePeriodFrom = l.TimePeriodFrom,
-                                             score = l.Score,
-                                             gameVersion = game.GameVersion,
-                                             createAt = l.CreateAt,
+                                             l.LeaderBoardId,
+                                             l.TimePeriod,
+                                             l.TimePeriodFrom,
+                                             l.Score,
+                                             game.GameVersion,
+                                             l.CreateAt,
                                          }).ToListAsync();
                 return leaderboard;
             }
@@ -51,12 +51,12 @@ namespace MobileBasedCashFlowAPI.Services
                                          where l.LeaderBoardId == id
                                          select new
                                          {
-                                             leaderboardId = l.LeaderBoardId,
-                                             timePeriod = l.TimeFeriod,
-                                             timePeriodFrom = l.TimePeriodFrom,
-                                             score = l.Score,
-                                             gameVersion = game.GameVersion,
-                                             createAt = l.CreateAt,
+                                             l.LeaderBoardId,
+                                             l.TimePeriod,
+                                             l.TimePeriodFrom,
+                                             l.Score,
+                                             game.GameVersion,
+                                             l.CreateAt,
                                          }).FirstOrDefaultAsync();
                 return leaderboard;
             }
@@ -81,7 +81,7 @@ namespace MobileBasedCashFlowAPI.Services
                 var leaderboard1 = new Leaderboard()
                 {
                     LeaderBoardId = Guid.NewGuid().ToString(),
-                    TimeFeriod = leaderboard.TimePeriod,
+                    TimePeriod = leaderboard.TimePeriod,
                     TimePeriodFrom = leaderboard.TimePeriodFrom,
                     Score = leaderboard.Score,
                     GameId = gameId.gameId,
@@ -114,7 +114,7 @@ namespace MobileBasedCashFlowAPI.Services
                     {
                         return "can not find this game version";
                     }
-                    oldLeaderboard.TimeFeriod = leaderboard.TimePeriod;
+                    oldLeaderboard.TimePeriod = leaderboard.TimePeriod;
                     oldLeaderboard.TimePeriodFrom = leaderboard.TimePeriodFrom;
                     oldLeaderboard.Score = leaderboard.Score;
                     oldLeaderboard.GameId = gameId.gameId;
@@ -143,7 +143,5 @@ namespace MobileBasedCashFlowAPI.Services
 
             return SUCCESS;
         }
-
-
     }
 }

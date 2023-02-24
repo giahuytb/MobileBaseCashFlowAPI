@@ -6,7 +6,7 @@ namespace MobileBasedCashFlowAPI.Models
     public partial class Leaderboard
     {
         public string LeaderBoardId { get; set; } = null!;
-        public byte TimeFeriod { get; set; }
+        public byte TimePeriod { get; set; }
         public DateTime TimePeriodFrom { get; set; }
         public int Score { get; set; }
         public DateTime CreateAt { get; set; }

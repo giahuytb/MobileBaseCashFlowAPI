@@ -10,7 +10,6 @@
         public string TradingRange { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string EventImageUrl { get; set; } = null!;
-        public string GameVersion { get; set; } = null!;
         public string GameEventName { get; set; } = null!;
     }
 }

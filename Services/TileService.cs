@@ -27,13 +27,13 @@ namespace MobileBasedCashFlowAPI.Services
                                    join tileType in _context.TileTypes on tile.TileTypeId equals tileType.TileTypeId
                                    select new
                                    {
-                                       tileId = tile.TileId,
-                                       isRatRace = tile.IsRatRace,
-                                       createAt = tile.CreateAt,
-                                       board = board.DementionBoard,
-                                       eventName = evt.EventName,
-                                       dreamName = dream.DreamName,
-                                       tileTypeName = tileType.TileTypeName,
+                                       tile.TileId,
+                                       tile.IsRatRace,
+                                       tile.CreateAt,
+                                       board.DementionBoard,
+                                       evt.EventName,
+                                       dream.DreamName,
+                                       tileType.TileTypeName,
                                    }).ToListAsync();
                 return tiles;
             }
@@ -54,14 +54,14 @@ namespace MobileBasedCashFlowAPI.Services
                                    join tileType in _context.TileTypes on tile.TileTypeId equals tileType.TileTypeId
                                    select new
                                    {
-                                       tileId = tile.TileId,
-                                       isRatRace = tile.IsRatRace,
-                                       createAt = tile.CreateAt,
-                                       board = board.DementionBoard,
-                                       eventName = evt.EventName,
-                                       dreamName = dream.DreamName,
-                                       tileTypeName = tileType.TileTypeName,
-                                   }).Where(tile => tile.tileId == id).FirstOrDefaultAsync();
+                                       tile.TileId,
+                                       tile.IsRatRace,
+                                       tile.CreateAt,
+                                       board.DementionBoard,
+                                       evt.EventName,
+                                       dream.DreamName,
+                                       tileType.TileTypeName,
+                                   }).Where(tile => tile.TileId == id).FirstOrDefaultAsync();
                 return tile1;
             }
             catch (Exception ex)

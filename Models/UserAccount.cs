@@ -13,7 +13,7 @@ namespace MobileBasedCashFlowAPI.Models
             FriendshipStatuses = new HashSet<FriendshipStatus>();
             GameMatchHosts = new HashSet<GameMatch>();
             GameMatchLastHosts = new HashSet<GameMatch>();
-            GameMatchWiners = new HashSet<GameMatch>();
+            GameMatchWinners = new HashSet<GameMatch>();
             Inventories = new HashSet<Inventory>();
             Leaderboards = new HashSet<Leaderboard>();
             Participants = new HashSet<Participant>();
@@ -46,7 +46,7 @@ namespace MobileBasedCashFlowAPI.Models
         public virtual ICollection<FriendshipStatus> FriendshipStatuses { get; set; }
         public virtual ICollection<GameMatch> GameMatchHosts { get; set; }
         public virtual ICollection<GameMatch> GameMatchLastHosts { get; set; }
-        public virtual ICollection<GameMatch> GameMatchWiners { get; set; }
+        public virtual ICollection<GameMatch> GameMatchWinners { get; set; }
         public virtual ICollection<Inventory> Inventories { get; set; }
         public virtual ICollection<Leaderboard> Leaderboards { get; set; }
         public virtual ICollection<Participant> Participants { get; set; }

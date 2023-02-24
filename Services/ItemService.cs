@@ -24,13 +24,13 @@ namespace MobileBasedCashFlowAPI.Services
             var item = await (from i in _context.Items
                               select new
                               {
-                                  itemId = i.ItemId,
-                                  itemName = i.ItemName,
-                                  itemImageUrl = i.ItemImageUrl,
-                                  itemPrice = i.ItemPrice,
-                                  description = i.Description,
-                                  isInShop = i.IsInShop,
-                                  createBy = i.CreateBy,
+                                  i.ItemId,
+                                  i.ItemName,
+                                  i.ItemImageUrl,
+                                  i.ItemPrice,
+                                  i.Description,
+                                  i.IsInShop,
+                                  i.CreateBy,
                               }).ToListAsync();
             return item;
         }
@@ -39,13 +39,14 @@ namespace MobileBasedCashFlowAPI.Services
         {
             var item = await _context.Items.Select(i => new
             {
-                itemId = i.ItemId,
-                itemName = i.ItemName,
-                itemImageUrl = i.ItemImageUrl,
-                itemPrice = i.ItemPrice,
-                description = i.Description,
-                isInShop = i.IsInShop,
-            }).Where(i => i.itemId == id).FirstOrDefaultAsync();
+                i.ItemId,
+                i.ItemName,
+                i.ItemImageUrl,
+                i.ItemPrice,
+                i.Description,
+                i.IsInShop,
+                i.CreateBy,
+            }).Where(i => i.ItemId == id).FirstOrDefaultAsync();
             return item;
         }
 

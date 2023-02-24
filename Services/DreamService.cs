@@ -24,12 +24,12 @@ namespace MobileBasedCashFlowAPI.Services
                 var board = await (from d in _context.Dreams
                                    select new
                                    {
-                                       dreamId = d.DreamId,
-                                       dreamName = d.DreamName,
-                                       description = d.Description,
-                                       cost = d.Cost,
-                                       dreamImageUrl = d.DreamImageUrl,
-                                       createAt = d.CreateAt,
+                                       d.DreamId,
+                                       d.DreamName,
+                                       d.Description,
+                                       d.Cost,
+                                       d.DreamImageUrl,
+                                       d.CreateAt,
                                    }).ToListAsync();
                 return board;
             }
@@ -45,14 +45,14 @@ namespace MobileBasedCashFlowAPI.Services
                 var board = await _context.Dreams
                     .Select(b => new
                     {
-                        dreamId = b.DreamId,
-                        dreamName = b.DreamName,
-                        description = b.Description,
-                        cost = b.Cost,
-                        dreamImageUrl = b.DreamImageUrl,
-                        createAt = b.CreateAt,
+                        b.DreamId,
+                        b.DreamName,
+                        b.Description,
+                        b.Cost,
+                        b.DreamImageUrl,
+                        b.CreateAt,
                     })
-                    .Where(d => d.dreamId == id)
+                    .Where(d => d.DreamId == id)
                     .FirstOrDefaultAsync();
                 if (board != null)
                 {

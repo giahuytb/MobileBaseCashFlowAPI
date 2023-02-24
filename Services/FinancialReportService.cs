@@ -26,12 +26,12 @@ namespace MobileBasedCashFlowAPI.Services
                                              on finan.JobCardId equals job.JobCardId
                                              select new
                                              {
-                                                 financialReportId = finan.FinacialId,
-                                                 childrenAmount = finan.ChildrenAmount,
-                                                 incomePerMonth = finan.IncomePerMonth,
-                                                 expensePerMonth = finan.ExpensePerMonth,
-                                                 jobCard = job.JobName,
-                                                 createAt = finan.CreateAt,
+                                                 finan.FinacialId,
+                                                 finan.ChildrenAmount,
+                                                 finan.IncomePerMonth,
+                                                 finan.ExpensePerMonth,
+                                                 job.JobCardName,
+                                                 finan.CreateAt,
                                              }).ToListAsync();
                 return financialReport;
             }
@@ -48,14 +48,14 @@ namespace MobileBasedCashFlowAPI.Services
                     .Join(_context.JobCards, finan => finan.JobCardId, job => job.JobCardId, (finan, job) => new { finan, job })
                     .Select(m => new
                     {
-                        financialReportId = m.finan.FinacialId,
-                        childrenAmount = m.finan.ChildrenAmount,
-                        incomePerMonth = m.finan.IncomePerMonth,
-                        expensePerMonth = m.finan.ExpensePerMonth,
-                        jobCard = m.job.JobName,
-                        createAt = m.finan.CreateAt,
+                        m.finan.FinacialId,
+                        m.finan.ChildrenAmount,
+                        m.finan.IncomePerMonth,
+                        m.finan.ExpensePerMonth,
+                        m.job.JobCardName,
+                        m.finan.CreateAt,
                     })
-                    .Where(i => i.financialReportId == id)
+                    .Where(i => i.FinacialId == id)
                     .FirstOrDefaultAsync();
                 return financialReport;
             }

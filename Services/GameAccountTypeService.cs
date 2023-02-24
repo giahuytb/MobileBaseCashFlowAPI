@@ -23,9 +23,9 @@ namespace MobileBasedCashFlowAPI.Services
                 var accountType = await (from accType in _context.GameAccountTypes
                                          select new
                                          {
-                                             accountTypeId = accType.AccountTypeId,
-                                             accountTypeName = accType.AccountTypeName,
-                                             createAt = accType.CreateAt,
+                                             accType.AccountTypeId,
+                                             accType.AccountTypeName,
+                                             accType.CreateAt,
                                          }).ToListAsync();
                 return accountType;
             }
@@ -42,11 +42,11 @@ namespace MobileBasedCashFlowAPI.Services
                 var accountType = await _context.GameAccountTypes
                     .Select(accType => new
                     {
-                        accountTypeId = accType.AccountTypeId,
-                        accountTypeName = accType.AccountTypeName,
-                        createAt = accType.CreateAt,
+                        accType.AccountTypeId,
+                        accType.AccountTypeName,
+                        accType.CreateAt,
                     })
-                    .Where(i => i.accountTypeId == id)
+                    .Where(i => i.AccountTypeId == id)
                     .FirstOrDefaultAsync();
                 return accountType;
             }
