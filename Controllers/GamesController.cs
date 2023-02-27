@@ -60,12 +60,6 @@ namespace MobileBasedCashFlowAPI.Controllers
         {
             try
             {
-                // get the current user logging in system
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return BadRequest("User id not Found, please login");
-                }
                 var result = await _gameService.CreateAsync(game);
 
                 return Ok(result);

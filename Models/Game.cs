@@ -7,8 +7,6 @@ namespace MobileBasedCashFlowAPI.Models
     {
         public Game()
         {
-            Boards = new HashSet<Board>();
-            EventCards = new HashSet<EventCard>();
             GameMatches = new HashSet<GameMatch>();
             Leaderboards = new HashSet<Leaderboard>();
             UserAccounts = new HashSet<UserAccount>();
@@ -20,8 +18,6 @@ namespace MobileBasedCashFlowAPI.Models
         public DateTime CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
 
-        public virtual ICollection<Board> Boards { get; set; }
-        public virtual ICollection<EventCard> EventCards { get; set; }
         public virtual ICollection<GameMatch> GameMatches { get; set; }
         public virtual ICollection<Leaderboard> Leaderboards { get; set; }
         public virtual ICollection<UserAccount> UserAccounts { get; set; }

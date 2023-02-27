@@ -56,7 +56,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost("match")]
-        public async Task<ActionResult> PostBoard(GameMatchRequest request)
+        public async Task<ActionResult> PostMatch(GameMatchRequest request)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("match/{id}")]
-        public async Task<ActionResult> UpdateBoard(string id, GameMatchRequest request)
+        public async Task<ActionResult> UpdateMatch(string id, GameMatchRequest request)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("match/{id}")]
-        public async Task<ActionResult> DeleteBoard(string id)
+        public async Task<ActionResult> DeleteMatch(string id)
         {
             try
             {
@@ -117,5 +117,6 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }

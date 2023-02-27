@@ -63,7 +63,7 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 var check = await _context.Games.Where(g => g.GameVersion == gameRequest.GameVersion).FirstOrDefaultAsync();
 
-                if (check == null)
+                if (check != null)
                 {
                     return "This game version already Exist";
                 }
