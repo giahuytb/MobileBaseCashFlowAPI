@@ -16,7 +16,7 @@ namespace MobileBasedCashFlowAPI.Models
         public string? HostId { get; set; }
         public string? LastHostId { get; set; }
         public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTime? EndTime { get; set; }
         public int TotalRound { get; set; }
         public string? GameId { get; set; }
 

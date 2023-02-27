@@ -14,12 +14,12 @@ namespace MobileBasedCashFlowAPI.Models
         public string ItemName { get; set; } = null!;
         public string ItemImageUrl { get; set; } = null!;
         public double ItemPrice { get; set; }
+        public string Description { get; set; } = null!;
         public bool IsInShop { get; set; }
         public DateTime CreateAt { get; set; }
         public string CreateBy { get; set; } = null!;
         public DateTime? UpdateAt { get; set; }
         public string? UpdateBy { get; set; }
-        public string? Description { get; set; }
 
         public virtual ICollection<Inventory> Inventories { get; set; }
     }
