@@ -1,4 +1,6 @@
-﻿using MobileBasedCashFlowAPI.MongoModels;
+﻿
+using MobileBasedCashFlowAPI.MongoDTO;
+using MobileBasedCashFlowAPI.MongoModels;
 
 namespace MobileBasedCashFlowAPI.IMongoServices
 {
@@ -6,8 +8,8 @@ namespace MobileBasedCashFlowAPI.IMongoServices
     {
         public Task<List<Dream>> GetAsync();
         public Task<Dream?> GetAsync(string id);
-        public Task CreateAsync(Dream dream);
-        public Task UpdateAsync(string id, Dream dream);
-        public Task RemoveAsync(string id);
+        public Task<string> CreateAsync(DreamRequest request);
+        public Task<string> UpdateAsync(string id, DreamRequest request);
+        public Task<string> RemoveAsync(string id);
     }
 }

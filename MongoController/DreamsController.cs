@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -9,41 +10,48 @@ namespace MobileBasedCashFlowAPI.MongoController
     [ApiController]
     public class DreamsController : ControllerBase
     {
-        private readonly IDreamService _mgDreamService;
-        public DreamsController(IDreamService mgDreamService)
+        private readonly IDreamService _dreamService;
+        public DreamsController(IDreamService dreamService)
         {
-            _mgDreamService = mgDreamService;
+            _dreamService = dreamService;
         }
 
         [HttpGet("dream")]
         public async Task<ActionResult<List<Dream?>>> getAll()
         {
-            var dream = await _mgDreamService.GetAsync();
-            if (dream != null)
+            var result = await _dreamService.GetAsync();
+            if (result != null)
             {
-                return Ok(dream);
+                return Ok(result);
             }
-            return NotFound("list is empty");
+            return NotFound("List is empty");
         }
 
         [HttpGet("dream/{id}")]
-        public async Task<ActionResult<List<Dream>>> GetById(string id)
+        public async Task<ActionResult<Dream>> GetById(string id)
         {
-            var dream = await _mgDreamService.GetAsync(id);
-            if (dream != null)
+            var result = await _dreamService.GetAsync(id);
+            if (result != null)
             {
-                return Ok(dream);
+                return Ok(result);
             }
-            return NotFound("can not find this dream");
+            return NotFound("Can not found this dream");
         }
 
         [HttpPost("dream")]
-        public async Task<ActionResult<List<Dream>>> CreateDream(Dream dream)
+        public async Task<ActionResult> CreateDream(DreamRequest request)
         {
             try
             {
-                await _mgDreamService.CreateAsync(dream);
-                return CreatedAtAction(nameof(GetById), new { Id = dream.id }, dream);
+                var result = await _dreamService.CreateAsync(request);
+                if (result == "success")
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
             }
             catch (Exception ex)
             {
@@ -52,17 +60,17 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPut("dream/{id}")]
-        public async Task<ActionResult<List<Dream>>> UpdateDream(string id, Dream dream)
+        public async Task<ActionResult<List<Dream>>> UpdateDream(string id, DreamRequest request)
         {
             try
             {
-                var dream1 = await _mgDreamService.GetAsync(id);
-                if (dream1 is null)
+                var result = await _dreamService.GetAsync(id);
+                if (result is null)
                 {
-                    return NotFound("can not find this dream");
+                    return NotFound(result);
                 }
-                await _mgDreamService.UpdateAsync(id, dream);
-                return Ok("update success");
+                await _dreamService.UpdateAsync(id, request);
+                return Ok(result);
             }
             catch (Exception ex)
             {

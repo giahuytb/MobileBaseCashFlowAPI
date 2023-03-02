@@ -1,13 +1,14 @@
-﻿using MobileBasedCashFlowAPI.MongoModels;
+﻿using MobileBasedCashFlowAPI.MongoDTO;
+using MobileBasedCashFlowAPI.MongoModels;
 
 namespace MobileBasedCashFlowAPI.IMongoServices
 {
     public interface IJobCardService
     {
         public Task<List<JobCard>> GetAsync();
-        public Task<JobCard?> GetAsync(string id);
-        public Task CreateAsync(JobCard jobCard);
-        public Task UpdateAsync(string id, JobCard jobCard);
-        public Task RemoveAsync(string id);
+        public Task<object?> GetAsync(string id);
+        public Task<string> CreateAsync(JobCardRequest request);
+        public Task<string> UpdateAsync(string id, JobCardRequest request);
+        public Task<string> RemoveAsync(string id);
     }
 }

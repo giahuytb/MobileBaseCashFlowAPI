@@ -69,6 +69,7 @@ builder.Services.AddTransient<ITileService, TileService>();
 builder.Services.AddTransient<IJobCardService, JobCardService>();
 builder.Services.AddTransient<IDreamService, DreamService>();
 builder.Services.AddTransient<IFinancialReportService, FinancialReportService>();
+builder.Services.AddTransient<IGameAccountService, GameAccountService>();
 
 // Config Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

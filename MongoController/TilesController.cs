@@ -46,7 +46,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             try
             {
                 await _tileService.CreateAsync(tile);
-                return CreatedAtAction(nameof(GetById), new { id = tile._id }, tile);
+                return CreatedAtAction(nameof(GetById), new { id = tile.id }, tile);
             }
             catch (Exception ex)
             {
