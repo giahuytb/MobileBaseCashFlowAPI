@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoModels;
@@ -46,7 +45,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             try
             {
                 await _tileService.CreateAsync(tile);
-                return CreatedAtAction(nameof(GetById), new { id = tile._id }, tile);
+                return CreatedAtAction(nameof(GetById), new { id = tile.id }, tile);
             }
             catch (Exception ex)
             {

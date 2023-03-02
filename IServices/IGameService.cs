@@ -7,8 +7,8 @@ namespace MobileBasedCashFlowAPI.IServices
     {
         public Task<IEnumerable> GetAsync();
         public Task<object?> GetAsync(string id);
-        public Task<string> CreateAsync(GameRequest gameRequest);
-        public Task<string> UpdateAsync(string gameId, GameRequest gameRequest);
+        public Task<string> CreateAsync(GameRequest request);
+        public Task<string> UpdateAsync(string gameId, GameRequest request);
         public Task<string> DeleteAsync(string gameId);
     }
 }

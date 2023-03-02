@@ -26,7 +26,11 @@ namespace MobileBasedCashFlowAPI.Controllers
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _itemService.GetAsync();
-            return Ok(result);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("List is empty");
         }
 
         [HttpGet("item/{id}")]
@@ -40,7 +44,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return Ok(result);
                 }
-                return NotFound();
+                return NotFound("Can not found this item");
             }
             catch (Exception ex)
             {

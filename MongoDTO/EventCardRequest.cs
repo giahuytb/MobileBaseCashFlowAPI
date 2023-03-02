@@ -1,13 +1,7 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-
-namespace MobileBasedCashFlowAPI.MongoModels
+﻿namespace MobileBasedCashFlowAPI.MongoDTO
 {
-    public class EventCard
+    public class EventCardRequest
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string? id { get; set; }
         public string Event_name { get; set; } = string.Empty;
         public string Image_url { get; set; } = string.Empty;
         public string Account_Name { get; set; } = string.Empty;

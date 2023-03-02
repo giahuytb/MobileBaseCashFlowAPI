@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
-using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Services;
 using System.Collections;
 using System.Security.Claims;
@@ -11,22 +10,22 @@ namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GamesController : ControllerBase
+    public class FriendShipsController : ControllerBase
     {
-        private readonly IGameService _gameService;
+        private readonly IFriendShipService _friendShipService;
 
-        public GamesController(IGameService gameService)
+        public FriendShipsController(IFriendShipService friendShipService)
         {
-            _gameService = gameService;
+            _friendShipService = friendShipService;
         }
 
+        [HttpGet("friend-ship")]
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("game")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
             {
-                var result = await _gameService.GetAsync();
+                var result = await _friendShipService.GetAsync();
                 if (result != null)
                 {
                     return Ok(result);
@@ -39,18 +38,18 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
+        [HttpGet("friend-ship/{requester}&{addresee}")]
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("game/{id}")]
-        public async Task<ActionResult<Game>> GetById(string id)
+        public async Task<ActionResult<IEnumerable>> GetFriendShipById(string requester, string addresee)
         {
             try
             {
-                var result = await _gameService.GetAsync(id);
+                var result = await _friendShipService.GetAsync(requester, addresee);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find this game");
+                return NotFound("List is empty");
             }
             catch (Exception ex)
             {
@@ -59,33 +58,19 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("game")]
-        public async Task<ActionResult> PostGame(GameRequest game)
+        [HttpPost("friend-ship")]
+        public async Task<ActionResult> PostFriendShip(string addressee)
         {
             try
             {
-                var result = await _gameService.CreateAsync(game);
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("game/{id}")]
-        public async Task<ActionResult> UpdateGame(string id, GameRequest game)
-        {
-            try
-            {
+                // get the current user logging in system
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _gameService.UpdateAsync(id, game);
+                var result = await _friendShipService.AddFriendShip(userId, addressee);
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -94,18 +79,6 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("game/{id}")]
-        public async Task<ActionResult> DeleteGame(string id)
-        {
-            try
-            {
-                var result = await _gameService.DeleteAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+
     }
 }

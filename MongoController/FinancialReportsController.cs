@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -17,7 +18,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
 
-        [HttpGet("financial")]
+        [HttpGet("financial-report")]
         public async Task<ActionResult<IEnumerable<FinancialReport>>> GetAll()
         {
             try
@@ -35,8 +36,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpGet("financial/{id}")]
-
+        [HttpGet("financial-report/{id}")]
         public async Task<ActionResult<FinancialReport>> GetById(string id)
         {
             var financial = await _financialReportService.GetAsync(id);
@@ -47,13 +47,13 @@ namespace MobileBasedCashFlowAPI.MongoController
             return Ok(financial);
         }
 
-        [HttpPost("financial")]
-        public async Task<ActionResult> PostFinacialReport(FinancialReport financialReport)
+        [HttpPost("financial-report")]
+        public async Task<ActionResult> PostFinacialReport(FinancialRequest request)
         {
             try
             {
-                await _financialReportService.CreateAsync(financialReport);
-                return CreatedAtAction(nameof(GetById), new { id = financialReport._id }, financialReport);
+                var result = await _financialReportService.GenerateAsync(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -61,8 +61,8 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpPut("financial/{id}")]
-        public async Task<ActionResult> UpdateFinacialReport(string id, int childrenAmount, GameAccount gameAccount)
+        [HttpPut("financial-report/{id}")]
+        public async Task<ActionResult> UpdateFinacialReport(string id, int childrenAmount, GameAccountRequest request)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace MobileBasedCashFlowAPI.MongoController
                 {
                     return NotFound("can not find this financial report");
                 }
-                await _financialReportService.UpdateAsync(id, childrenAmount, gameAccount);
+                await _financialReportService.UpdateAsync(id, childrenAmount, request);
                 return Ok("update success");
             }
             catch (Exception ex)

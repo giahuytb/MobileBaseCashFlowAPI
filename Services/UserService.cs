@@ -4,12 +4,13 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
+using System.Collections;
 
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.DTO;
-using System.Collections;
+
 
 namespace MobileBasedCashFlowAPI.Services
 {
@@ -121,7 +122,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
             else if (!ValidateInput.isPhone(request.Phone))
             {
-                return "You need to enter the the correct phone with 10 number";
+                return "Your phone number is not correct";
             }
             else if (request.ConfirmPassword.Equals(""))
             {

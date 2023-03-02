@@ -27,7 +27,11 @@ namespace MobileBasedCashFlowAPI.Controllers
             try
             {
                 var result = await _gameMatchService.GetAsync();
-                return Ok(result);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return NotFound("List is empty");
             }
             catch (Exception ex)
             {
