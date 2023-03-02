@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -15,7 +16,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _eventCardService = eventCardService;
         }
 
-        [HttpGet("event")]
+        [HttpGet("event-card")]
         public async Task<ActionResult<List<EventCard>>> GetAll()
         {
             var eventCard = await _eventCardService.GetAsync();
@@ -26,11 +27,10 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet("event/{id:length(24)}")]
+        [HttpGet("event-card/{id:length(24)}")]
         public async Task<ActionResult<EventCard>> GetById(string id)
         {
             var eventCard = await _eventCardService.GetAsync(id);
-
             if (eventCard != null)
             {
                 return Ok(eventCard);
@@ -38,13 +38,17 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("can not find this event card");
         }
 
-        [HttpPost("event")]
-        public async Task<IActionResult> PostEvent(EventCard eventCard)
+        [HttpPost("event-card")]
+        public async Task<IActionResult> PostEvent(EventCardRequest request)
         {
             try
             {
-                await _eventCardService.CreateAsync(eventCard);
-                return CreatedAtAction(nameof(GetById), new { id = eventCard._id }, eventCard);
+                var result = await _eventCardService.CreateAsync(request);
+                if (result == "success")
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
@@ -52,8 +56,8 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpPut("event/{id:length(24)}")]
-        public async Task<IActionResult> UpdateEvent(string id, EventCard updateEventCard)
+        [HttpPut("event-card/{id:length(24)}")]
+        public async Task<IActionResult> UpdateEvent(string id, EventCardRequest request)
         {
             try
             {
@@ -62,8 +66,12 @@ namespace MobileBasedCashFlowAPI.MongoController
                 {
                     return NotFound("can not find this event card");
                 }
-                await _eventCardService.UpdateAsync(id, updateEventCard);
-                return Ok("update success");
+                var result = await _eventCardService.UpdateAsync(id, request);
+                if (result == "success")
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
 
             }
             catch (Exception ex)

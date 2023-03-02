@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using System.Data;
 
@@ -27,7 +28,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             {
                 return Ok(jobCard);
             }
-            return NotFound("can not find this job card");
+            return NotFound("List is empty");
         }
 
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -43,12 +44,20 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPost("job-card")]
-        public async Task<ActionResult> PostJob(JobCard jobCard)
+        public async Task<ActionResult> PostJobCard(JobCardRequest request)
         {
             try
             {
-                await _jobCardService.CreateAsync(jobCard);
-                return CreatedAtAction(nameof(GetById), new { id = jobCard._id }, jobCard);
+                var result = await _jobCardService.CreateAsync(request);
+                if (result == "success")
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
+
             }
             catch (Exception ex)
             {
@@ -57,7 +66,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPut("job-card/{id}")]
-        public async Task<ActionResult> UpdateJob(string id, JobCard jobCard)
+        public async Task<ActionResult> UpdateJobCard(string id, JobCardRequest request)
         {
             try
             {
@@ -67,7 +76,7 @@ namespace MobileBasedCashFlowAPI.MongoController
                 {
                     return NotFound("can not find this job card");
                 }
-                await _jobCardService.UpdateAsync(id, jobCard);
+                await _jobCardService.UpdateAsync(id, request);
                 return Ok("update success");
             }
             catch (Exception ex)

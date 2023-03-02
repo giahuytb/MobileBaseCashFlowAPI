@@ -1,7 +1,9 @@
 ﻿using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
+using MobileBasedCashFlowAPI.MongoDTO;
 using MongoDB.Driver;
+using MobileBasedCashFlowAPI.Common;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
@@ -25,59 +27,50 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<FinancialReport?> GetAsync(string id)
         {
-            var result = await _finacial.Find(fr => fr._id == id).FirstOrDefaultAsync();
+            var result = await _finacial.Find(fr => fr.id == id).FirstOrDefaultAsync();
             return result;
         }
 
-        public async Task<List<FinancialReport>> GetFinancialAccount(string id)
-        {
-            return await _finacial.Find(fr => fr._id == id).ToListAsync();
-        }
-
-        public async Task<string> CreateAsync(FinancialReport financialReport)
+        public async Task<string> GenerateAsync(FinancialRequest request)
         {
             var finanReport = new FinancialReport()
             {
-                Children_amount = financialReport.Children_amount,
-                User_id = financialReport.User_id,
-                Job_card_id = financialReport.User_id,
-                Income_per_month = financialReport.Income_per_month,
-                Expense_per_month = financialReport.Expense_per_month,
-                Game_accounts = financialReport.Game_accounts,
+                Children_amount = request.Children_amount,
+                User_id = request.User_id,
+                Job_card_id = request.Job_card_id,
+                Game_accounts = request.Game_accounts,
+                Create_at = DateTime.Now,
             };
             await _finacial.InsertOneAsync(finanReport);
             return SUCCESS;
         }
 
-        public async Task<string> RemoveAsync(string id)
-        {
-            await _finacial.DeleteOneAsync(x => x._id == id);
-            return SUCCESS;
-        }
-
-        public async Task<string> UpdateAsync(string id, int childrenAmount, GameAccount gameAccount)
+        public async Task<string> UpdateAsync(string id, int childrenAmount, GameAccountRequest request)
         {
             bool checkAccountExist = false;
-            double salary = 0;
-            double expensePerMonth = 0;
-            double passiveIncome = 0;
 
-            var oldFinanReport = await _finacial.Find(fr => fr._id == id).FirstOrDefaultAsync();
+            var oldFinanReport = await _finacial.Find(fr => fr.id == id)
+                .SortByDescending(d => d.Create_at)
+                .FirstOrDefaultAsync();
 
             if (oldFinanReport == null)
             {
                 return "Can not find this financial report";
             }
+            if (!ValidateInput.isNumber(request.Game_account_value.ToString()))
+            {
+                return "Game account cost must be mumber and bigger than 0";
+            }
 
             else
             {
-                // find if game account is already exist in this financial report 
+                //find if game account is already exist in this financial report
                 for (int i = 0; i < oldFinanReport.Game_accounts.Count(); i++)
                 {
-                    // if find update it cost
-                    if (oldFinanReport.Game_accounts[i].GameAccount_name == gameAccount.GameAccount_name)
+                    // if this account already existed then update it value
+                    if (oldFinanReport.Game_accounts[i].Game_account_name == request.Game_account_name)
                     {
-                        oldFinanReport.Game_accounts[i].GameAccount_cost = gameAccount.GameAccount_cost;
+                        oldFinanReport.Game_accounts[i].Game_account_value = request.Game_account_value;
                         checkAccountExist = true;
                         break;
                     }
@@ -85,50 +78,28 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 // if not add this new account
                 if (!checkAccountExist)
                 {
-                    oldFinanReport.Game_accounts.Add(gameAccount);
-                }
-
-                // calculation income per month and expense permonth
-                for (int i = 0; i < oldFinanReport.Game_accounts.Count(); i++)
-                {
-                    switch (oldFinanReport.Game_accounts[i].GameAccount_type)
-                    {
-                        // income
-                        case 0:
-                            salary = oldFinanReport.Game_accounts[i].GameAccount_cost;
-                            break;
-                        // expense
-                        case 1:
-                            expensePerMonth += oldFinanReport.Game_accounts[i].GameAccount_cost;
-                            break;
-                        // asset
-                        case 2:
-                            if (!oldFinanReport.Game_accounts[i].GameAccount_name.Equals("Tiền mặt"))
-                            {
-                                passiveIncome += oldFinanReport.Game_accounts[i].GameAccount_cost;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-
+                    oldFinanReport.Game_accounts.Add(request);
                 }
 
                 var finanReport = new FinancialReport()
                 {
-                    _id = oldFinanReport._id,
                     User_id = oldFinanReport.User_id,
                     Job_card_id = oldFinanReport.Job_card_id,
                     Children_amount = childrenAmount,
-                    Income_per_month = salary + passiveIncome,
-                    Expense_per_month = expensePerMonth,
                     Game_accounts = oldFinanReport.Game_accounts,
                 };
 
-                await _finacial.ReplaceOneAsync(x => x._id == id, finanReport);
+                await _finacial.InsertOneAsync(finanReport);
                 return SUCCESS;
             }
         }
+
+        public async Task<string> RemoveAsync(string id)
+        {
+            await _finacial.DeleteOneAsync(x => x.id == id);
+            return SUCCESS;
+        }
+
 
     }
 }

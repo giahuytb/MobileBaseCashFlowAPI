@@ -7,6 +7,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
 {
     public class TileService : ITileService
     {
+        public const string SUCCESS = "success";
         private readonly IMongoCollection<Tile> _tiles;
         public TileService(MongoDbSettings setting)
         {
@@ -21,22 +22,26 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<Tile?> GetAsync(string id)
         {
-            return await _tiles.Find(x => x._id == id).FirstOrDefaultAsync();
+            return await _tiles.Find(x => x.id == id).FirstOrDefaultAsync();
+
         }
 
-        public async Task CreateAsync(Tile newTile)
+        public async Task<string> CreateAsync(Tile newTile)
         {
             await _tiles.InsertOneAsync(newTile);
+            return SUCCESS;
         }
 
-        public async Task UpdateAsync(string id, Tile updatedTile)
+        public async Task<string> UpdateAsync(string id, Tile updatedTile)
         {
-            await _tiles.ReplaceOneAsync(x => x._id == id, updatedTile);
+            await _tiles.ReplaceOneAsync(x => x.id == id, updatedTile);
+            return SUCCESS;
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task<string> DeleteAsync(string id)
         {
-            await _tiles.DeleteOneAsync(x => x._id == id);
+            await _tiles.DeleteOneAsync(x => x.id == id);
+            return SUCCESS;
         }
 
     }

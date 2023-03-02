@@ -1,4 +1,6 @@
 ﻿//using MobileBasedCashFlowAPI.SubModels;
+using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.MongoDTO;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -8,10 +10,10 @@ namespace MobileBasedCashFlowAPI.MongoModels
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? _id { get; set; }
-        public string Name { get; set; } = string.Empty;
+        public string? id { get; set; }
+        public string Job_card_name { get; set; } = string.Empty;
         public int Children_cost { get; set; } = 0;
-        public  List<GameAccount> Game_accounts { get; set; } = new List<GameAccount>();
+        public List<GameAccountRequest> Game_accounts { get; set; } = new List<GameAccountRequest>();
 
     }
 }
