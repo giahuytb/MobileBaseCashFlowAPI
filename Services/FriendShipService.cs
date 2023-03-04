@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
 using System.Collections;
@@ -16,13 +17,11 @@ namespace MobileBasedCashFlowAPI.Services
             _context = context;
         }
 
-        public async Task<IEnumerable> GetFriendList(string userId)
+        public async Task<IEnumerable> GetAsync()
         {
             try
             {
                 var friendShip = await (from friend in _context.Friendships
-                                        join user in _context.UserAccounts on friend.RequesterId equals user.UserId
-                                        where friend.RequesterId == userId || friend.AddresseeId == userId
                                         select new
                                         {
                                             friend.RequesterId,
@@ -37,19 +36,54 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public Task<object?> SearchFriend(string userId, string friendName)
+        public async Task<IEnumerable> GetAsync(string requesterId, string addresseeId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var friendShip = await (from friend in _context.Friendships
+                                        join requester in _context.UserAccounts on friend.RequesterId equals requester.UserId
+                                        join addressee in _context.UserAccounts on friend.AddresseeId equals addressee.UserId
+                                        where friend.RequesterId == requesterId || friend.AddresseeId == addresseeId
+                                        select new
+                                        {
+                                            addressee.NickName,
+                                            friend.CreateAt,
+                                        }).ToListAsync();
+                return friendShip;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
-        public Task<string> AddFriend(string RequesterId, string AddresseeId)
+        public async Task<string> AddFriendShip(string RequesterId, string AddresseeId)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var checkExist = await _context.Friendships
+                    .Where(f => f.RequesterId == RequesterId && f.AddresseeId == AddresseeId)
+                    .FirstOrDefaultAsync();
 
-        public Task<string> DeleteFriend(string RequesterId, string AddresseeId)
-        {
-            throw new NotImplementedException();
+                if (checkExist != null)
+                {
+                    return "This friend ship has already existed";
+                }
+                var Friendship = new Friendship()
+                {
+                    RequesterId = RequesterId,
+                    AddresseeId = AddresseeId,
+                    CreateAt = DateTime.Now,
+                };
+
+                _context.Friendships.Add(Friendship);
+                await _context.SaveChangesAsync();
+                return SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
         }
 
 

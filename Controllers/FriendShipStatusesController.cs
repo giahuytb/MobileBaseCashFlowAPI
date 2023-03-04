@@ -1,32 +1,29 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using MobileBasedCashFlowAPI.IServices;
 using System.Collections;
 using System.Security.Claims;
-
-using MobileBasedCashFlowAPI.DTO;
-using MobileBasedCashFlowAPI.IServices;
-using MobileBasedCashFlowAPI.Models;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InventorysController : ControllerBase
+    public class FriendShipStatusesController : ControllerBase
     {
-        private readonly IInventoryService _inventoryService;
+        private readonly IFriendShipStatusService _friendShipStatusService;
 
-        public InventorysController(IInventoryService inventoryService)
+        public FriendShipStatusesController(IFriendShipStatusService friendShipStatusService)
         {
-            _inventoryService = inventoryService;
+            _friendShipStatusService = friendShipStatusService;
         }
 
+        [HttpGet]
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("inventory")]
-        public async Task<ActionResult<IEnumerable>> GetALl()
+        public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
             {
-                var result = await _inventoryService.GetAsync();
+                var result = await _friendShipStatusService.GetAll();
                 if (result != null)
                 {
                     return Ok(result);
@@ -39,20 +36,23 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-
-        //[HttpGet]
+        [HttpGet("friend-ship-status")]
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("inventory/{searchBy}&{id}")]
-        public async Task<ActionResult<Inventory>> GetById(string searchBy, string id)
+        public async Task<ActionResult<IEnumerable>> GetFriend()
         {
             try
             {
-                var result = await _inventoryService.GetAsync(searchBy, id);
+                string userId = HttpContext.User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return BadRequest("User id not Found, please login");
+                }
+                var result = await _friendShipStatusService.GetFriendList(userId);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find iventory of this " + searchBy);
+                return NotFound("List is empty");
             }
             catch (Exception ex)
             {
@@ -61,8 +61,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("inventory")]
-        public async Task<ActionResult> BuyItem(string itemId)
+        [HttpPost("friend-ship-status")]
+        public async Task<ActionResult> AddFriend(string addressee)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest("User id not Found, please login");
                 }
-                var result = await _inventoryService.CreateAsync(itemId, userId);
+                var result = await _friendShipStatusService.AddFriend(userId, addressee);
 
                 return Ok(result);
             }
@@ -81,5 +81,8 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+
     }
 }

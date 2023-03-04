@@ -122,7 +122,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
             else if (!ValidateInput.isPhone(request.Phone))
             {
-                return "You need to enter the the correct phone with 10 number";
+                return "Your phone number is not correct";
             }
             else if (request.ConfirmPassword.Equals(""))
             {

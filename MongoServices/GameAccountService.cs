@@ -30,6 +30,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             var gameAccount = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
             return gameAccount;
         }
+
         public async Task<string> CreateAsync(AccountRequest request)
         {
             if (request.Game_account_name.Length <= 0)
@@ -72,5 +73,6 @@ namespace MobileBasedCashFlowAPI.MongoServices
             await _collection.DeleteOneAsync(x => x.id == id);
             return SUCCESS;
         }
+
     }
 }

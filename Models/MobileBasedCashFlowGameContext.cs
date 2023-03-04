@@ -84,7 +84,7 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.Property(e => e.AddresseeId)
                     .HasMaxLength(36)
                     .IsUnicode(false)
-                    .HasColumnName("Addressee_id")
+                    .HasColumnName("addressee_id")
                     .IsFixedLength();
 
                 entity.Property(e => e.SpecifiedDateTime).HasColumnType("datetime");
