@@ -104,29 +104,29 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("list-add-friend-request")]
-        //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<IEnumerable>> GetListAddfriendRequest()
-        {
-            try
-            {
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return BadRequest("User id not Found, please login");
-                }
-                var result = await _friendShipService.
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("List is empty");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpGet("list-add-friend-request")]
+        ////[Authorize(Roles = "Player, Admin")]
+        //public async Task<ActionResult<IEnumerable>> GetListAddfriendRequest()
+        //{
+        //    try
+        //    {
+        //        string userId = HttpContext.User.FindFirstValue("Id");
+        //        if (userId == null)
+        //        {
+        //            return BadRequest("User id not Found, please login");
+        //        }
+        //        var result = await _friendShipService.
+        //        if (result != null)
+        //        {
+        //            return Ok(result);
+        //        }
+        //        return NotFound("List is empty");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost("add-friend/{friendId}")]
