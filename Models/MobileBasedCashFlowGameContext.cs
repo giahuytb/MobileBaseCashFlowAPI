@@ -29,7 +29,6 @@ namespace MobileBasedCashFlowAPI.Models
         public virtual DbSet<UserAccount> UserAccounts { get; set; } = null!;
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Friendship>(entity =>
@@ -73,7 +72,7 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.HasKey(e => new { e.RequesterId, e.AddresseeId, e.SpecifiedDateTime })
                     .HasName("FriendshipStatus_PK");
 
-                entity.ToTable("FriendshipStatus");
+                entity.ToTable("Friendship_status");
 
                 entity.Property(e => e.RequesterId)
                     .HasMaxLength(36)
@@ -87,16 +86,20 @@ namespace MobileBasedCashFlowAPI.Models
                     .HasColumnName("addressee_id")
                     .IsFixedLength();
 
-                entity.Property(e => e.SpecifiedDateTime).HasColumnType("datetime");
+                entity.Property(e => e.SpecifiedDateTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("specified_date_time");
 
                 entity.Property(e => e.SpecifierId)
                     .HasMaxLength(36)
                     .IsUnicode(false)
+                    .HasColumnName("specifier_id")
                     .IsFixedLength();
 
                 entity.Property(e => e.StatusCode)
-                    .HasMaxLength(1)
-                    .IsUnicode(false);
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("status_code");
 
                 entity.HasOne(d => d.Specifier)
                     .WithMany(p => p.FriendshipStatuses)

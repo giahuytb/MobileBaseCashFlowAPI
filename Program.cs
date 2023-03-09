@@ -56,7 +56,6 @@ builder.Services.AddTransient<ISendMailService, SendMailService>();
 builder.Services.AddTransient<IUserService, UserService>();
 
 builder.Services.AddTransient<IFriendShipService, FriendShipService>();
-builder.Services.AddTransient<IFriendShipStatusService, FriendShipStatusService>();
 builder.Services.AddTransient<IGameMatchService, GameMatchService>();
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IInventoryService, InventoryService>();
