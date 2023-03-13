@@ -314,9 +314,31 @@ namespace MobileBasedCashFlowAPI.Services
             return FAILED;
         }
 
+        public async Task<object?> ViewProfile(string userId)
+        {
+            var user = await (from u in _context.UserAccounts
+                              where u.UserId == userId
+                              select new
+                              {
+                                  u.NickName,
+                                  u.Gender,
+                                  u.Phone,
+                                  u.Email,
+                                  u.AvatarImageUrl,
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                return user;
+            }
+            return null;
+        }
+
         private bool UserExists(string id)
         {
             return _context.UserAccounts.Any(e => e.UserId == id);
         }
+
+
     }
 }

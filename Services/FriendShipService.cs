@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
@@ -297,40 +296,122 @@ namespace MobileBasedCashFlowAPI.Services
                 // Check if the two user is in relation ship
                 // The user is the requester and this request is declined
                 // Update the statuscode of this friendship to Requested again
-                var friendshipAsRequested = await _context.FriendshipStatuses
-                                            .Where(fs => fs.RequesterId == userId
-                                            && fs.AddresseeId == friendId
-                                            && fs.StatusCode != "Blocked")
-                                            .FirstOrDefaultAsync();
+                var friendshipAsRequester = await (from FS in _context.FriendshipStatuses
+                                                   join Reqter in _context.UserAccounts on FS.RequesterId equals Reqter.UserId
+                                                   join Adrsee in _context.UserAccounts on FS.AddresseeId equals Adrsee.UserId
+                                                   where FS.RequesterId == userId
+                                                       & FS.AddresseeId == friendId
+                                                       & FS.SpecifiedDateTime == (from NestedFS in _context.FriendshipStatuses
+                                                                                  where NestedFS.RequesterId == FS.RequesterId
+                                                                                        & NestedFS.AddresseeId == FS.AddresseeId
+                                                                                  orderby NestedFS.SpecifiedDateTime descending
+                                                                                  select NestedFS.SpecifiedDateTime)
+                                                                                  .FirstOrDefault()
+                                                   select new
+                                                   {
+                                                       Adrsee.NickName,
+                                                       FS.StatusCode,
+                                                   }).FirstOrDefaultAsync();
 
                 // Check if the two user is in relation ship
                 // The user is the adressee and this request is declined
                 // Update the statuscode of this friendship to Requested again
-                var friendshipAsAdressee = await _context.FriendshipStatuses
-                                            .Where(fs => fs.RequesterId == friendId
-                                            && fs.AddresseeId == userId
-                                            && fs.StatusCode != "Blocked")
-                                            .FirstOrDefaultAsync();
+                var friendshipAsAdressee = await (from FS in _context.FriendshipStatuses
+                                                  join Reqter in _context.UserAccounts on FS.RequesterId equals Reqter.UserId
+                                                  join Adrsee in _context.UserAccounts on FS.AddresseeId equals Adrsee.UserId
+                                                  where FS.AddresseeId == userId
+                                                      & FS.RequesterId == friendId
+                                                      & FS.SpecifiedDateTime == (from NestedFS in _context.FriendshipStatuses
+                                                                                 where NestedFS.RequesterId == FS.RequesterId
+                                                                                     & NestedFS.AddresseeId == FS.AddresseeId
+                                                                                 orderby NestedFS.SpecifiedDateTime descending
+                                                                                 select NestedFS.SpecifiedDateTime)
+                                                                                 .FirstOrDefault()
+                                                  select new
+                                                  {
+                                                      Reqter.NickName,
+                                                      FS.StatusCode,
+                                                  }).FirstOrDefaultAsync();
 
-                if (friendshipAsRequested != null)
+                if (friendshipAsRequester == null && friendshipAsAdressee == null)
                 {
-                    friendshipAsRequested.StatusCode = statusCode;
-                    _context.FriendshipStatuses.Update(friendshipAsRequested);
-                    return SUCCESS;
+
+                    return "Can not found this relation ship";
                 }
-                else if (friendshipAsAdressee != null)
+                else
                 {
-                    friendshipAsAdressee.StatusCode = statusCode;
-                    await _context.SaveChangesAsync();
-                    return SUCCESS;
+                    // if they user in friendship but any of them declined then request to add friend again
+                    if (friendshipAsRequester != null)
+                    {
+                        try
+                        {
+                            var newFriendshipStatus = new FriendshipStatus()
+                            {
+                                RequesterId = userId,
+                                AddresseeId = friendId,
+                                SpecifiedDateTime = DateTime.Now,
+                                StatusCode = statusCode,
+                                SpecifierId = userId,
+                            };
+                            _context.FriendshipStatuses.Add(newFriendshipStatus);
+                            await _context.SaveChangesAsync();
+                            return SUCCESS;
+                        }
+                        catch (Exception ex)
+                        {
+                            return ex.Message;
+                        }
+                    }
+                    else if (friendshipAsRequester != null && friendshipAsRequester.StatusCode.Equals("Accepted") && statusCode.Equals("Accepted"))
+                    {
+                        return "this person is your friend already";
+                    }
+                    else if (friendshipAsRequester != null && friendshipAsRequester.StatusCode.Equals("Blocked"))
+                    {
+                        return "this person Blocked you";
+                    }
+
+                    // if they user in friendship but any of them declined then request to add friend again
+                    if (friendshipAsAdressee != null && friendshipAsAdressee.StatusCode.Equals("Declined"))
+                    {
+                        try
+                        {
+                            var newFriendshipStatus = new FriendshipStatus()
+                            {
+                                RequesterId = friendId,
+                                AddresseeId = userId,
+                                SpecifiedDateTime = DateTime.Now,
+                                StatusCode = "Requested",
+                                SpecifierId = userId,
+                            };
+                            _context.FriendshipStatuses.Add(newFriendshipStatus);
+                            await _context.SaveChangesAsync();
+                            return SUCCESS;
+                        }
+                        catch (Exception ex)
+                        {
+                            return ex.Message;
+                        }
+                    }
+                    else if (friendshipAsAdressee != null && friendshipAsAdressee.StatusCode.Equals("Accepted") && statusCode.Equals("Accepted"))
+                    {
+                        return "this person is your friend already";
+                    }
+                    else if (friendshipAsAdressee != null && friendshipAsAdressee.StatusCode.Equals("Blocked"))
+                    {
+                        return "this person Blocked you";
+                    }
                 }
-                return "Can not found this friendship";
+                return "Update friendship status failed";
             }
             catch (Exception ex)
             {
                 return ex.ToString();
             }
         }
+
+
+
 
 
     }
