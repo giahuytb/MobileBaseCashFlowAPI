@@ -77,13 +77,16 @@ namespace MobileBasedCashFlowAPI.Services
             var stringToken = tokenHandler.WriteToken(token);
             return new
             {
-                user.NickName,
-                user.Email,
-                user.Coin,
-                user.AvatarImageUrl,
-                user.Phone,
-                user.Gender,
-                role.roleName,
+                user = new
+                {
+                    user.NickName,
+                    user.Email,
+                    user.Coin,
+                    user.AvatarImageUrl,
+                    user.Phone,
+                    user.Gender,
+                    role.roleName,
+                },
                 token = stringToken,
             };
         }
