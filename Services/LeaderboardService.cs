@@ -109,7 +109,6 @@ namespace MobileBasedCashFlowAPI.Services
                     var gameId = await (from game in _context.Games
                                         where game.GameVersion == leaderboard.GameVersion
                                         select new { gameId = game.GameId }).FirstOrDefaultAsync();
-
                     if (gameId == null)
                     {
                         return "can not find this game version";
