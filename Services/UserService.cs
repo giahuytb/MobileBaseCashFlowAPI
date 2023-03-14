@@ -34,7 +34,7 @@ namespace MobileBasedCashFlowAPI.Services
             _context = context;
         }
 
-        public async Task<string> Authenticate(LoginRequest request)
+        public async Task<object> Authenticate(LoginRequest request)
         {
             var user = await _context.UserAccounts.SingleOrDefaultAsync(x => x.UserName == request.UserName);
             if (user == null)
@@ -71,8 +71,21 @@ namespace MobileBasedCashFlowAPI.Services
                 claims,
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            //var jwt = JwtSecurityTokenHandler().WriteToken(token)
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.WriteToken(token);
+            var stringToken = tokenHandler.WriteToken(token);
+            return new
+            {
+                user.NickName,
+                user.Email,
+                user.Coin,
+                user.AvatarImageUrl,
+                user.Phone,
+                user.Gender,
+                role.roleName,
+                token = stringToken,
+            };
         }
 
         public async Task<string> Register(RegisterRequest request)
