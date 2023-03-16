@@ -58,6 +58,10 @@ namespace MobileBasedCashFlowAPI.Services
                 new Claim(ClaimTypes.Role , role.roleName),
                 new Claim("NickName" , user.NickName),
                 new Claim("UserName" , user.UserName),
+                new Claim("Coin", user.Coin.ToString()),
+                new Claim("Email", user.Email),
+                new Claim("AvatarImageUrl", user.AvatarImageUrl),
+                new Claim("Gender", user.Gender),
                 new Claim("Id" , user.UserId.ToString()),
                 new Claim("Status" , user.Status.ToString()),
             };
@@ -102,6 +106,7 @@ namespace MobileBasedCashFlowAPI.Services
                 Gender = request.Gender,
                 Email = request.Email,
                 Phone = request.Phone,
+                Coin = 0,
                 AvatarImageUrl = request.ImageUrl,
                 CreateAt = DateTime.UtcNow,
                 EmailConfirmToken = GenerateEmailConfirmationToken(),
