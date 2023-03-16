@@ -72,7 +72,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 {
                     Event_name = request.Event_name,
                     Image_url = request.Image_url,
-                    Account_Name = request.Account_Name,
+                    Account_name = request.Account_Name,
                     Event_description = request.Event_description,
                     Trading_range = request.Trading_range,
                     Cost = request.Cost,
@@ -134,7 +134,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
                     oldEventCard.Event_name = request.Event_name;
                     oldEventCard.Image_url = request.Image_url;
-                    oldEventCard.Account_Name = request.Account_Name;
+                    oldEventCard.Account_name = request.Account_Name;
                     oldEventCard.Event_description = request.Event_description;
                     oldEventCard.Trading_range = request.Trading_range;
                     oldEventCard.Cost = request.Cost;
