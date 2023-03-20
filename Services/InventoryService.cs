@@ -38,7 +38,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public async Task<object?> GetAsync(string searchBy, string id)
+        public async Task<object?> GetAsync(string id)
         {
             try
             {
@@ -46,6 +46,7 @@ namespace MobileBasedCashFlowAPI.Services
                 var AllInventory = await (from invent in _context.Inventories
                                           join user in _context.UserAccounts on invent.UserId equals user.UserId
                                           join item in _context.Items on invent.ItemId equals item.ItemId
+                                          where user.UserId == id
                                           select new
                                           {
                                               user.UserId,
@@ -54,19 +55,6 @@ namespace MobileBasedCashFlowAPI.Services
                                               item.ItemName,
                                               invent.CreateAt,
                                           }).ToListAsync();
-
-                if (searchBy.Equals("user"))
-                {
-                    AllInventory = AllInventory.Where(i => i.UserId == id).ToList();
-                }
-                else if (searchBy.Equals("item"))
-                {
-                    AllInventory = AllInventory.Where(i => i.ItemId == id).ToList();
-                }
-                else
-                {
-                    return "Your searchBy field must be user or item";
-                }
                 return AllInventory;
             }
             catch (Exception ex)
