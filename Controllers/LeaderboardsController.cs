@@ -68,7 +68,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login");
+                    return Unauthorized("User id not Found, please login");
                 }
                 var result = await _leaderboardService.CreateAsync(userId, leaderboard);
 
@@ -89,7 +89,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login");
+                    return Unauthorized("User id not Found, please login");
                 }
                 var result = await _leaderboardService.UpdateAsync(id, userId, leaderboard);
                 if (result != "success")

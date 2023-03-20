@@ -17,24 +17,24 @@ namespace MobileBasedCashFlowAPI.Controllers
             _friendShipService = friendShipService;
         }
 
-        //[HttpGet]
-        ////[Authorize(Roles = "Player, Admin")]
-        //public async Task<ActionResult<IEnumerable>> GetAllFriendShip()
-        //{
-        //    try
-        //    {
-        //        var result = await _friendShipService.GetAllFriendShip();
-        //        if (result != null)
-        //        {
-        //            return Ok(result);
-        //        }
-        //        return NotFound("List is empty");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpGet("friend")]
+        //[Authorize(Roles = "Player, Admin")]
+        public async Task<ActionResult<IEnumerable>> GetAllFriendShip()
+        {
+            try
+            {
+                var result = await _friendShipService.GetAllFriendShip();
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return NotFound("List is empty");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpGet]
         //[Authorize(Roles = "Player, Admin")]
@@ -55,7 +55,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("friend-name/{name}")]
         public async Task<ActionResult<IEnumerable>> GetFriendByName(string name)
         {
             try
@@ -63,7 +63,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login");
+                    return Unauthorized("User id not Found, please login");
                 }
                 var result = await _friendShipService.SearchFriend(userId, name);
                 if (result != null)
@@ -78,7 +78,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("{statusCode}")]
+        [HttpGet("status/{statusCode}")]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetFriendList(string statusCode)
         {
@@ -87,7 +87,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login");
+                    return Unauthorized("User id not Found, please login");
                 }
                 var result = await _friendShipService.GetFriendList(userId, statusCode);
                 if (result != null)
@@ -103,7 +103,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("{friendId}")]
+        [HttpPost("add-friend")]
         public async Task<ActionResult> AddFriend(string friendId)
         {
             try
@@ -112,7 +112,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login");
+                    return Unauthorized("User id not Found, please login");
                 }
                 var result = await _friendShipService.AddFriend(userId, friendId);
 
@@ -124,7 +124,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("update-friend-status")]
         public async Task<ActionResult> UpdateFriendShipStatus(string friendId, string statusCode)
         {
             try
@@ -133,7 +133,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not found, please login");
+                    return Unauthorized("User id not found, please login");
                 }
                 var result = await _friendShipService.UpdateFriendShipStatus(userId, friendId, statusCode);
 

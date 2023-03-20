@@ -83,7 +83,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login");
+                    return Unauthorized("User id not Found, please login");
                 }
                 var result = await _gameService.UpdateAsync(id, game);
                 return Ok(result);
