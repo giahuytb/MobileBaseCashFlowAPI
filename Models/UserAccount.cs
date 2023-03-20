@@ -26,7 +26,7 @@ namespace MobileBasedCashFlowAPI.Models
         public string Email { get; set; } = null!;
         public string AvatarImageUrl { get; set; } = null!;
         public string Phone { get; set; } = null!;
-        public double? Coin { get; set; }
+        public double? Coin { get; set; } = null!;
         public string Gender { get; set; } = null!;
         public bool Status { get; set; }
         public string? EmailConfirmToken { get; set; }

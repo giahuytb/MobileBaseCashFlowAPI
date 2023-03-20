@@ -35,11 +35,11 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [HttpGet("item/{id}")]
         //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<Item>> GetById(string name)
+        public async Task<ActionResult<Item>> GetById(string id)
         {
             try
             {
-                var result = await _itemService.GetAsync(name);
+                var result = await _itemService.GetAsync(id);
                 if (result != null)
                 {
                     return Ok(result);

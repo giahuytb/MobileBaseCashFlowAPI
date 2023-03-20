@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.DTO;
 using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -12,10 +13,13 @@ namespace MobileBasedCashFlowAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ILoginHistoryService _loginHistoryService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService,
+                               ILoginHistoryService loginHistoryService)
         {
             _userService = userService;
+            _loginHistoryService = loginHistoryService;
         }
 
         [AllowAnonymous]
@@ -149,7 +153,6 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
 
     }
 }

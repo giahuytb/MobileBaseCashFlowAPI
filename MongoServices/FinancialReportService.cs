@@ -45,7 +45,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             return SUCCESS;
         }
 
-        public async Task<string> UpdateAsync(string id, int childrenAmount, GameAccountRequest request)
+        public async Task<string> CreateAsync(string id, int childrenAmount, GameAccountRequest request)
         {
             bool checkAccountExist = false;
 
