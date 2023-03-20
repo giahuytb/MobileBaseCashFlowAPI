@@ -23,15 +23,18 @@ namespace MobileBasedCashFlowAPI.Services
 
         private readonly IConfiguration _configuration;
         private readonly ISendMailService _sendMailService;
+        private readonly ILoginHistoryService _loginHistoryService;
         private readonly MobileBasedCashFlowGameContext _context;
 
-        public UserService(IConfiguration configuration,
-                            ISendMailService sendMailService,
-                            MobileBasedCashFlowGameContext context)
+        public UserService(MobileBasedCashFlowGameContext context,
+                           IConfiguration configuration,
+                           ISendMailService sendMailService,
+                           ILoginHistoryService loginHistoryService)
         {
             _configuration = configuration;
             _sendMailService = sendMailService;
             _context = context;
+            _loginHistoryService = loginHistoryService;
         }
 
         public async Task<object> Authenticate(LoginRequest request)
@@ -51,7 +54,14 @@ namespace MobileBasedCashFlowAPI.Services
             var role = await _context.UserRoles
                                 .Where(r => r.RoleId == user.RoleId)
                                 .Select(r => new { roleName = r.RoleName }).FirstOrDefaultAsync();
-
+            if (role == null)
+            {
+                return "Can not found this role";
+            }
+            if (user.Coin == null)
+            {
+                user.Coin = 0;
+            }
             var claims = new[]
             {
                 new Claim(ClaimTypes.Email , user.Email),
@@ -75,10 +85,13 @@ namespace MobileBasedCashFlowAPI.Services
                 claims,
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: creds);
-            //var jwt = JwtSecurityTokenHandler().WriteToken(token)
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.WriteToken(token);
             var stringToken = tokenHandler.WriteToken(token);
+
+            // write login date time when user Login
+            var loginId = await _loginHistoryService.WriteLog(user.UserId);
+
             return new
             {
                 user = new
@@ -90,6 +103,7 @@ namespace MobileBasedCashFlowAPI.Services
                     user.Phone,
                     user.Gender,
                     role.roleName,
+                    loginId,
                 },
                 token = stringToken,
             };

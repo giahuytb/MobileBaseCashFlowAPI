@@ -72,7 +72,7 @@ namespace MobileBasedCashFlowAPI.MongoController
                 {
                     return NotFound("can not find this financial report");
                 }
-                await _financialReportService.UpdateAsync(id, childrenAmount, request);
+                await _financialReportService.CreateAsync(id, childrenAmount, request);
                 return Ok("update success");
             }
             catch (Exception ex)

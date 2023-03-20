@@ -13,5 +13,4 @@ namespace MobileBasedCashFlowAPI.MongoModels
         public string Game_account_name { get; set; } = null!;
         public DateTime Create_at { get; set; }
     }
-
 }

@@ -61,6 +61,7 @@ builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IInventoryService, InventoryService>();
 builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<ILeaderboardService, LeaderboardService>();
+builder.Services.AddTransient<ILoginHistoryService, LoginHistoryService>();
 
 
 // Register Service For MongoDatabase
@@ -70,7 +71,6 @@ builder.Services.AddTransient<ITileService, TileService>();
 builder.Services.AddTransient<IJobCardService, JobCardService>();
 builder.Services.AddTransient<IDreamService, DreamService>();
 builder.Services.AddTransient<IFinancialReportService, FinancialReportService>();
-builder.Services.AddTransient<IGameAccountService, GameAccountService>();
 
 // Config Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
