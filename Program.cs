@@ -123,6 +123,12 @@ builder.Services.AddSwaggerGen(c =>
 }
 );
 
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.LowercaseUrls = true;
+});
+
+
 var app = builder.Build();
 
 // use app.Environment.IsProduction() to enable swagger after deploy
