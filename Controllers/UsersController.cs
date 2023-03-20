@@ -136,7 +136,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("user")]
+        [HttpGet("user-list")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
             try

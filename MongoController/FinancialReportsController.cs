@@ -18,7 +18,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
 
-        [HttpGet("financial-report")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<FinancialReport>>> GetAll()
         {
             try
@@ -36,7 +36,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpGet("financial-report/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<FinancialReport>> GetById(string id)
         {
             var financial = await _financialReportService.GetAsync(id);
@@ -47,7 +47,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return Ok(financial);
         }
 
-        [HttpPost("financial-report")]
+        [HttpPost]
         public async Task<ActionResult> PostFinacialReport(FinancialRequest request)
         {
             try
@@ -61,7 +61,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpPut("financial-report/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateFinacialReport(string id, int childrenAmount, GameAccountRequest request)
         {
             try

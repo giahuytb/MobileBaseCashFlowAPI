@@ -21,7 +21,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("inventory")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
             try
@@ -42,7 +42,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[HttpGet]
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("inventory/{searchBy}&{id}")]
+        [HttpGet("{searchBy}&{id}")]
         public async Task<ActionResult<Inventory>> GetById(string searchBy, string id)
         {
             try
@@ -61,7 +61,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("inventory")]
+        [HttpPost]
         public async Task<ActionResult> BuyItem(string itemId)
         {
             try

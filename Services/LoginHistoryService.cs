@@ -71,7 +71,7 @@ namespace MobileBasedCashFlowAPI.Services
                 };
                 await _context.LoginHistories.AddAsync(loginHistory);
                 await _context.SaveChangesAsync();
-                return loginHistory.LoginId;
+                return loginHistory.LoginId.ToString();
             }
             catch (Exception ex)
             {

@@ -20,7 +20,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _jobCardService = jobCardService;
         }
 
-        [HttpGet("job-card")]
+        [HttpGet]
         public async Task<ActionResult<JobCard>> GetAll()
         {
             var jobCard = await _jobCardService.GetAsync();
@@ -32,7 +32,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-        [HttpGet("job-card/{id:length(24)}")]
+        [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<JobCard>> GetById(string id)
         {
             var jobCard = await _jobCardService.GetAsync(id);
@@ -43,7 +43,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("can not find this job card");
         }
 
-        [HttpPost("job-card")]
+        [HttpPost]
         public async Task<ActionResult> PostJobCard(JobCardRequest request)
         {
             try
@@ -65,7 +65,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpPut("job-card/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateJobCard(string id, JobCardRequest request)
         {
             try

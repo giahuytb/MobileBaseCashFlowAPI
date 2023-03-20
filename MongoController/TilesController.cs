@@ -16,7 +16,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _tileService = tileService;
         }
 
-        [HttpGet("tile")]
+        [HttpGet]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         public async Task<ActionResult<List<Tile>>> GetAll()
         {
@@ -28,7 +28,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet("tile/{id:length(24)}")]
+        [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Tile>> GetById(string id)
         {
             var tile = await _tileService.GetAsync(id);
@@ -39,7 +39,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("can not find this tile");
         }
 
-        [HttpPost("tile")]
+        [HttpPost]
         public async Task<IActionResult> PostTile(Tile tile)
         {
             try
@@ -53,7 +53,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpPut("tile/{id:length(24)}")]
+        [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> UpdateTile(string id, Tile tile)
         {
             try

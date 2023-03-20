@@ -11,7 +11,7 @@ namespace MobileBasedCashFlowAPI.Common
         // Validate should be character or number
         private static Regex regexSpecialChar = new Regex("[^a-zA-Z0-9]");
         // Validate number
-        private static Regex hasNumber = new Regex(@"[0-9]+");
+        private static Regex regexNuber = new Regex(@"^-?[0-9]\d*(\.\d+)?$");
         // Validarte min max
         private static Regex hasMiniMaxChars = new Regex(@".{6,30}");
         // Validate symbols
@@ -50,7 +50,7 @@ namespace MobileBasedCashFlowAPI.Common
 
         public static bool isNumber(string s)
         {
-            if (hasNumber.IsMatch(s))
+            if (regexNuber.IsMatch(s))
             {
                 return true;
             }

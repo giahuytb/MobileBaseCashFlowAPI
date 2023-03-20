@@ -68,7 +68,6 @@ namespace MobileBasedCashFlowAPI.Services
                 new Claim(ClaimTypes.Role , role.roleName),
                 new Claim("NickName" , user.NickName),
                 new Claim("UserName" , user.UserName),
-                new Claim("Coin", user.Coin.ToString()),
                 new Claim("Email", user.Email),
                 new Claim("AvatarImageUrl", user.AvatarImageUrl),
                 new Claim("Gender", user.Gender),
@@ -139,7 +138,7 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 return "This email has used already";
             }
-            else if (request.Email.Equals(""))
+            else if (!ValidateInput.isEmail(request.Email) || request.Email.Equals(""))
             {
                 return "You need to fill your email";
             }

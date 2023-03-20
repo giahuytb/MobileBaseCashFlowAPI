@@ -15,13 +15,13 @@ namespace MobileBasedCashFlowAPI.Controllers
             _context = context;
         }
 
-        [HttpGet("role")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<UserRole>>> GetAll()
         {
             return await _context.UserRoles.ToListAsync();
         }
 
-        [HttpGet("role/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<UserRole>> GetById(string id)
         {
             var userRole = await (from role in _context.UserRoles.Where(r => r.RoleId == id)
@@ -37,7 +37,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return Ok(userRole);
         }
 
-        [HttpPost("role")]
+        [HttpPost]
         public async Task<ActionResult<UserRole>> PostUserRole(string roleName)
         {
             var role = new UserRole
@@ -57,7 +57,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = role.RoleId }, role);
         }
 
-        [HttpDelete("role/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteRole(string roleId)
         {
             try

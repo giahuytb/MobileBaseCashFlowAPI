@@ -21,7 +21,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("game")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
@@ -40,7 +40,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("game/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Game>> GetById(string id)
         {
             try
@@ -59,7 +59,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("game")]
+        [HttpPost]
         public async Task<ActionResult> PostGame(GameRequest game)
         {
             try
@@ -75,7 +75,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("game/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateGame(string id, GameRequest game)
         {
             try
@@ -94,7 +94,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("game/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteGame(string id)
         {
             try

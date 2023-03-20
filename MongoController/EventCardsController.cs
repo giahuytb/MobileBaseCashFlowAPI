@@ -16,7 +16,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _eventCardService = eventCardService;
         }
 
-        [HttpGet("event-card")]
+        [HttpGet]
         public async Task<ActionResult<List<EventCard>>> GetAll()
         {
             var eventCard = await _eventCardService.GetAsync();
@@ -27,7 +27,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet("event-card/{id:length(24)}")]
+        [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<EventCard>> GetById(string id)
         {
             var eventCard = await _eventCardService.GetAsync(id);
@@ -38,7 +38,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("can not find this event card");
         }
 
-        [HttpPost("event-card")]
+        [HttpPost]
         public async Task<IActionResult> PostEvent(EventCardRequest request)
         {
             try
@@ -56,7 +56,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpPut("event-card/{id:length(24)}")]
+        [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> UpdateEvent(string id, EventCardRequest request)
         {
             try
