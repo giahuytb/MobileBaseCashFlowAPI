@@ -20,7 +20,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             _loginHistoryService = loginHistoryService;
         }
 
-        [HttpGet("login-history")]
+        [HttpGet]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
@@ -32,7 +32,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("List is empty");
         }
 
-        [HttpGet("login-history/{userId}")]
+        [HttpGet("{userId}")]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetById(string userId)
         {
@@ -52,7 +52,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("login-history/{loginId}")]
+        [HttpPut("{loginId}")]
         public async Task<ActionResult> UpdateLoginHistory(string loginId)
         {
             try

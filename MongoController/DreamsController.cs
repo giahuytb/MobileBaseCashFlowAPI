@@ -16,7 +16,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _dreamService = dreamService;
         }
 
-        [HttpGet("dream")]
+        [HttpGet]
         public async Task<ActionResult<List<Dream?>>> getAll()
         {
             var result = await _dreamService.GetAsync();
@@ -27,7 +27,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("List is empty");
         }
 
-        [HttpGet("dream/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Dream>> GetById(string id)
         {
             var result = await _dreamService.GetAsync(id);
@@ -38,7 +38,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("Can not found this dream");
         }
 
-        [HttpPost("dream")]
+        [HttpPost]
         public async Task<ActionResult> CreateDream(DreamRequest request)
         {
             try
@@ -59,7 +59,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpPut("dream/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<List<Dream>>> UpdateDream(string id, DreamRequest request)
         {
             try
@@ -77,8 +77,6 @@ namespace MobileBasedCashFlowAPI.MongoController
                 return BadRequest(ex.ToString());
             }
         }
-
-
 
     }
 }

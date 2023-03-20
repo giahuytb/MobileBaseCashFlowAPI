@@ -21,7 +21,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("match")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
@@ -40,7 +40,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("match/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<GameMatch>> GetById(string id)
         {
             try
@@ -59,7 +59,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("match")]
+        [HttpPost]
         public async Task<ActionResult> PostMatch(GameMatchRequest request)
         {
             try
@@ -81,7 +81,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("match/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateMatch(string id, GameMatchRequest request)
         {
             try
@@ -104,7 +104,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("match/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMatch(string id)
         {
             try

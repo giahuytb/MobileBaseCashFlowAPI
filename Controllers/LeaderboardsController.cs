@@ -21,7 +21,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("leaderboard")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             try
@@ -40,7 +40,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("leaderboard/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Leaderboard>> GetById(string id)
         {
             try
@@ -59,7 +59,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("leaderboard")]
+        [HttpPost]
         public async Task<ActionResult> PostBoard(LeaderboardRequest leaderboard)
         {
             try
@@ -81,7 +81,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("leaderboard/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateBoard(string id, LeaderboardRequest leaderboard)
         {
             try
@@ -104,7 +104,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("leaderboard/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBoard(string id)
         {
             try

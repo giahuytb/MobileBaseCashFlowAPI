@@ -17,26 +17,26 @@ namespace MobileBasedCashFlowAPI.Controllers
             _friendShipService = friendShipService;
         }
 
-        [HttpGet("friend-ship")]
-        //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<IEnumerable>> GetAll()
-        {
-            try
-            {
-                var result = await _friendShipService.GetAllFriendShip();
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("List is empty");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpGet]
+        ////[Authorize(Roles = "Player, Admin")]
+        //public async Task<ActionResult<IEnumerable>> GetAllFriendShip()
+        //{
+        //    try
+        //    {
+        //        var result = await _friendShipService.GetAllFriendShip();
+        //        if (result != null)
+        //        {
+        //            return Ok(result);
+        //        }
+        //        return NotFound("List is empty");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
-        [HttpGet("friend-ship-status")]
+        [HttpGet]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetAllFriendShipStatus()
         {
@@ -55,8 +55,8 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("friend-ship/{name}")]
-        public async Task<ActionResult<IEnumerable>> GetAll(string name)
+        [HttpGet("{name}")]
+        public async Task<ActionResult<IEnumerable>> GetFriendByName(string name)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("list-friend/{statusCode}")]
+        [HttpGet("{statusCode}")]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetFriendList(string statusCode)
         {
@@ -103,7 +103,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("add-friend/{friendId}")]
+        [HttpPost("{friendId}")]
         public async Task<ActionResult> AddFriend(string friendId)
         {
             try
@@ -124,7 +124,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpPost("delete-friend/{friendId}&{statusCode}")]
+        [HttpPost]
         public async Task<ActionResult> UpdateFriendShipStatus(string friendId, string statusCode)
         {
             try
@@ -133,7 +133,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return BadRequest("User id not Found, please login");
+                    return BadRequest("User id not found, please login");
                 }
                 var result = await _friendShipService.UpdateFriendShipStatus(userId, friendId, statusCode);
 

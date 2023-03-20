@@ -21,7 +21,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             _itemService = itemService;
         }
 
-        [HttpGet("item")]
+        [HttpGet]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
@@ -33,7 +33,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("List is empty");
         }
 
-        [HttpGet("item/{id}")]
+        [HttpGet("{id}")]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<Item>> GetById(string id)
         {
@@ -53,7 +53,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPost("item")]
+        [HttpPost]
         public async Task<ActionResult> PostItem(ItemRequest item)
         {
             try
@@ -75,7 +75,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
-        [HttpPut("item/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateItem(string id, ItemRequest item)
         {
             try
@@ -98,7 +98,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpDelete("item/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteItem(string id)
         {
             try

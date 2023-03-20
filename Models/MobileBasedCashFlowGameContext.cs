@@ -387,19 +387,20 @@ namespace MobileBasedCashFlowAPI.Models
 
             modelBuilder.Entity<LoginHistory>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.LoginId)
+                    .HasName("PK__Login_hi__C2C971DB2E381F77");
 
                 entity.ToTable("Login_history");
-
-                entity.Property(e => e.LoginDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("login_date");
 
                 entity.Property(e => e.LoginId)
                     .HasMaxLength(36)
                     .IsUnicode(false)
                     .HasColumnName("login_id")
                     .IsFixedLength();
+
+                entity.Property(e => e.LoginDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("login_date");
 
                 entity.Property(e => e.LogoutDate)
                     .HasColumnType("datetime")
@@ -412,9 +413,9 @@ namespace MobileBasedCashFlowAPI.Models
                     .IsFixedLength();
 
                 entity.HasOne(d => d.User)
-                    .WithMany()
+                    .WithMany(p => p.LoginHistories)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Login_his__user___5535A963");
+                    .HasConstraintName("FK__Login_his__user___02FC7413");
             });
 
             modelBuilder.Entity<Participant>(entity =>
