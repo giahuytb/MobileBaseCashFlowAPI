@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
-using Org.BouncyCastle.Cms;
+
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services

@@ -36,7 +36,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             try
             {
                 var checkNameExist = _collection.Find(evt => evt.Event_name == request.Event_name).FirstOrDefaultAsync();
-                if (checkNameExist != null)
+                if (checkNameExist.Result != null)
                 {
                     return "This event card has already existed";
                 }
@@ -52,21 +52,21 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 {
                     return "You need to fill description for this event card";
                 }
-                else if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost <= 0)
+                else if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost < 0)
                 {
-                    return "Cost must be mumber and bigger than 0";
+                    return "Cost must be greater than or equal to 0";
                 }
-                else if (!ValidateInput.isNumber(request.Down_pay.ToString()) || request.Down_pay <= 0)
+                else if (!ValidateInput.isNumber(request.Down_pay.ToString()) || request.Down_pay < 0)
                 {
-                    return "Down Pay must be mumber and bigger than 0";
+                    return "Down pay must be greater than or equal to 0";
                 }
-                else if (!ValidateInput.isNumber(request.Dept.ToString()) || request.Down_pay <= 0)
+                else if (!ValidateInput.isNumber(request.Dept.ToString()) || request.Down_pay < 0)
                 {
-                    return "Down Pay must be mumber and bigger than 0";
+                    return "Dept must be greater than or equal to 0";
                 }
-                else if (!ValidateInput.isNumber(request.Cash_flow.ToString()))
+                else if (!ValidateInput.isNumber(request.Cash_flow.ToString()) || request.Cash_flow < 0)
                 {
-                    return "Down Pay must be mumber";
+                    return "Cash flow must be greater than or equal to 0";
                 }
                 var eventCard = new EventCard()
                 {
@@ -98,11 +98,6 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
                 if (oldEventCard != null)
                 {
-                    var checkNameExist = _collection.Find(evt => evt.Event_name == request.Event_name).FirstOrDefaultAsync();
-                    if (checkNameExist != null)
-                    {
-                        return "This event card has already existed";
-                    }
                     if (request.Event_name.Length <= 0)
                     {
                         return "You need to fill name for this event card";
@@ -115,21 +110,21 @@ namespace MobileBasedCashFlowAPI.MongoServices
                     {
                         return "You need to fill description for this event card";
                     }
-                    else if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost <= 0)
+                    else if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost < 0)
                     {
-                        return "Cost must be mumber and bigger than 0";
+                        return "Cost must be greater than or equal to 0";
                     }
-                    else if (!ValidateInput.isNumber(request.Down_pay.ToString()) || request.Down_pay <= 0)
+                    else if (!ValidateInput.isNumber(request.Down_pay.ToString()) || request.Down_pay < 0)
                     {
-                        return "Down Pay must be mumber and bigger than 0";
+                        return "Down pay must be greater than or equal to 0";
                     }
-                    else if (!ValidateInput.isNumber(request.Dept.ToString()) || request.Down_pay <= 0)
+                    else if (!ValidateInput.isNumber(request.Dept.ToString()) || request.Down_pay < 0)
                     {
-                        return "Down Pay must be mumber and bigger than 0";
+                        return "Dept must be greater than or equal to 0";
                     }
-                    else if (!ValidateInput.isNumber(request.Cash_flow.ToString()))
+                    else if (!ValidateInput.isNumber(request.Cash_flow.ToString()) || request.Cash_flow < 0)
                     {
-                        return "Down Pay must be mumber";
+                        return "Cash flow must be greater than or equal to 0";
                     }
 
                     oldEventCard.Event_name = request.Event_name;
@@ -160,8 +155,13 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<string> RemoveAsync(string id)
         {
+            //var checkExist = _
             var result = await _collection.DeleteOneAsync(x => x.id == id);
-            return SUCCESS;
+            if (result != null)
+            {
+                return SUCCESS;
+            }
+            return "Can not found this event card";
         }
     }
 }

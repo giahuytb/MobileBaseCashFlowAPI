@@ -42,17 +42,23 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[HttpGet]
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("{searchBy}&{id}")]
-        public async Task<ActionResult<Inventory>> GetById(string searchBy, string id)
+        [HttpGet("my-inventory")]
+        public async Task<ActionResult<Inventory>> GetById()
         {
             try
             {
-                var result = await _inventoryService.GetAsync(searchBy, id);
+                // get the current user logging in system
+                string userId = HttpContext.User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return Unauthorized("User id not Found, please login");
+                }
+                var result = await _inventoryService.GetAsync(userId);
                 if (result != null)
                 {
                     return Ok(result);
                 }
-                return NotFound("Can not find iventory of this " + searchBy);
+                return NotFound("Can not found this user iventory ");
             }
             catch (Exception ex)
             {

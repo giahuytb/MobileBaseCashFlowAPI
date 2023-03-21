@@ -101,6 +101,29 @@ namespace MobileBasedCashFlowAPI.Controllers
                 var result = await _userService.ForgotPassword(email);
                 if (result)
                 {
+                    return Ok("Success");
+                }
+                else
+                {
+                    return BadRequest("Failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+
+        [HttpPost("profile")]
+        [Authorize(Roles = "Player, Admin, Moderator")]
+        public async Task<IActionResult> EditProfile(string userId, EditProfileRequest request)
+        {
+            try
+            {
+                var result = await _userService.EditProfile(userId, request);
+                if (result == "success")
+                {
                     return Ok(result);
                 }
                 else

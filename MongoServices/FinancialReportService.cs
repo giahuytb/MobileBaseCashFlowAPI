@@ -9,47 +9,62 @@ namespace MobileBasedCashFlowAPI.MongoServices
 {
     public class FinancialReportService : IFinancialReportService
     {
-        public const string SUCCESS = "success";
-        private readonly IMongoCollection<FinancialReport> _finacial;
+        private readonly IMongoCollection<FinancialReport> _collection;
 
         public FinancialReportService(MongoDbSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
-            _finacial = database.GetCollection<FinancialReport>("Financial_report");
+            _collection = database.GetCollection<FinancialReport>("Financial_report");
         }
 
         public async Task<List<FinancialReport>> GetAsync()
         {
-            var result = await _finacial.Find(_ => true).ToListAsync();
+            var result = await _collection.Find(_ => true).ToListAsync();
             return result;
         }
 
         public async Task<FinancialReport?> GetAsync(string id)
         {
-            var result = await _finacial.Find(fr => fr.id == id).FirstOrDefaultAsync();
+            var result = await _collection.Find(fr => fr.id == id).FirstOrDefaultAsync();
             return result;
         }
 
-        public async Task<string> GenerateAsync(FinancialRequest request)
+        public async Task<string> GenerateAsync(string userId, FinancialRequest request)
         {
-            var finanReport = new FinancialReport()
+            try
             {
-                Children_amount = request.Children_amount,
-                User_id = request.User_id,
-                Job_card_id = request.Job_card_id,
-                Game_accounts = request.Game_accounts,
-                Create_at = DateTime.Now,
-            };
-            await _finacial.InsertOneAsync(finanReport);
-            return SUCCESS;
+                if (!ValidateInput.isNumber(request.Children_amount.ToString()) || request.Children_amount < 0)
+                {
+                    return "Cost must be mumber and bigger than 0";
+                }
+                var checkJob = await _collection.Find(fr => fr.Job_card_id == request.Job_card_id).FirstOrDefaultAsync();
+                if (checkJob == null)
+                {
+                    return "Can not found this job card";
+                }
+                var finanReport = new FinancialReport()
+                {
+                    Children_amount = request.Children_amount,
+                    User_id = userId,
+                    Job_card_id = request.Job_card_id,
+                    Game_accounts = request.Game_accounts,
+                    Create_at = DateTime.Now,
+                };
+                await _collection.InsertOneAsync(finanReport);
+                return "Create success";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
         public async Task<string> CreateAsync(string id, int childrenAmount, GameAccountRequest request)
         {
             bool checkAccountExist = false;
 
-            var oldFinanReport = await _finacial.Find(fr => fr.id == id)
+            var oldFinanReport = await _collection.Find(fr => fr.id == id)
                 .SortByDescending(d => d.Create_at)
                 .FirstOrDefaultAsync();
 
@@ -57,11 +72,14 @@ namespace MobileBasedCashFlowAPI.MongoServices
             {
                 return "Can not find this financial report";
             }
-            if (!ValidateInput.isNumber(request.Game_account_value.ToString()))
+            if (!ValidateInput.isNumber(request.Game_account_value.ToString()) || request.Game_account_value < 0)
             {
-                return "Game account cost must be mumber and bigger than 0";
+                return "Game account cost must be a number greater than or equal to 0";
             }
-
+            if (!ValidateInput.isNumber(childrenAmount.ToString()) || childrenAmount < 0)
+            {
+                return "children amount must be a number greater than or equal to 0";
+            }
             else
             {
                 //find if game account is already exist in this financial report
@@ -89,15 +107,15 @@ namespace MobileBasedCashFlowAPI.MongoServices
                     Game_accounts = oldFinanReport.Game_accounts,
                 };
 
-                await _finacial.InsertOneAsync(finanReport);
-                return SUCCESS;
+                await _collection.InsertOneAsync(finanReport);
+                return "Create success";
             }
         }
 
         public async Task<string> RemoveAsync(string id)
         {
-            await _finacial.DeleteOneAsync(x => x.id == id);
-            return SUCCESS;
+            await _collection.DeleteOneAsync(x => x.id == id);
+            return "Delete success";
         }
 
 

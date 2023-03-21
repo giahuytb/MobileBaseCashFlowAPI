@@ -9,6 +9,7 @@ namespace MobileBasedCashFlowAPI.MongoController
     [ApiController]
     public class EventCardsController : ControllerBase
     {
+
         private readonly IEventCardService _eventCardService;
 
         public EventCardsController(IEventCardService eventCardService)
@@ -79,5 +80,32 @@ namespace MobileBasedCashFlowAPI.MongoController
                 return BadRequest(ex.ToString());
             }
         }
+
+
+        [HttpDelete("{id:length(24)}")]
+        public async Task<IActionResult> DeleteEvent(string id)
+        {
+            try
+            {
+                var eventCard = await _eventCardService.GetAsync(id);
+                if (eventCard is null)
+                {
+                    return NotFound("can not find this event card");
+                }
+                var result = await _eventCardService.RemoveAsync(id);
+                if (result == "success")
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+
     }
 }
