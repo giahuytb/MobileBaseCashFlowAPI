@@ -17,7 +17,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             _friendShipService = friendShipService;
         }
 
-        [HttpGet("friend")]
+        [HttpGet("in-relationship")]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetAllFriendShip()
         {
@@ -78,7 +78,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpGet("status/{statusCode}")]
+        [HttpGet("my-friend-list/{statusCode}")]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetFriendList(string statusCode)
         {
@@ -87,7 +87,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return Unauthorized("User id not Found, please login");
+                    return Unauthorized("User id not found, please login");
                 }
                 var result = await _friendShipService.GetFriendList(userId, statusCode);
                 if (result != null)
@@ -112,7 +112,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
-                    return Unauthorized("User id not Found, please login");
+                    return Unauthorized("User id not found, please login");
                 }
                 var result = await _friendShipService.AddFriend(userId, friendId);
 
@@ -144,5 +144,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
     }
 }

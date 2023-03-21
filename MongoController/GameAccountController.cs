@@ -1,49 +1,58 @@
-﻿
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
+using System.Collections;
 
 namespace MobileBasedCashFlowAPI.MongoController
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DreamsController : ControllerBase
+    public class GameAccountsController : ControllerBase
     {
-        private readonly IDreamService _dreamService;
-        public DreamsController(IDreamService dreamService)
+        private readonly IGameAccountService _gameAccountService;
+
+        public GameAccountsController(IGameAccountService gameAccountService)
         {
-            _dreamService = dreamService;
+            _gameAccountService = gameAccountService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Dream?>>> getAll()
-        {
-            var result = await _dreamService.GetAsync();
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound("List is empty");
-        }
-
-        [HttpGet("{id:length(24)}")]
-        public async Task<ActionResult<Dream>> GetById(string id)
-        {
-            var result = await _dreamService.GetAsync(id);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound("Can not found this dream");
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> CreateDream(DreamRequest request)
+        public async Task<ActionResult<IEnumerable>> GetALl()
         {
             try
             {
-                var result = await _dreamService.CreateAsync(request);
+                var result = await _gameAccountService.GetAsync();
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return NotFound("List is empty");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{id:length(24)}")]
+        public async Task<ActionResult<GameAccount>> GetGameAccountById(string id)
+        {
+            var result = await _gameAccountService.GetAsync(id);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("Can not found this game account");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateGameAccount(AccountRequest request)
+        {
+            try
+            {
+                var result = await _gameAccountService.CreateAsync(request);
                 if (result == "success")
                 {
                     return Ok(result);
@@ -60,16 +69,16 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPut("{id:length(24)}")]
-        public async Task<ActionResult<List<Dream>>> UpdateDream(string id, DreamRequest request)
+        public async Task<ActionResult<List<GameAccount>>> UpdateGameAccount(string id, AccountRequest request)
         {
             try
             {
-                var result = await _dreamService.GetAsync(id);
+                var result = await _gameAccountService.GetAsync(id);
                 if (result is null)
                 {
                     return NotFound(result);
                 }
-                await _dreamService.UpdateAsync(id, request);
+                await _gameAccountService.UpdateAsync(id, request);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -79,16 +88,16 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpDelete("{id:length(24)}")]
-        public async Task<ActionResult<List<Dream>>> DeleteDream(string id)
+        public async Task<ActionResult<List<GameAccount>>> DeleteGameAccount(string id)
         {
             try
             {
-                var result = await _dreamService.GetAsync(id);
+                var result = await _gameAccountService.GetAsync(id);
                 if (result is null)
                 {
                     return NotFound(result);
                 }
-                await _dreamService.RemoveAsync(id);
+                await _gameAccountService.RemoveAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -96,6 +105,5 @@ namespace MobileBasedCashFlowAPI.MongoController
                 return BadRequest(ex.ToString());
             }
         }
-
     }
 }

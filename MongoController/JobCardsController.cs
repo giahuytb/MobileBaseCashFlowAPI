@@ -49,15 +49,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             try
             {
                 var result = await _jobCardService.CreateAsync(request);
-                if (result == "success")
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
-
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -65,7 +57,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:length(24)}")]
         public async Task<ActionResult> UpdateJobCard(string id, JobCardRequest request)
         {
             try
@@ -76,8 +68,29 @@ namespace MobileBasedCashFlowAPI.MongoController
                 {
                     return NotFound("can not find this job card");
                 }
-                await _jobCardService.UpdateAsync(id, request);
-                return Ok("update success");
+                var result = await _jobCardService.UpdateAsync(id, request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+
+        [HttpDelete("{id:length(24)}")]
+        public async Task<ActionResult> DeleteJobCard(string id)
+        {
+            try
+            {
+                var jobCard1 = await _jobCardService.GetAsync(id);
+
+                if (jobCard1 is null)
+                {
+                    return NotFound("can not find this job card");
+                }
+                await _jobCardService.RemoveAsync(id);
+                return Ok("Delete success");
             }
             catch (Exception ex)
             {

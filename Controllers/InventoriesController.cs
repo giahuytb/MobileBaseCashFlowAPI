@@ -42,7 +42,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[HttpGet]
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("user")]
+        [HttpGet("my-inventory")]
         public async Task<ActionResult<Inventory>> GetById()
         {
             try

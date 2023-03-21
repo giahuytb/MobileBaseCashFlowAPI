@@ -154,6 +154,10 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 return "You need to fill your nickname";
             }
+            else if (request.Gender.Equals("Female") || request.Gender.Equals("Male") || request.Gender.Equals("Other"))
+            {
+                return "Your Gender must be Female, Male or Other";
+            }
             else if (!ValidateInput.isPhone(request.Phone))
             {
                 return "Your phone number is not correct";
@@ -166,6 +170,7 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 return "Your confirm password must be the same with password";
             }
+
             else
             {
                 // Find role "Player" in database
@@ -325,6 +330,11 @@ namespace MobileBasedCashFlowAPI.Services
                     {
                         return "You need to enter the the correct phone with 10 number";
                     }
+                    else if (!ValidateInput.isEmail(request.Email))
+                    {
+                        return "You need to enter the the correct email format";
+                    }
+                    //else if
 
                     oldProfile.NickName = request.NickName;
                     oldProfile.Gender = request.Gender;

@@ -49,18 +49,13 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 {
                     return "You need to fill name of this dream";
                 }
-                if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost <= 0)
-                {
-                    return "You need to fill description of this dream";
-                }
                 var dream1 = new Dream()
                 {
                     Name = request.Name,
-                    Description = request.Description,
                     Cost = request.Cost,
                 };
                 await _collection.InsertOneAsync(dream1);
-                return SUCCESS;
+                return "Create success";
             }
             catch (Exception ex)
             {
@@ -83,19 +78,14 @@ namespace MobileBasedCashFlowAPI.MongoServices
                     {
                         return "You need to fill name for this dream";
                     }
-                    else if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost <= 0)
-                    {
-                        return "You need to fill description for this dream";
-                    }
 
                     oldDream.Name = request.Name;
-                    oldDream.Description = request.Description;
                     oldDream.Cost = request.Cost;
 
                     var result = await _collection.ReplaceOneAsync(x => x.id == id, oldDream);
                     if (result != null)
                     {
-                        return SUCCESS;
+                        return "Update success";
                     }
                     return "Update failed";
                 }
@@ -115,7 +105,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             var result = await _collection.DeleteOneAsync(x => x.id == id);
             if (result != null)
             {
-                return SUCCESS;
+                return "Delete uccess";
             }
             return "Can not found this dream to delete";
         }
