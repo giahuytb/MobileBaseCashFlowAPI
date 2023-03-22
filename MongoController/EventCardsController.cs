@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
@@ -17,13 +18,31 @@ namespace MobileBasedCashFlowAPI.MongoController
             _eventCardService = eventCardService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<List<EventCard>>> GetAll()
         {
             var eventCard = await _eventCardService.GetAsync();
             if (eventCard != null)
             {
                 return Ok(eventCard);
+            }
+            return NotFound("list is empty");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<EventCard>>> Get([FromQuery] PaginationFilter filter)
+        {
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var result = await _eventCardService.GetAsync(validFilter.PageNumber, validFilter.PageSize);
+            if (result != null)
+            {
+                //return Ok(new
+                //{
+                //    pageIndex = validFilter.PageNumber,
+                //    pageSize = validFilter.PageSize,
+                //    data = eventCard
+                //});
+                return Ok(result);
             }
             return NotFound("list is empty");
         }

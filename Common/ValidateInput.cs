@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Drawing.Printing;
+using System.Text.RegularExpressions;
 
 namespace MobileBasedCashFlowAPI.Common
 {
@@ -20,6 +21,12 @@ namespace MobileBasedCashFlowAPI.Common
         private static Regex regexNumSymbol = new Regex("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]*$");
         // Validate Email
         private static Regex regexEmail = new Regex("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$");
+
+
+        public static int totaPage(int totalCount, int pageSize)
+        {
+            return ((int)Math.Ceiling(totalCount / (double)pageSize));
+        }
 
         public static bool isName(string s)
         {

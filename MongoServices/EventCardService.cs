@@ -5,6 +5,8 @@ using MobileBasedCashFlowAPI.Settings;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.MongoDTO;
+using System.Collections;
+using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
@@ -19,10 +21,38 @@ namespace MobileBasedCashFlowAPI.MongoServices
             _collection = database.GetCollection<EventCard>("Event_card");
         }
 
-        public async Task<List<EventCard>> GetAsync()
+        public async Task<IEnumerable> GetAsync()
         {
             var eventCards = await _collection.Find(_ => true).ToListAsync();
             return eventCards;
+        }
+
+        public async Task<Object?> GetAsync(int pageIndex, int pageSize)
+        {
+            var AllEventCard = await _collection.Find(_ => true).ToListAsync();
+
+            //var PagedData = await AllEventCard.Skip((pageIndex - 1) * pageSize)
+            //                            .Limit(pageSize)
+            //                            .ToListAsync();
+            //var TotalRecords = await _collection.EstimatedDocumentCountAsync();
+            //return new
+            //{
+            //    pageIndex,
+            //    pageSize,
+            //    TotalRecords,
+            //    data = PagedData,
+            //};
+            //var AllEventCard = await _collection.AsQueryable();
+
+            var PagedData = await AllEventCard.ToPagedListAsync(pageIndex, pageSize);
+            var totalPage = ValidateInput.totaPage(PagedData.TotalItemCount, pageSize);
+            return new
+            {
+                pageIndex,
+                pageSize,
+                totalPage,
+                data = PagedData,
+            };
         }
 
         public async Task<EventCard?> GetAsync(string id)
@@ -36,19 +66,19 @@ namespace MobileBasedCashFlowAPI.MongoServices
             try
             {
                 var checkNameExist = _collection.Find(evt => evt.Event_name == request.Event_name).FirstOrDefaultAsync();
-                if (checkNameExist.Result != null)
+                if (checkNameExist.Result == null)
                 {
                     return "This event card has already existed";
                 }
-                else if (request.Event_name.Length <= 0)
+                else if (request.Event_name == null)
                 {
                     return "You need to fill name for this event card";
                 }
-                else if (request.Trading_range.Length <= 0)
+                else if (request.Trading_range == null)
                 {
                     return "You need to fill tranding range for this event card";
                 }
-                else if (request.Event_description.Length <= 0)
+                else if (request.Event_description == null)
                 {
                     return "You need to fill description for this event card";
                 }
@@ -98,15 +128,15 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
                 if (oldEventCard != null)
                 {
-                    if (request.Event_name.Length <= 0)
+                    if (request.Event_name == null)
                     {
                         return "You need to fill name for this event card";
                     }
-                    else if (request.Trading_range.Length <= 0)
+                    else if (request.Trading_range == null)
                     {
                         return "You need to fill tranding range for this event card";
                     }
-                    else if (request.Event_description.Length <= 0)
+                    else if (request.Event_description == null)
                     {
                         return "You need to fill description for this event card";
                     }
@@ -163,5 +193,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             }
             return "Can not found this event card";
         }
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
@@ -36,6 +37,24 @@ namespace MobileBasedCashFlowAPI.MongoController
                 return BadRequest(ex);
             }
         }
+
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<FinancialReport>>> GetAll([FromQuery] PaginationFilter filter)
+        //{
+        //    try
+        //    {
+        //        var financial = await _financialReportService.GetAsync();
+        //        if (financial != null)
+        //        {
+        //            return Ok(financial);
+        //        }
+        //        return NotFound("list was empty");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex);
+        //    }
+        //}
 
         [HttpGet("{id}")]
         public async Task<ActionResult<FinancialReport>> GetById(string id)

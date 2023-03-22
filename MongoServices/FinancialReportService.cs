@@ -4,11 +4,16 @@ using MobileBasedCashFlowAPI.Settings;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MongoDB.Driver;
 using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.DTO;
+using System.Collections;
+using System.Drawing.Printing;
+using Microsoft.EntityFrameworkCore;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
     public class FinancialReportService : IFinancialReportService
     {
+        public const string SUCCESS = "success";
         private readonly IMongoCollection<FinancialReport> _collection;
 
         public FinancialReportService(MongoDbSettings settings)
@@ -18,10 +23,24 @@ namespace MobileBasedCashFlowAPI.MongoServices
             _collection = database.GetCollection<FinancialReport>("Financial_report");
         }
 
-        public async Task<List<FinancialReport>> GetAsync()
+        public async Task<IEnumerable> GetAsync()
         {
             var result = await _collection.Find(_ => true).ToListAsync();
             return result;
+        }
+
+        public async Task<IEnumerable> GetAsync(int pageIndex, int pageSize)
+        {
+            var PagedData = await _collection.Find(_ => true)
+                                    .Skip((pageIndex - 1) * pageSize)
+                                    .Limit(pageSize)
+                                    .ToListAsync();
+            //var PagedData = await AllFinancialReport
+            //                    .Skip((pageIndex - 1) * pageSize)
+            //                    .Take(pageSize)
+            //                    .ToListAsync();
+            var TotalRecords = PagedData.Count();
+            return PagedData;
         }
 
         public async Task<FinancialReport?> GetAsync(string id)
@@ -52,7 +71,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
                     Create_at = DateTime.Now,
                 };
                 await _collection.InsertOneAsync(finanReport);
-                return "Create success";
+                return SUCCESS;
             }
             catch (Exception ex)
             {
@@ -83,7 +102,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             else
             {
                 //find if game account is already exist in this financial report
-                for (int i = 0; i < oldFinanReport.Game_accounts.Count(); i++)
+                for (int i = 0; i < oldFinanReport.Game_accounts.Count; i++)
                 {
                     // if this account already existed then update it value
                     if (oldFinanReport.Game_accounts[i].Game_account_name == request.Game_account_name)
@@ -108,14 +127,14 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 };
 
                 await _collection.InsertOneAsync(finanReport);
-                return "Create success";
+                return SUCCESS;
             }
         }
 
         public async Task<string> RemoveAsync(string id)
         {
             await _collection.DeleteOneAsync(x => x.id == id);
-            return "Delete success";
+            return SUCCESS;
         }
 
 

@@ -1,22 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.Services;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System.Collections;
+using System.Data;
 using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserRolesController : ControllerBase
+    public class GameReportsController : ControllerBase
     {
-        private readonly IUserRoleServicecs _userRoleServicecs;
+        private readonly IGameReportService _gameReportService;
 
-        public UserRolesController(IUserRoleServicecs userRoleServicecs)
+        public GameReportsController(IGameReportService gameReportService)
         {
-            _userRoleServicecs = userRoleServicecs;
+            _gameReportService = gameReportService;
         }
 
         [HttpGet]
@@ -24,7 +26,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         {
             try
             {
-                var result = await _userRoleServicecs.GetAsync();
+                var result = await _gameReportService.GetAsync();
                 if (result == null)
                 {
                     return NotFound();
@@ -38,11 +40,11 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(string id)
+        public async Task<ActionResult<GameReport>> GetById(string id)
         {
             try
             {
-                var result = await _userRoleServicecs.GetAsync(id);
+                var result = await _gameReportService.GetAsync(id);
                 if (result == null)
                 {
                     return NotFound();
@@ -56,7 +58,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostUserRole(string roleName)
+        public async Task<ActionResult> PostGameReport(GameReportRequest request)
         {
             try
             {
@@ -64,8 +66,14 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var result = await _userRoleServicecs.CreateAsync(roleName);
-                if (result.Equals("success"))
+                // get the current user logging in system
+                string userId = HttpContext.User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return Unauthorized("User id not Found, please login");
+                }
+                var result = await _gameReportService.CreateAsync(userId, request);
+                if (result == "success")
                 {
                     return Ok("Create success");
                 }
@@ -78,8 +86,8 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUserRole(string id, string roleName)
+        [HttpPut]
+        public async Task<ActionResult> UpdateGameReport(GameReportRequest request)
         {
             try
             {
@@ -87,10 +95,16 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var result = await _userRoleServicecs.UpdateAsync(id, roleName);
-                if (result.Equals("success"))
+                // get the current user logging in system
+                string userId = HttpContext.User.FindFirstValue("Id");
+                if (userId == null)
                 {
-                    return Ok("Update success");
+                    return Unauthorized("User id not Found, please login");
+                }
+                var result = await _gameReportService.CreateAsync(userId, request);
+                if (result == "success")
+                {
+                    return Ok("Create success");
                 }
                 return BadRequest(result);
 
@@ -102,21 +116,19 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteRole(string id)
+        public async Task<ActionResult> DeleteGameReport(string id)
         {
             try
             {
-                var role = await _userRoleServicecs.DeleteAsync(id);
-                if (role.Equals("success"))
-                {
-                    Ok("Delete success");
-                }
-                return NotFound();
+                var result = await _gameReportService.DeleteAsync(id);
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+
     }
 }

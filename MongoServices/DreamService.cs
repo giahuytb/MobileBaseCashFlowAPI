@@ -5,6 +5,7 @@ using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
+using System.Collections;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
@@ -20,7 +21,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             _collection = database.GetCollection<Dream>("Dream");
         }
 
-        public async Task<List<Dream>> GetAsync()
+        public async Task<IEnumerable> GetAsync()
         {
             var dream = await _collection.Find(_ => true).ToListAsync();
             return dream;
@@ -55,7 +56,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
                     Cost = request.Cost,
                 };
                 await _collection.InsertOneAsync(dream1);
-                return "Create success";
+                return SUCCESS;
             }
             catch (Exception ex)
             {
@@ -85,7 +86,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
                     var result = await _collection.ReplaceOneAsync(x => x.id == id, oldDream);
                     if (result != null)
                     {
-                        return "Update success";
+                        return SUCCESS;
                     }
                     return "Update failed";
                 }
@@ -105,7 +106,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             var result = await _collection.DeleteOneAsync(x => x.id == id);
             if (result != null)
             {
-                return "Delete uccess";
+                return SUCCESS;
             }
             return "Can not found this dream to delete";
         }

@@ -208,8 +208,8 @@ namespace MobileBasedCashFlowAPI.Services
                         StatusCode = "Requested",
                         SpecifierId = userId,
                     };
-                    _context.Friendships.Add(Friendship);
-                    _context.FriendshipStatuses.Add(FriendShipStatus);
+                    await _context.Friendships.AddAsync(Friendship);
+                    await _context.FriendshipStatuses.AddAsync(FriendShipStatus);
                     await _context.SaveChangesAsync();
                     return SUCCESS;
                 }
@@ -230,7 +230,7 @@ namespace MobileBasedCashFlowAPI.Services
                                 StatusCode = "Requested",
                                 SpecifierId = userId,
                             };
-                            _context.FriendshipStatuses.Add(newFriendshipStatus);
+                            await _context.FriendshipStatuses.AddAsync(newFriendshipStatus);
                             await _context.SaveChangesAsync();
                             return SUCCESS;
                         }
