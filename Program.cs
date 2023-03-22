@@ -54,9 +54,11 @@ builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
 //Register Service For SqlServer Database
 builder.Services.AddTransient<ISendMailService, SendMailService>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IUserRoleServicecs, UserRoleService>();
 
 builder.Services.AddTransient<IFriendShipService, FriendShipService>();
 builder.Services.AddTransient<IGameMatchService, GameMatchService>();
+builder.Services.AddTransient<IGameReportService, GameReportService>();
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IInventoryService, InventoryService>();
 builder.Services.AddTransient<IItemService, ItemService>();
@@ -66,11 +68,14 @@ builder.Services.AddTransient<ILoginHistoryService, LoginHistoryService>();
 
 // Register Service For MongoDatabase
 builder.Services.AddTransient<MongoDbSettings>(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
-builder.Services.AddTransient<IEventCardService, EventCardService>();
-builder.Services.AddTransient<ITileService, TileService>();
-builder.Services.AddTransient<IJobCardService, JobCardService>();
 builder.Services.AddTransient<IDreamService, DreamService>();
+builder.Services.AddTransient<IEventCardService, EventCardService>();
 builder.Services.AddTransient<IFinancialReportService, FinancialReportService>();
+builder.Services.AddTransient<IGameAccountService, GameAccountService>();
+builder.Services.AddTransient<IJobCardService, JobCardService>();
+builder.Services.AddTransient<ITileService, TileService>();
+
+
 
 // Config Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

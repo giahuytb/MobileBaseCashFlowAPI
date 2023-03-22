@@ -58,8 +58,14 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpGet("friend-name/{name}")]
         public async Task<ActionResult<IEnumerable>> GetFriendByName(string name)
         {
+
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                // get the current user logging in system
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
@@ -84,6 +90,11 @@ namespace MobileBasedCashFlowAPI.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                // get the current user logging in system
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {
@@ -108,6 +119,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
                 // get the current user logging in system
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
@@ -129,6 +144,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
                 // get the current user logging in system
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)

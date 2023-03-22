@@ -112,16 +112,65 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public Task<string> UpdateAsync(string reportId, GameReportRequest request)
+        public async Task<string> UpdateAsync(string reportId, GameReportRequest request)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var oldGameReport = await _context.GameReports.Where(g => g.ReportId == reportId).FirstOrDefaultAsync();
+                if (oldGameReport != null)
+                {
+                    if (!ValidateInput.isNumber(request.ChildrenAmount.ToString()) || request.ChildrenAmount < 0)
+                    {
+                        return "Children amount must be mumber and bigger than or equal 0";
+                    }
+                    if (!ValidateInput.isNumber(request.TotalStep.ToString()) || request.TotalStep <= 0)
+                    {
+                        return "Total step must be mumber and bigger than 0";
+                    }
+                    if (!ValidateInput.isNumber(request.TotalMoney.ToString()) || request.TotalMoney <= 0)
+                    {
+                        return "Total money must be mumber and bigger than 0";
+                    }
+                    if (!ValidateInput.isNumber(request.Score.ToString()) || request.Score <= 0)
+                    {
+                        return "Score must be mumber and bigger than 0";
+                    }
+                    if (!ValidateInput.isNumber(request.IncomePerMonth.ToString()) || request.IncomePerMonth <= 0)
+                    {
+                        return "Income per month must be mumber and bigger than 0";
+                    }
+                    if (!ValidateInput.isNumber(request.ExpensePerMonth.ToString()) || request.ExpensePerMonth <= 0)
+                    {
+                        return "Expense per month must be mumber and bigger than 0";
+                    }
+
+                    oldGameReport.ChildrenAmount = request.ChildrenAmount;
+                    oldGameReport.TotalStep = request.TotalStep;
+                    oldGameReport.TotalMoney = request.TotalMoney;
+                    oldGameReport.IsWin = request.IsWin;
+                    oldGameReport.Score = request.Score;
+                    oldGameReport.IncomePerMonth = request.IncomePerMonth;
+                    oldGameReport.ExpensePerMonth = request.ExpensePerMonth;
+                    await _context.SaveChangesAsync();
+                    return SUCCESS;
+                };
+                return "Can not found this game report";
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
         }
 
-        public Task<string> DeleteAsync(string reportId)
+        public async Task<string> DeleteAsync(string reportId)
         {
-            throw new NotImplementedException();
+            var gameReport = await _context.GameReports.Where(g => g.ReportId == reportId).FirstOrDefaultAsync();
+            if (gameReport != null)
+            {
+                _context.GameReports.Remove(gameReport);
+            }
+            return "Can not found this game report";
         }
-
 
 
     }
