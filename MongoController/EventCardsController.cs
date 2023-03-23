@@ -30,18 +30,12 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<EventCard>>> Get([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<List<EventCard>>> GetByPaging([FromQuery] PaginationFilter filter)
         {
             var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
             var result = await _eventCardService.GetAsync(validFilter.PageNumber, validFilter.PageSize);
             if (result != null)
             {
-                //return Ok(new
-                //{
-                //    pageIndex = validFilter.PageNumber,
-                //    pageSize = validFilter.PageSize,
-                //    data = eventCard
-                //});
                 return Ok(result);
             }
             return NotFound("list is empty");

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
+using MobileBasedCashFlowAPI.MongoServices;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -18,7 +20,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _gameAccountService = gameAccountService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
             try
@@ -34,6 +36,18 @@ namespace MobileBasedCashFlowAPI.MongoController
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<GameAccount>>> GetByPaging([FromQuery] PaginationFilter filter)
+        {
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var result = await _gameAccountService.GetAsync(validFilter.PageNumber, validFilter.PageSize);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("list is empty");
         }
 
         [HttpGet("{id:length(24)}")]

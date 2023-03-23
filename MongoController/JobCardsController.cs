@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
+using MobileBasedCashFlowAPI.MongoServices;
 using System.Data;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -20,7 +22,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _jobCardService = jobCardService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<JobCard>> GetAll()
         {
             var jobCard = await _jobCardService.GetAsync();
@@ -29,6 +31,18 @@ namespace MobileBasedCashFlowAPI.MongoController
                 return Ok(jobCard);
             }
             return NotFound("List is empty");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<JobCard>>> GetByPaging([FromQuery] PaginationFilter filter)
+        {
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var result = await _jobCardService.GetAsync(validFilter.PageNumber, validFilter.PageSize);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("list is empty");
         }
 
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]

@@ -4,10 +4,9 @@ using MobileBasedCashFlowAPI.Settings;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MongoDB.Driver;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
 using System.Collections;
-using System.Drawing.Printing;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
@@ -29,18 +28,18 @@ namespace MobileBasedCashFlowAPI.MongoServices
             return result;
         }
 
-        public async Task<IEnumerable> GetAsync(int pageIndex, int pageSize)
+        public async Task<object?> GetAsync(int pageIndex, int pageSize)
         {
-            var PagedData = await _collection.Find(_ => true)
-                                    .Skip((pageIndex - 1) * pageSize)
-                                    .Limit(pageSize)
-                                    .ToListAsync();
-            //var PagedData = await AllFinancialReport
-            //                    .Skip((pageIndex - 1) * pageSize)
-            //                    .Take(pageSize)
-            //                    .ToListAsync();
-            var TotalRecords = PagedData.Count();
-            return PagedData;
+            var AllFinancialReport = await _collection.Find(_ => true).ToListAsync();
+            var PagedData = await AllFinancialReport.ToPagedListAsync(pageIndex, pageSize);
+            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, pageSize);
+            return new
+            {
+                pageIndex,
+                pageSize,
+                totalPage = TotalPage,
+                data = PagedData,
+            };
         }
 
         public async Task<FinancialReport?> GetAsync(string id)

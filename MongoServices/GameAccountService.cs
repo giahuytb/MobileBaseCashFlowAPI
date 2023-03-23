@@ -1,9 +1,11 @@
-﻿using MobileBasedCashFlowAPI.IMongoServices;
+﻿using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
 using System.Collections;
+using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
@@ -23,6 +25,20 @@ namespace MobileBasedCashFlowAPI.MongoServices
         {
             var gameAccounts = await _collection.Find(_ => true).ToListAsync();
             return gameAccounts;
+        }
+
+        public async Task<object?> GetAsync(int pageIndex, int pageSize)
+        {
+            var AllGameAccount = await _collection.Find(_ => true).ToListAsync();
+            var PagedData = await AllGameAccount.ToPagedListAsync(pageIndex, pageSize);
+            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, pageSize);
+            return new
+            {
+                pageIndex,
+                pageSize,
+                totalPage = TotalPage,
+                data = PagedData,
+            };
         }
 
         public async Task<GameAccount?> GetAsync(string id)
@@ -95,6 +111,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             await _collection.DeleteOneAsync(x => x.id == id);
             return SUCCESS;
         }
+
 
     }
 }

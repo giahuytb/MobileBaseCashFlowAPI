@@ -1,11 +1,11 @@
-﻿
-using MobileBasedCashFlowAPI.Common;
+﻿using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
 using System.Collections;
+using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
@@ -25,6 +25,20 @@ namespace MobileBasedCashFlowAPI.MongoServices
         {
             var dream = await _collection.Find(_ => true).ToListAsync();
             return dream;
+        }
+
+        public async Task<object?> GetAsync(int pageIndex, int pageSize)
+        {
+            var AllDream = await _collection.Find(_ => true).ToListAsync();
+            var PagedData = await AllDream.ToPagedListAsync(pageIndex, pageSize);
+            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, pageSize);
+            return new
+            {
+                pageIndex,
+                pageSize,
+                totalPage = TotalPage,
+                data = PagedData,
+            };
         }
 
         public async Task<Dream?> GetAsync(string id)
