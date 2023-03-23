@@ -20,7 +20,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<FinancialReport>>> GetAll()
         {
             try
@@ -38,23 +38,17 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<FinancialReport>>> GetAll([FromQuery] PaginationFilter filter)
-        //{
-        //    try
-        //    {
-        //        var financial = await _financialReportService.GetAsync();
-        //        if (financial != null)
-        //        {
-        //            return Ok(financial);
-        //        }
-        //        return NotFound("list was empty");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex);
-        //    }
-        //}
+        [HttpGet]
+        public async Task<ActionResult<List<FinancialReport>>> GetByPaging([FromQuery] PaginationFilter filter)
+        {
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var result = await _financialReportService.GetAsync(validFilter.PageNumber, validFilter.PageSize);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("list is empty");
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<FinancialReport>> GetById(string id)

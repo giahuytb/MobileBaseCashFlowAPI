@@ -1,7 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoModels;
+using MobileBasedCashFlowAPI.MongoServices;
 
 namespace MobileBasedCashFlowAPI.MongoController
 {
@@ -16,7 +18,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _tileService = tileService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         public async Task<ActionResult<List<Tile>>> GetAll()
         {
@@ -24,6 +26,18 @@ namespace MobileBasedCashFlowAPI.MongoController
             if (tile != null)
             {
                 return Ok(tile);
+            }
+            return NotFound("list is empty");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Tile>>> GetByPaging([FromQuery] PaginationFilter filter)
+        {
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var result = await _tileService.GetAsync(validFilter.PageNumber, validFilter.PageSize);
+            if (result != null)
+            {
+                return Ok(result);
             }
             return NotFound("list is empty");
         }

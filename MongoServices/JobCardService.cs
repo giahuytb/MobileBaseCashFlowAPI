@@ -6,6 +6,8 @@ using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
+using MobileBasedCashFlowAPI.Common;
+using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
@@ -23,9 +25,22 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<List<JobCard>> GetAsync()
         {
-
             var result = await _collection.Find(_ => true).ToListAsync();
             return result;
+        }
+
+        public async Task<object?> GetAsync(int pageIndex, int pageSize)
+        {
+            var AllJobCard = await _collection.Find(_ => true).ToListAsync();
+            var PagedData = await AllJobCard.ToPagedListAsync(pageIndex, pageSize);
+            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, pageSize);
+            return new
+            {
+                pageIndex,
+                pageSize,
+                totalPage = TotalPage,
+                data = PagedData,
+            };
         }
 
         public async Task<object?> GetAsync(string id)
@@ -82,6 +97,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             await _collection.DeleteOneAsync(x => x.id == id);
             return SUCCESS;
         }
+
 
     }
 }

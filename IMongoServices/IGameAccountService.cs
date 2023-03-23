@@ -7,6 +7,7 @@ namespace MobileBasedCashFlowAPI.IMongoServices
     public interface IGameAccountService
     {
         public Task<IEnumerable> GetAsync();
+        public Task<Object?> GetAsync(int pageIndex, int pageSize);
         public Task<GameAccount?> GetAsync(string id);
         public Task<string> CreateAsync(AccountRequest request);
         public Task<string> UpdateAsync(string id, AccountRequest request);

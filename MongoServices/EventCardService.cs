@@ -27,30 +27,16 @@ namespace MobileBasedCashFlowAPI.MongoServices
             return eventCards;
         }
 
-        public async Task<Object?> GetAsync(int pageIndex, int pageSize)
+        public async Task<object?> GetAsync(int pageIndex, int pageSize)
         {
             var AllEventCard = await _collection.Find(_ => true).ToListAsync();
-
-            //var PagedData = await AllEventCard.Skip((pageIndex - 1) * pageSize)
-            //                            .Limit(pageSize)
-            //                            .ToListAsync();
-            //var TotalRecords = await _collection.EstimatedDocumentCountAsync();
-            //return new
-            //{
-            //    pageIndex,
-            //    pageSize,
-            //    TotalRecords,
-            //    data = PagedData,
-            //};
-            //var AllEventCard = await _collection.AsQueryable();
-
             var PagedData = await AllEventCard.ToPagedListAsync(pageIndex, pageSize);
-            var totalPage = ValidateInput.totaPage(PagedData.TotalItemCount, pageSize);
+            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, pageSize);
             return new
             {
                 pageIndex,
                 pageSize,
-                totalPage,
+                totalPage = TotalPage,
                 data = PagedData,
             };
         }
