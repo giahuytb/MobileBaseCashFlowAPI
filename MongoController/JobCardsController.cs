@@ -36,8 +36,8 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet]
         public async Task<ActionResult<List<JobCard>>> GetByPaging([FromQuery] PaginationFilter filter)
         {
-            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-            var result = await _jobCardService.GetAsync(validFilter.PageNumber, validFilter.PageSize);
+            var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
+            var result = await _jobCardService.GetAsync(validFilter);
             if (result != null)
             {
                 return Ok(result);

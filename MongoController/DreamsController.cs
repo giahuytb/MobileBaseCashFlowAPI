@@ -30,10 +30,10 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Dream>>> GetByPaging([FromQuery] PaginationFilter filter)
+        public async Task<ActionResult<List<Dream>>> GetByPaging([FromQuery] PaginationFilter filter, double? from, double? to)
         {
-            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-            var result = await _dreamService.GetAsync(validFilter.PageNumber, validFilter.PageSize);
+            var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
+            var result = await _dreamService.GetAsync(validFilter, from, to);
             if (result != null)
             {
                 return Ok(result);

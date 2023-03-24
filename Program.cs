@@ -3,8 +3,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using Microsoft.AspNetCore.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 using Microsoft.EntityFrameworkCore;
 
 using MobileBasedCashFlowAPI.MongoServices;

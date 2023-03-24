@@ -4,6 +4,7 @@ using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using System.Collections;
 using X.PagedList;
 
@@ -27,15 +28,32 @@ namespace MobileBasedCashFlowAPI.MongoServices
             return dream;
         }
 
-        public async Task<object?> GetAsync(int pageIndex, int pageSize)
+        public async Task<object?> GetAsync(PaginationFilter filter, double? from, double? to)
         {
-            var AllDream = await _collection.Find(_ => true).ToListAsync();
-            var PagedData = await AllDream.ToPagedListAsync(pageIndex, pageSize);
-            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, pageSize);
+            // var AllDream = await _collection.Find(_ => true).ToListAsync();
+            var AllDream = _collection.AsQueryable();
+            #region Filter
+            if (from.HasValue)
+            {
+                AllDream = AllDream.Where(d => d.Cost >= from);
+            }
+            if (to.HasValue)
+            {
+                AllDream = AllDream.Where(d => d.Cost <= to);
+            }
+
+            #endregion
+
+            #region Paging
+            var PagedData = await AllDream.ToPagedListAsync(filter.PageIndex, filter.PageSize);
+            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, filter.PageSize);
+            #endregion
+
+
             return new
             {
-                pageIndex,
-                pageSize,
+                filter.PageIndex,
+                filter.PageSize,
                 totalPage = TotalPage,
                 data = PagedData,
             };

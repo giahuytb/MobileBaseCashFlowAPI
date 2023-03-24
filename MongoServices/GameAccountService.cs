@@ -27,15 +27,15 @@ namespace MobileBasedCashFlowAPI.MongoServices
             return gameAccounts;
         }
 
-        public async Task<object?> GetAsync(int pageIndex, int pageSize)
+        public async Task<object?> GetAsync(PaginationFilter filter)
         {
             var AllGameAccount = await _collection.Find(_ => true).ToListAsync();
-            var PagedData = await AllGameAccount.ToPagedListAsync(pageIndex, pageSize);
-            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, pageSize);
+            var PagedData = await AllGameAccount.ToPagedListAsync(filter.PageIndex, filter.PageSize);
+            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, filter.PageSize);
             return new
             {
-                pageIndex,
-                pageSize,
+                filter.PageIndex,
+                filter.PageSize,
                 totalPage = TotalPage,
                 data = PagedData,
             };

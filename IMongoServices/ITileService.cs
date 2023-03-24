@@ -1,11 +1,12 @@
-﻿using MobileBasedCashFlowAPI.MongoModels;
+﻿using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.MongoModels;
 
 namespace MobileBasedCashFlowAPI.IMongoServices
 {
     public interface ITileService
     {
         public Task<List<Tile>> GetAsync();
-        public Task<Object?> GetAsync(int pageIndex, int pageSize);
+        public Task<Object?> GetAsync(PaginationFilter filter);
         public Task<Tile?> GetAsync(string id);
         public Task<string> CreateAsync(Tile tile);
         public Task<string> UpdateAsync(string id, Tile tile);

@@ -33,8 +33,8 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet]
         public async Task<ActionResult<List<Tile>>> GetByPaging([FromQuery] PaginationFilter filter)
         {
-            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-            var result = await _tileService.GetAsync(validFilter.PageNumber, validFilter.PageSize);
+            var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
+            var result = await _tileService.GetAsync(validFilter);
             if (result != null)
             {
                 return Ok(result);
