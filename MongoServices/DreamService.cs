@@ -41,14 +41,12 @@ namespace MobileBasedCashFlowAPI.MongoServices
             {
                 AllDream = AllDream.Where(d => d.Cost <= to);
             }
-
             #endregion
 
             #region Paging
             var PagedData = await AllDream.ToPagedListAsync(filter.PageIndex, filter.PageSize);
             var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, filter.PageSize);
             #endregion
-
 
             return new
             {
