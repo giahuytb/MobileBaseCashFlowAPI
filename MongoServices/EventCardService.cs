@@ -7,6 +7,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.MongoDTO;
 using System.Collections;
 using X.PagedList;
+using MongoDB.Driver.Linq;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
@@ -27,11 +28,24 @@ namespace MobileBasedCashFlowAPI.MongoServices
             return eventCards;
         }
 
-        public async Task<object?> GetAsync(PaginationFilter filter)
+        public async Task<object?> GetAsync(PaginationFilter filter, double? from, double? to)
         {
-            var AllEventCard = await _collection.Find(_ => true).ToListAsync();
+            var AllEventCard = _collection.AsQueryable();
+            #region Filter
+            if (from.HasValue)
+            {
+                AllEventCard = AllEventCard.Where(evt => evt.Cost >= from);
+            }
+            if (to.HasValue)
+            {
+                AllEventCard = AllEventCard.Where(evt => evt.Cost <= to);
+            }
+            #endregion
+
+            #region Paging
             var PagedData = await AllEventCard.ToPagedListAsync(filter.PageIndex, filter.PageSize);
             var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, filter.PageSize);
+            #endregion
             return new
             {
                 filter.PageIndex,
