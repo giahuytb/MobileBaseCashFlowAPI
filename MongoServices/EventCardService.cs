@@ -65,7 +65,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
         {
             try
             {
-                else if (request.Event_name == null)
+                if (request.Event_name == null)
                 {
                     return "You need to fill name for this event card";
                 }
