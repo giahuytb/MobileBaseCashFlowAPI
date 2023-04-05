@@ -65,11 +65,6 @@ namespace MobileBasedCashFlowAPI.MongoServices
         {
             try
             {
-                var checkNameExist = _collection.Find(evt => evt.Event_name == request.Event_name).FirstOrDefaultAsync();
-                if (checkNameExist.Result == null)
-                {
-                    return "This event card has already existed";
-                }
                 else if (request.Event_name == null)
                 {
                     return "You need to fill name for this event card";
