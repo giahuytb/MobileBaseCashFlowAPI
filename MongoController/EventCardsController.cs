@@ -105,6 +105,30 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
+        [HttpPut("inactive/{id:length(24)}")]
+        public async Task<IActionResult> InActiveEventCard(string id)
+        {
+            try
+            {
+                var eventCard = await _eventCardService.GetAsync(id);
+                if (eventCard is null)
+                {
+                    return NotFound("can not find this event card");
+                }
+                var result = await _eventCardService.InActiveCardAsync(id);
+                if (result == "success")
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
 
         [HttpDelete("{id:length(24)}")]
         public async Task<IActionResult> DeleteEvent(string id)

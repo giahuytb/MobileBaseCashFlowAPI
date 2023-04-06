@@ -23,7 +23,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<IEnumerable> GetAsync()
         {
-            var gameAccounts = await _collection.Find(_ => true).ToListAsync();
+            var gameAccounts = await _collection.Find(account => account.Status.Equals(true)).ToListAsync();
             return gameAccounts;
         }
 
@@ -43,7 +43,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<GameAccount?> GetAsync(string id)
         {
-            var gameAccount = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
+            var gameAccount = await _collection.Find(account => account.id == id && account.Status.Equals(true)).FirstOrDefaultAsync();
             return gameAccount;
         }
 

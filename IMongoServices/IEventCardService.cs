@@ -13,6 +13,7 @@ namespace MobileBasedCashFlowAPI.IMongoServices
         public Task<EventCard?> GetAsync(string id);
         public Task<string> CreateAsync(EventCardRequest request);
         public Task<string> UpdateAsync(string id, EventCardRequest request);
+        public Task<string> InActiveCardAsync(string id);
         public Task<string> RemoveAsync(string id);
     }
 }
