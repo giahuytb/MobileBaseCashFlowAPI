@@ -24,7 +24,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<IEnumerable> GetAsync()
         {
-            var eventCards = await _collection.Find(_ => true).ToListAsync();
+            var eventCards = await _collection.Find(evt => evt.Status.Equals(true)).ToListAsync();
             return eventCards;
         }
 
@@ -57,13 +57,13 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<IEnumerable> GetAsync(int typeId)
         {
-            var eventCards = await _collection.Find(evt => evt.Event_type_id == typeId).ToListAsync();
+            var eventCards = await _collection.Find(evt => evt.Event_type_id == typeId && evt.Status.Equals(true)).ToListAsync();
             return eventCards;
         }
 
         public async Task<EventCard?> GetAsync(string id)
         {
-            var eventCard = await _collection.Find(evt => evt.id == id).FirstOrDefaultAsync();
+            var eventCard = await _collection.Find(evt => evt.id == id && evt.Status.Equals(true)).FirstOrDefaultAsync();
             return eventCard;
         }
 
@@ -112,6 +112,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
                     Cash_flow = request.Cash_flow,
                     Event_type_id = request.Event_type_id,
                     Action = request.Action,
+                    Status = true,
                 };
                 await _collection.InsertOneAsync(eventCard);
                 return SUCCESS;
@@ -170,6 +171,28 @@ namespace MobileBasedCashFlowAPI.MongoServices
                     oldEventCard.Event_type_id = request.Event_type_id;
                     oldEventCard.Action = request.Action;
 
+                    await _collection.ReplaceOneAsync(x => x.id == id, oldEventCard);
+                    return SUCCESS;
+                }
+                else
+                {
+                    return "Can not found this event card";
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        public async Task<string> InActiveCardAsync(string id)
+        {
+            try
+            {
+                var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
+                if (oldEventCard != null)
+                {
+                    oldEventCard.Status = false;
                     await _collection.ReplaceOneAsync(x => x.id == id, oldEventCard);
                     return SUCCESS;
                 }
