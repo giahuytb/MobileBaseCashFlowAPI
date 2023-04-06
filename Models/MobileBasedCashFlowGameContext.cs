@@ -473,6 +473,10 @@ namespace MobileBasedCashFlowAPI.Models
                     .HasColumnName("user_id")
                     .IsFixedLength();
 
+                entity.Property(e => e.Address)
+                    .HasMaxLength(200)
+                    .HasColumnName("address");
+
                 entity.Property(e => e.AvatarImageUrl)
                     .HasMaxLength(200)
                     .IsUnicode(false)

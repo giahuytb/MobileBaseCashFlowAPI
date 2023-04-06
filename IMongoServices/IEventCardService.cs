@@ -9,6 +9,7 @@ namespace MobileBasedCashFlowAPI.IMongoServices
     {
         public Task<IEnumerable> GetAsync();
         public Task<Object?> GetAsync(PaginationFilter filter, double? from, double? to);
+        public Task<IEnumerable> GetAsync(int typeId);
         public Task<EventCard?> GetAsync(string id);
         public Task<string> CreateAsync(EventCardRequest request);
         public Task<string> UpdateAsync(string id, EventCardRequest request);

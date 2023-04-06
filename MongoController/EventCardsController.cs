@@ -41,6 +41,17 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
+        [HttpGet("type-id/{id}")]
+        public async Task<ActionResult<EventCard>> GetByTypeId(int id)
+        {
+            var eventCard = await _eventCardService.GetAsync(id);
+            if (eventCard != null)
+            {
+                return Ok(eventCard);
+            }
+            return NotFound("can not find event card of this type");
+        }
+
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<EventCard>> GetById(string id)
         {

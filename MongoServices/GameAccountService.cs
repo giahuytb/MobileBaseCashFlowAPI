@@ -63,7 +63,6 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 {
                     Game_account_name = request.Game_account_name,
                     Game_account_type_id = request.Game_account_type,
-                    Create_at = DateTime.Now,
                 };
                 await _collection.InsertOneAsync(account);
                 return SUCCESS;

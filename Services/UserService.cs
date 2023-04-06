@@ -62,6 +62,10 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 user.Coin = 0;
             }
+            if (user.Address == null)
+            {
+                user.Address = "";
+            }
             var claims = new[]
             {
                 new Claim(ClaimTypes.Email , user.Email),
@@ -69,6 +73,7 @@ namespace MobileBasedCashFlowAPI.Services
                 new Claim("NickName" , user.NickName),
                 new Claim("UserName" , user.UserName),
                 new Claim("Email", user.Email),
+                new Claim("Address", user.Address ),
                 new Claim("AvatarImageUrl", user.AvatarImageUrl),
                 new Claim("Gender", user.Gender),
                 new Claim("Id" , user.UserId.ToString()),
@@ -97,6 +102,7 @@ namespace MobileBasedCashFlowAPI.Services
                 {
                     user.NickName,
                     user.Email,
+                    user.Address,
                     user.Coin,
                     user.AvatarImageUrl,
                     user.Phone,
