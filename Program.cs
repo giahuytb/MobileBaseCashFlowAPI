@@ -49,7 +49,7 @@ builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerDb"));
 });
 
-//Register Service For SqlServer Database
+// Register Service For SqlServer Database
 builder.Services.AddTransient<ISendMailService, SendMailService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserRoleServicecs, UserRoleService>();
@@ -72,7 +72,6 @@ builder.Services.AddTransient<IFinancialReportService, FinancialReportService>()
 builder.Services.AddTransient<IGameAccountService, GameAccountService>();
 builder.Services.AddTransient<IJobCardService, JobCardService>();
 builder.Services.AddTransient<ITileService, TileService>();
-
 
 
 // Config Authentication

@@ -38,6 +38,7 @@ namespace MobileBasedCashFlowAPI.Models
         public string? GameId { get; set; }
         public string? RoleId { get; set; }
         public double? Coin { get; set; }
+        public string? Address { get; set; }
 
         public virtual Game? Game { get; set; }
         public virtual UserRole? Role { get; set; }

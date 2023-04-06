@@ -55,6 +55,12 @@ namespace MobileBasedCashFlowAPI.MongoServices
             };
         }
 
+        public async Task<IEnumerable> GetAsync(int typeId)
+        {
+            var eventCards = await _collection.Find(evt => evt.Event_type_id == typeId).ToListAsync();
+            return eventCards;
+        }
+
         public async Task<EventCard?> GetAsync(string id)
         {
             var eventCard = await _collection.Find(evt => evt.id == id).FirstOrDefaultAsync();
