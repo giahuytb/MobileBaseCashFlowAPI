@@ -10,6 +10,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.DTO;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 
 namespace MobileBasedCashFlowAPI.Services
@@ -389,6 +390,32 @@ namespace MobileBasedCashFlowAPI.Services
             return _context.UserAccounts.Any(e => e.UserId == id);
         }
 
-
+        public async Task<string> UpdateCoin(string userId, int coin)
+        {
+            var oldProfile = await _context.UserAccounts.FirstOrDefaultAsync(i => i.UserId == userId);
+            if (oldProfile != null)
+            {
+                try
+                {
+                    if (!ValidateInput.isNumber(coin.ToString()))
+                    {
+                        return "Coin must be number";
+                    }
+                    //else if
+                    oldProfile.Coin += coin;
+                    await _context.SaveChangesAsync();
+                    return SUCCESS;
+                }
+                catch (Exception ex)
+                {
+                    if (!UserExists(userId))
+                    {
+                        return NOTFOUND;
+                    }
+                    return ex.ToString();
+                }
+            }
+            return FAILED;
+        }
     }
 }

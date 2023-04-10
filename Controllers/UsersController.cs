@@ -115,7 +115,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
 
-        [HttpPost("profile")]
+        [HttpPut("profile")]
         [Authorize(Roles = "Player, Admin, Moderator")]
         public async Task<IActionResult> EditProfile(string userId, EditProfileRequest request)
         {
@@ -174,6 +174,27 @@ namespace MobileBasedCashFlowAPI.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("coin")]
+        public async Task<IActionResult> AddCoinToUser(string userId, int coin)
+        {
+            try
+            {
+                var result = await _userService.UpdateCoin(userId, coin);
+                if (result == "success")
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
             }
         }
 

@@ -68,7 +68,6 @@ builder.Services.AddTransient<ILoginHistoryService, LoginHistoryService>();
 builder.Services.AddTransient<MongoDbSettings>(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
 builder.Services.AddTransient<IDreamService, DreamService>();
 builder.Services.AddTransient<IEventCardService, EventCardService>();
-builder.Services.AddTransient<IFinancialReportService, FinancialReportService>();
 builder.Services.AddTransient<IGameAccountService, GameAccountService>();
 builder.Services.AddTransient<IJobCardService, JobCardService>();
 builder.Services.AddTransient<ITileService, TileService>();
@@ -79,8 +78,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
+        ValidateIssuer = false,
+        ValidateAudience = false,
         // Sign In token
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),

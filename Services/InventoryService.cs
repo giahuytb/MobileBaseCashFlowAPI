@@ -66,11 +66,25 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> CreateAsync(string itemId, string userId)
         {
+            var item = await _context.Items.Where(i => i.ItemId == itemId).FirstOrDefaultAsync();
+            if (item == null)
+            {
+                return "Can not Found this Item";
+            }
             // check if this item has been purchased by the user 
             var check = await _context.Inventories.FirstOrDefaultAsync(i => i.UserId == userId && i.ItemId == itemId);
             if (check != null)
             {
                 return "You already bought this item";
+            }
+            var user = await _context.UserAccounts.Where(u => u.UserId == userId).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return "Can not found this user";
+            }
+            if (user.Coin < item.ItemPrice)
+            {
+                return "You don't have enough coin to buy this item";
             }
             try
             {
@@ -80,6 +94,7 @@ namespace MobileBasedCashFlowAPI.Services
                     UserId = userId,
                     CreateAt = DateTime.Now,
                 };
+                user.Coin = user.Coin - item.ItemPrice;
                 _context.Inventories.Add(invent);
                 await _context.SaveChangesAsync();
                 return SUCCESS;

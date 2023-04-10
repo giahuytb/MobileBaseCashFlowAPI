@@ -6,6 +6,7 @@ using System.Security.Claims;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -40,8 +41,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
 
-        //[HttpGet]
-        //[Authorize(Roles = "Player, Admin")]
+        [Authorize(Roles = "Player, Admin")]
         [HttpGet("my-inventory")]
         public async Task<ActionResult<Inventory>> GetById()
         {
@@ -49,6 +49,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 // get the current user logging in system
                 string userId = HttpContext.User.FindFirstValue("Id");
+                string users = HttpContext.User.FindFirstValue("roleName");
                 if (userId == null)
                 {
                     return Unauthorized("User id not Found, please login");
@@ -72,7 +73,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         {
             try
             {
-                // get the current user logging in system
+                // get the id of current user logging in system
                 string userId = HttpContext.User.FindFirstValue("Id");
                 if (userId == null)
                 {

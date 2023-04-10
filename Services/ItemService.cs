@@ -6,6 +6,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.DTO;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace MobileBasedCashFlowAPI.Services
 {
@@ -31,6 +32,7 @@ namespace MobileBasedCashFlowAPI.Services
                                   i.Description,
                                   i.IsInShop,
                                   i.CreateBy,
+                                  i.ItemType,
                               }).ToListAsync();
             return item;
         }
@@ -46,6 +48,7 @@ namespace MobileBasedCashFlowAPI.Services
                 i.Description,
                 i.IsInShop,
                 i.CreateBy,
+                i.ItemType,
             }).Where(i => i.ItemId == id).FirstOrDefaultAsync();
             return item;
         }
@@ -62,9 +65,29 @@ namespace MobileBasedCashFlowAPI.Services
                 {
                     return "This Item name is existed";
                 }
+                if (item.ItemName == null)
+                {
+                    return "You need to fill name for this item";
+                }
+                if (item.ItemImageUrl == null)
+                {
+                    return "Please Select Image for this item";
+                }
+                if (item.ItemImageUrl == null)
+                {
+                    return "Please Select Image for this item";
+                }
+                if (item.Description == null)
+                {
+                    return "You need to fill description for this item";
+                }
                 if (!ValidateInput.isNumber(item.ItemPrice.ToString()) || item.ItemPrice <= 0)
                 {
                     return "Price must be mumber and bigger than 0";
+                }
+                if (!ValidateInput.isNumber(item.ItemType.ToString()) || item.ItemPrice <= 0)
+                {
+                    return "Item Type must be 1 - 127";
                 }
 
                 var item1 = new Item()
@@ -77,6 +100,7 @@ namespace MobileBasedCashFlowAPI.Services
                     IsInShop = item.IsInShop,
                     CreateAt = DateTime.Now,
                     CreateBy = userId,
+                    ItemType = item.ItemType,
                 };
 
                 _context.Items.Add(item1);
@@ -97,16 +121,29 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 try
                 {
-                    var checkName = await _context.Items
-                                .Where(d => d.ItemName == item.ItemName)
-                                .Select(d => new { itemName = d.ItemName }).FirstOrDefaultAsync();
-                    if (checkName != null)
+                    if (item.ItemName == null)
                     {
-                        return "This Item name is existed";
+                        return "You need to fill name for this item";
+                    }
+                    if (item.ItemImageUrl == null)
+                    {
+                        return "Please Select Image for this item";
+                    }
+                    if (item.ItemImageUrl == null)
+                    {
+                        return "Please Select Image for this item";
+                    }
+                    if (item.Description == null)
+                    {
+                        return "You need to fill description for this item";
                     }
                     if (!ValidateInput.isNumber(item.ItemPrice.ToString()) || item.ItemPrice <= 0)
                     {
                         return "Price must be mumber and bigger than 0";
+                    }
+                    if (!ValidateInput.isNumber(item.ItemType.ToString()) || item.ItemPrice <= 0)
+                    {
+                        return "Item Type must be 1 - 127";
                     }
 
                     oldItem.ItemName = item.ItemName;
@@ -118,6 +155,7 @@ namespace MobileBasedCashFlowAPI.Services
                     oldItem.CreateBy = oldItem.CreateBy;
                     oldItem.UpdateAt = DateTime.Now;
                     oldItem.UpdateBy = userId;
+                    oldItem.ItemType = item.ItemType;
 
                     await _context.SaveChangesAsync();
                     return SUCCESS;

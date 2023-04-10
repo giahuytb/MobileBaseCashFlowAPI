@@ -7,5 +7,6 @@
         public double ItemPrice { get; set; }
         public string Description { get; set; } = null!;
         public bool IsInShop { get; set; }
+        public byte ItemType { get; set; }
     }
 }

@@ -13,5 +13,6 @@ namespace MobileBasedCashFlowAPI.IServices
         Task<IEnumerable> GetAsync();
         public Task<string> EditProfile(string userId, EditProfileRequest request);
         public Task<object?> ViewProfile(string userId);
+        public Task<string> UpdateCoin(string userId, int coin);
     }
 }
