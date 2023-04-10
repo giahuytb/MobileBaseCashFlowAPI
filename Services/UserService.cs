@@ -127,7 +127,6 @@ namespace MobileBasedCashFlowAPI.Services
                 Email = request.Email,
                 Phone = request.Phone,
                 Coin = 0,
-                AvatarImageUrl = request.ImageUrl,
                 CreateAt = DateTime.UtcNow,
                 EmailConfirmToken = GenerateEmailConfirmationToken(),
                 RoleId = null,
@@ -169,14 +168,14 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 return "Your phone number is not correct";
             }
-            else if (request.ConfirmPassword.Equals(""))
-            {
-                return "Please confirm your password";
-            }
-            else if (!request.Password.Equals(request.ConfirmPassword))
-            {
-                return "Your confirm password must be the same with password";
-            }
+            //else if (request.ConfirmPassword.Equals(""))
+            //{
+            //    return "Please confirm your password";
+            //}
+            //else if (!request.Password.Equals(request.ConfirmPassword))
+            //{
+            //    return "Your confirm password must be the same with password";
+            //}
 
             else
             {
