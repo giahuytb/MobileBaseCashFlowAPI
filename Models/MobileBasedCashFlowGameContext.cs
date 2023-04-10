@@ -329,6 +329,8 @@ namespace MobileBasedCashFlowAPI.Models
 
                 entity.Property(e => e.ItemPrice).HasColumnName("item_price");
 
+                entity.Property(e => e.ItemType).HasColumnName("Item_Type");
+
                 entity.Property(e => e.UpdateAt)
                     .HasColumnType("datetime")
                     .HasColumnName("update_at");

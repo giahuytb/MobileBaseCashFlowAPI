@@ -20,6 +20,7 @@ namespace MobileBasedCashFlowAPI.Models
         public string CreateBy { get; set; } = null!;
         public DateTime? UpdateAt { get; set; }
         public string? UpdateBy { get; set; }
+        public byte? ItemType { get; set; }
 
         public virtual ICollection<Inventory> Inventories { get; set; }
     }
