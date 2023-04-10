@@ -126,6 +126,7 @@ namespace MobileBasedCashFlowAPI.Services
                 Gender = request.Gender,
                 Email = request.Email,
                 Phone = request.Phone,
+                AvatarImageUrl = "",
                 Coin = 0,
                 CreateAt = DateTime.UtcNow,
                 EmailConfirmToken = GenerateEmailConfirmationToken(),
@@ -160,7 +161,7 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 return "You need to fill your nickname";
             }
-            else if (request.Gender.Equals("Female") || request.Gender.Equals("Male") || request.Gender.Equals("Other"))
+            else if (!request.Gender.Equals("Female") && !request.Gender.Equals("Male"))
             {
                 return "Your Gender must be Female, Male or Other";
             }
