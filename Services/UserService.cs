@@ -122,10 +122,10 @@ namespace MobileBasedCashFlowAPI.Services
                 UserId = Guid.NewGuid().ToString(),
                 UserName = request.UserName,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                NickName = request.NickName,
-                Gender = request.Gender,
+                NickName = "",
+                Gender = "Male",
                 Email = request.Email,
-                Phone = request.Phone,
+                Phone = "",
                 AvatarImageUrl = "",
                 Coin = 0,
                 CreateAt = DateTime.UtcNow,
@@ -157,26 +157,26 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 return "Your password must be at least 8 character";
             }
-            else if (request.NickName.Equals(""))
-            {
-                return "You need to fill your nickname";
-            }
-            else if (!request.Gender.Equals("Female") && !request.Gender.Equals("Male"))
-            {
-                return "Your Gender must be Female, Male or Other";
-            }
-            else if (!ValidateInput.isPhone(request.Phone))
-            {
-                return "Your phone number is not correct";
-            }
-            //else if (request.ConfirmPassword.Equals(""))
+            //else if (request.NickName.Equals(""))
             //{
-            //    return "Please confirm your password";
+            //    return "You need to fill your nickname";
             //}
-            //else if (!request.Password.Equals(request.ConfirmPassword))
+            //else if (!request.Gender.Equals("Female") && !request.Gender.Equals("Male"))
             //{
-            //    return "Your confirm password must be the same with password";
+            //    return "Your Gender must be Female, Male or Other";
             //}
+            //else if (!ValidateInput.isPhone(request.Phone))
+            //{
+            //    return "Your phone number is not correct";
+            //}
+            else if (request.ConfirmPassword.Equals(""))
+            {
+                return "Please confirm your password";
+            }
+            else if (!request.Password.Equals(request.ConfirmPassword))
+            {
+                return "Your confirm password must be the same with password";
+            }
 
             else
             {
