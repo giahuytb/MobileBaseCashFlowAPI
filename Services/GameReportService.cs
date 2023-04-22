@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class GameReportService : IGameReportService
+    public class GameReportService : GameReportRepository
     {
         public const string SUCCESS = "success";
         private readonly MobileBasedCashFlowGameContext _context;
@@ -20,6 +20,7 @@ namespace MobileBasedCashFlowAPI.Services
         {
             var report = await (from gr in _context.GameReports
                                 join user in _context.UserAccounts on gr.UserId equals user.UserId
+                                join match in _context.GameMatches on gr.MatchId equals match.MatchId
                                 select new
                                 {
                                     gr.ReportId,
@@ -32,15 +33,17 @@ namespace MobileBasedCashFlowAPI.Services
                                     gr.ExpensePerMonth,
                                     gr.CreateAt,
                                     user.NickName,
+                                    match.MatchId,
                                 }).ToListAsync();
             return report;
         }
 
-        public async Task<object?> GetAsync(string id)
+        public async Task<object?> GetAsync(int reportId)
         {
             var report = await (from gr in _context.GameReports
                                 join user in _context.UserAccounts on gr.UserId equals user.UserId
-                                where gr.ReportId == id
+                                join match in _context.GameMatches on gr.MatchId equals match.MatchId
+                                where gr.ReportId == reportId
                                 select new
                                 {
                                     gr.ReportId,
@@ -53,11 +56,12 @@ namespace MobileBasedCashFlowAPI.Services
                                     gr.ExpensePerMonth,
                                     gr.CreateAt,
                                     user.NickName,
+                                    match.MatchId,
                                 }).ToListAsync();
             return report;
         }
 
-        public async Task<string> CreateAsync(string userId, GameReportRequest request)
+        public async Task<string> CreateAsync(int userId, GameReportRequest request)
         {
             try
             {
@@ -90,7 +94,6 @@ namespace MobileBasedCashFlowAPI.Services
 
                 var gameReport = new GameReport()
                 {
-                    ReportId = Guid.NewGuid().ToString(),
                     ChildrenAmount = request.ChildrenAmount,
                     TotalStep = request.TotalStep,
                     TotalMoney = request.TotalMoney,
@@ -112,7 +115,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public async Task<string> UpdateAsync(string reportId, GameReportRequest request)
+        public async Task<string> UpdateAsync(int reportId, GameReportRequest request)
         {
             try
             {
@@ -162,7 +165,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public async Task<string> DeleteAsync(string reportId)
+        public async Task<string> DeleteAsync(int reportId)
         {
             var gameReport = await _context.GameReports.Where(g => g.ReportId == reportId).FirstOrDefaultAsync();
             if (gameReport != null)

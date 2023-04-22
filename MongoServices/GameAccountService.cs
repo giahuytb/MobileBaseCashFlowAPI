@@ -1,30 +1,43 @@
-﻿using MobileBasedCashFlowAPI.Common;
+﻿using Microsoft.Extensions.Caching.Memory;
+using MobileBasedCashFlowAPI.Cache;
+using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
-using System.Collections;
 using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
     public class GameAccountService : IGameAccountService
     {
-        public const string SUCCESS = "success";
         private readonly IMongoCollection<GameAccount> _collection;
+        private readonly IMemoryCache _cache;
 
-        public GameAccountService(MongoDbSettings settings)
+        public GameAccountService(MongoDbSettings settings, IMemoryCache cache)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<GameAccount>("Game_account");
+            _cache = cache;
         }
 
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable<GameAccount>> GetAsync()
         {
-            var gameAccounts = await _collection.Find(account => account.Status.Equals(true)).ToListAsync();
-            return gameAccounts;
+
+            if (!_cache.TryGetValue(CacheKeys.GameAccounts, out IEnumerable<GameAccount> gameAccountList))
+            {
+                gameAccountList = await _collection.Find(account => account.Status.Equals(true)).ToListAsync();
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromHours(5))
+                .SetAbsoluteExpiration(TimeSpan.FromHours(5))
+                .SetPriority(CacheItemPriority.Normal)
+                .SetSize(1024);
+
+                _cache.Set(CacheKeys.GameAccounts, gameAccountList, cacheEntryOptions);
+            }
+            return gameAccountList;
         }
 
         public async Task<object?> GetAsync(PaginationFilter filter)
@@ -49,66 +62,48 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<string> CreateAsync(AccountRequest request)
         {
-            try
+
+            var account = new GameAccount()
             {
-                if (request.Game_account_name.Length <= 0)
-                {
-                    return "You must to enter game account name";
-                }
-                else if (request.Game_account_type < 0 || request.Game_account_type > 3)
-                {
-                    return "You must to enter game account type and it must be from 0-3";
-                }
-                var account = new GameAccount()
-                {
-                    Game_account_name = request.Game_account_name,
-                    Game_account_type_id = request.Game_account_type,
-                };
-                await _collection.InsertOneAsync(account);
-                return SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+                Game_account_name = request.Game_account_name,
+                Game_account_type_id = request.Game_account_type,
+            };
+            await _collection.InsertOneAsync(account);
+            return Constant.Success;
         }
 
         public async Task<string> UpdateAsync(string id, AccountRequest request)
         {
-            try
-            {
-                var oldGameAccount = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
-                if (oldGameAccount != null)
-                {
-                    if (request.Game_account_name.Length <= 0)
-                    {
-                        return "You must to enter game account game";
-                    }
-                    else if (request.Game_account_type < 0 || request.Game_account_type > 3)
-                    {
-                        return "You must to enter game account type and it must be from 0-3";
-                    }
-                    oldGameAccount.Game_account_name = request.Game_account_name;
-                    oldGameAccount.Game_account_type_id = request.Game_account_type;
 
-                    await _collection.ReplaceOneAsync(x => x.id == id, oldGameAccount);
-                    return SUCCESS;
-                }
-                else
-                {
-                    return "Can not found this game account";
-                }
-            }
-            catch (Exception ex)
+            var oldGameAccount = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
+            if (oldGameAccount != null)
             {
-                return ex.Message;
+                oldGameAccount.Game_account_name = request.Game_account_name;
+                oldGameAccount.Game_account_type_id = request.Game_account_type;
+
+                var result = await _collection.ReplaceOneAsync(x => x.id == id, oldGameAccount);
+                if (result != null)
+                {
+                    return Constant.Success;
+                }
+                return "Update this game account failed";
             }
+            return Constant.NotFound;
         }
 
         public async Task<string> RemoveAsync(string id)
         {
-            await _collection.DeleteOneAsync(x => x.id == id);
-            return SUCCESS;
+            var gameAccountExist = GetAsync(id);
+            if (gameAccountExist != null)
+            {
+                var result = await _collection.DeleteOneAsync(x => x.id == id);
+                if (result != null)
+                {
+                    return Constant.Success;
+                }
+                return "Delete this game account failed";
+            }
+            return Constant.NotFound;
         }
 
 

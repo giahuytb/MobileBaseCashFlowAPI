@@ -12,7 +12,6 @@ namespace MobileBasedCashFlowAPI.MongoServices
 {
     public class DreamService : IDreamService
     {
-        public const string SUCCESS = "success";
         private readonly IMongoCollection<Dream> _collection;
 
         public DreamService(MongoDbSettings settings)
@@ -22,7 +21,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             _collection = database.GetCollection<Dream>("Dream");
         }
 
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable<Dream>> GetAsync()
         {
             var dream = await _collection.Find(_ => true).ToListAsync();
             return dream;
@@ -65,80 +64,54 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<string> CreateAsync(DreamRequest request)
         {
-            try
+            var checkDreamExist = _collection.Find(dream => dream.Name == request.Name).FirstOrDefaultAsync();
+            if (checkDreamExist != null)
             {
-                var checkDreamExist = _collection.Find(dream => dream.Name == request.Name).FirstOrDefaultAsync();
-                if (checkDreamExist != null)
-                {
-                    return "This dream has already existed";
-                }
-                if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost <= 0)
-                {
-                    return "Cost must be mumber and bigger than 0";
-                }
-                if (request.Name.Length <= 0)
-                {
-                    return "You need to fill name of this dream";
-                }
-                var dream1 = new Dream()
-                {
-                    Name = request.Name,
-                    Cost = request.Cost,
-                };
-                await _collection.InsertOneAsync(dream1);
-                return SUCCESS;
+                return "This dream name has already existed";
             }
-            catch (Exception ex)
+            var dream1 = new Dream()
             {
-                return ex.Message;
-            }
+                Name = request.Name,
+                Cost = request.Cost,
+            };
+            await _collection.InsertOneAsync(dream1);
+            return Constant.Success;
         }
 
         public async Task<string> UpdateAsync(string id, DreamRequest request)
         {
-            try
+            var oldDream = await _collection.Find(dream => dream.id == id).FirstOrDefaultAsync();
+            if (oldDream != null)
             {
-                var oldDream = await _collection.Find(dream => dream.id == id).FirstOrDefaultAsync();
-                if (oldDream != null)
-                {
-                    if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost <= 0)
-                    {
-                        return "Cost must be mumber and bigger than 0";
-                    }
-                    else if (request.Name.Length <= 0)
-                    {
-                        return "You need to fill name for this dream";
-                    }
+                oldDream.Name = request.Name;
+                oldDream.Cost = request.Cost;
 
-                    oldDream.Name = request.Name;
-                    oldDream.Cost = request.Cost;
-
-                    var result = await _collection.ReplaceOneAsync(x => x.id == id, oldDream);
-                    if (result != null)
-                    {
-                        return SUCCESS;
-                    }
-                    return "Update failed";
-                }
-                else
+                var result = await _collection.ReplaceOneAsync(x => x.id == id, oldDream);
+                if (result != null)
                 {
-                    return "Can not found this dream";
+                    return Constant.Success;
                 }
+                return "Update this dream failed";
             }
-            catch (Exception ex)
+            else
             {
-                return ex.Message;
+                return Constant.NotFound;
             }
         }
 
         public async Task<string> RemoveAsync(string id)
         {
-            var result = await _collection.DeleteOneAsync(x => x.id == id);
-            if (result != null)
+            var dreamExist = GetAsync(id);
+            if (dreamExist != null)
             {
-                return SUCCESS;
+                var result = await _collection.DeleteOneAsync(x => x.id == id);
+                if (result != null)
+                {
+                    return Constant.Success;
+                }
+                return "Delete this dream failed";
             }
-            return "Can not found this dream to delete";
+            return Constant.NotFound;
         }
 
 

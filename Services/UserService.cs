@@ -16,26 +16,19 @@ using Org.BouncyCastle.Asn1.Ocsp;
 namespace MobileBasedCashFlowAPI.Services
 {
 
-    public class UserService : IUserService
+    public class UserService : UserRepository
     {
-        public const string SUCCESS = "success";
-        public const string FAILED = "failed";
-        public const string NOTFOUND = "not found";
-
         private readonly IConfiguration _configuration;
-        private readonly ISendMailService _sendMailService;
-        private readonly ILoginHistoryService _loginHistoryService;
+        private readonly SendMailRepository _sendMailService;
         private readonly MobileBasedCashFlowGameContext _context;
 
         public UserService(MobileBasedCashFlowGameContext context,
                            IConfiguration configuration,
-                           ISendMailService sendMailService,
-                           ILoginHistoryService loginHistoryService)
+                           SendMailRepository sendMailService)
         {
             _configuration = configuration;
             _sendMailService = sendMailService;
             _context = context;
-            _loginHistoryService = loginHistoryService;
         }
 
         public async Task<object> Authenticate(LoginRequest request)
@@ -43,13 +36,13 @@ namespace MobileBasedCashFlowAPI.Services
             var user = await _context.UserAccounts.SingleOrDefaultAsync(x => x.UserName == request.UserName);
             if (user == null)
             {
-                return "User not found";
+                return Constant.NotFound;
             }
             bool isValidPassword = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
             if (!isValidPassword)
             {
-                return "Wrong password";
+                return Constant.WrongPassword;
             }
             // find role name by id
             var role = await _context.UserRoles
@@ -69,14 +62,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email , user.Email),
                 new Claim(ClaimTypes.Role , role.roleName),
-                new Claim("NickName" , user.NickName),
-                new Claim("UserName" , user.UserName),
-                new Claim("Email", user.Email),
-                new Claim("Address", user.Address ),
-                new Claim("AvatarImageUrl", user.AvatarImageUrl),
-                new Claim("Gender", user.Gender),
                 new Claim("Id" , user.UserId.ToString()),
                 new Claim("Status" , user.Status.ToString()),
             };
@@ -94,9 +80,6 @@ namespace MobileBasedCashFlowAPI.Services
             var jwtToken = tokenHandler.WriteToken(token);
             var stringToken = tokenHandler.WriteToken(token);
 
-            // write login date time when user Login
-            var loginId = await _loginHistoryService.WriteLog(user.UserId);
-
             return new
             {
                 user = new
@@ -105,11 +88,10 @@ namespace MobileBasedCashFlowAPI.Services
                     user.Email,
                     user.Address,
                     user.Coin,
-                    user.AvatarImageUrl,
+                    user.ImageUrl,
                     user.Phone,
                     user.Gender,
                     role.roleName,
-                    loginId,
                 },
                 token = stringToken,
             };
@@ -119,19 +101,19 @@ namespace MobileBasedCashFlowAPI.Services
         {
             var user = new UserAccount()
             {
-                UserId = Guid.NewGuid().ToString(),
                 UserName = request.UserName,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 NickName = "",
                 Gender = "Male",
                 Email = request.Email,
                 Phone = "",
-                AvatarImageUrl = "",
+                ImageUrl = "",
                 Coin = 0,
                 CreateAt = DateTime.UtcNow,
                 EmailConfirmToken = GenerateEmailConfirmationToken(),
                 RoleId = null,
                 Status = true,
+
             };
 
             var checkUser = await _context.UserAccounts.FirstOrDefaultAsync(u => u.UserName == request.UserName);
@@ -145,56 +127,23 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 return "This email has used already";
             }
-            else if (!ValidateInput.isEmail(request.Email) || request.Email.Equals(""))
-            {
-                return "You need to fill your email";
-            }
-            else if (request.UserName.Equals(""))
-            {
-                return "You need to fill your username";
-            }
-            else if (request.Password.Equals("") || request.Password.Length < 8)
-            {
-                return "Your password must be at least 8 character";
-            }
-            //else if (request.NickName.Equals(""))
-            //{
-            //    return "You need to fill your nickname";
-            //}
-            //else if (!request.Gender.Equals("Female") && !request.Gender.Equals("Male"))
-            //{
-            //    return "Your Gender must be Female, Male or Other";
-            //}
-            //else if (!ValidateInput.isPhone(request.Phone))
-            //{
-            //    return "Your phone number is not correct";
-            //}
-            else if (request.ConfirmPassword.Equals(""))
-            {
-                return "Please confirm your password";
-            }
-            else if (!request.Password.Equals(request.ConfirmPassword))
-            {
-                return "Your confirm password must be the same with password";
-            }
-
             else
             {
                 // Find role "Player" in database
                 var roleId = await (from role in _context.UserRoles
                                     where role.RoleName == "Player"
-                                    select new { roleId = role.RoleId }).FirstOrDefaultAsync();
-                // Find gameId in database that match version == "Ver_1"
-                var gameId = await (from game in _context.Games
-                                    where game.GameVersion == "Ver_1"
-                                    select new { gameId = game.GameId }).FirstOrDefaultAsync();
+                                    select new { roleId = role.RoleId }).AsNoTracking().FirstOrDefaultAsync();
+                // Find gameId in database that match version == "ver_1"
+                var gameServerId = await (from game in _context.GameServers
+                                          where game.GameVersion == "Ver_1"
+                                          select new { gameId = game.GameServerId }).AsNoTracking().FirstOrDefaultAsync();
 
-                if (roleId != null && gameId != null)
+                if (roleId != null && gameServerId != null)
                 {
                     try
                     {
                         // Add role to user
-                        user.GameId = gameId.gameId;
+                        user.GameServerId = gameServerId.gameId;
                         user.RoleId = roleId.roleId;
                         await _context.UserAccounts.AddAsync(user);
                         await _context.SaveChangesAsync();
@@ -239,10 +188,10 @@ namespace MobileBasedCashFlowAPI.Services
                     //// call method to send mail
                     //var mailMessage = await _sendMailService.SendMail(mailContent);
 
-                    return SUCCESS;
+                    return Constant.Success;
                 }
+                return Constant.Failed;
             }
-            return FAILED;
         }
 
         public async Task<string> VerifyEmail(string token)
@@ -262,7 +211,7 @@ namespace MobileBasedCashFlowAPI.Services
 
             await _context.SaveChangesAsync();
 
-            return SUCCESS;
+            return Constant.Success;
         }
 
         public async Task<bool> ForgotPassword(string email)
@@ -304,68 +253,38 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<IEnumerable> GetAsync()
         {
-            try
-            {
-                var users = await (from user in _context.UserAccounts
-                                   join role in _context.UserRoles on user.RoleId equals role.RoleId
-                                   select new
-                                   {
-                                       userId = user.UserId,
-                                       userName = user.UserName,
-                                       userRole = role.RoleName,
-                                   }).ToListAsync();
-                return users;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+
+            var users = await (from user in _context.UserAccounts
+                               join role in _context.UserRoles on user.RoleId equals role.RoleId
+                               select new
+                               {
+                                   userId = user.UserId,
+                                   userName = user.UserName,
+                                   userRole = role.RoleName,
+                               }).ToListAsync();
+            return users;
         }
 
-        public async Task<string> EditProfile(string userId, EditProfileRequest request)
+        public async Task<string> EditProfile(int userId, EditProfileRequest request)
         {
             var oldProfile = await _context.UserAccounts.FirstOrDefaultAsync(i => i.UserId == userId);
             if (oldProfile != null)
             {
-                try
-                {
-                    if (request.NickName.Equals(""))
-                    {
-                        return "You need to fill your nickname";
-                    }
-                    else if (!ValidateInput.isPhone(request.Phone))
-                    {
-                        return "You need to enter the the correct phone with 10 number";
-                    }
-                    else if (!ValidateInput.isEmail(request.Email))
-                    {
-                        return "You need to enter the the correct email format";
-                    }
-                    //else if
+                oldProfile.NickName = request.NickName;
+                oldProfile.Gender = request.Gender;
+                oldProfile.Phone = request.Phone;
+                oldProfile.Email = request.Email;
+                oldProfile.ImageUrl = request.ImageUrl;
+                oldProfile.UpdateAt = DateTime.Now;
 
-                    oldProfile.NickName = request.NickName;
-                    oldProfile.Gender = request.Gender;
-                    oldProfile.Phone = request.Phone;
-                    oldProfile.Email = request.Email;
-                    oldProfile.AvatarImageUrl = request.ImageUrl;
-                    oldProfile.UpdateAt = DateTime.Now;
+                await _context.SaveChangesAsync();
+                return Constant.Success;
 
-                    await _context.SaveChangesAsync();
-                    return SUCCESS;
-                }
-                catch (Exception ex)
-                {
-                    if (!UserExists(userId))
-                    {
-                        return NOTFOUND;
-                    }
-                    return ex.ToString();
-                }
             }
-            return FAILED;
+            return Constant.Failed;
         }
 
-        public async Task<object?> ViewProfile(string userId)
+        public async Task<object?> ViewProfile(int userId)
         {
             var user = await (from u in _context.UserAccounts
                               where u.UserId == userId
@@ -375,7 +294,7 @@ namespace MobileBasedCashFlowAPI.Services
                                   u.Gender,
                                   u.Phone,
                                   u.Email,
-                                  u.AvatarImageUrl,
+                                  u.ImageUrl,
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -385,37 +304,27 @@ namespace MobileBasedCashFlowAPI.Services
             return null;
         }
 
-        private bool UserExists(string id)
-        {
-            return _context.UserAccounts.Any(e => e.UserId == id);
-        }
-
-        public async Task<string> UpdateCoin(string userId, int coin)
+        public async Task<string> UpdateCoin(int userId, int coin)
         {
             var oldProfile = await _context.UserAccounts.FirstOrDefaultAsync(i => i.UserId == userId);
             if (oldProfile != null)
             {
-                try
+                if (!ValidateInput.isNumber(coin.ToString()))
                 {
-                    if (!ValidateInput.isNumber(coin.ToString()))
-                    {
-                        return "Coin must be number";
-                    }
-                    //else if
-                    oldProfile.Coin += coin;
-                    await _context.SaveChangesAsync();
-                    return SUCCESS;
+                    return "Coin must be number";
                 }
-                catch (Exception ex)
-                {
-                    if (!UserExists(userId))
-                    {
-                        return NOTFOUND;
-                    }
-                    return ex.ToString();
-                }
+                //else if
+                oldProfile.Coin += coin;
+                await _context.SaveChangesAsync();
+                return Constant.Success;
             }
-            return FAILED;
+            return Constant.Failed;
+        }
+
+        public async Task<UserAccount?> FindUserById(int userId)
+        {
+            var user = await _context.UserAccounts.FirstOrDefaultAsync(i => i.UserId == userId);
+            return user;
         }
     }
 }

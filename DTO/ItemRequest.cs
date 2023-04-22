@@ -1,12 +1,12 @@
 ﻿namespace MobileBasedCashFlowAPI.DTO
 {
-    public class ItemRequest
+    public class AssetRequest
     {
-        public string ItemName { get; set; } = null!;
-        public string ItemImageUrl { get; set; } = null!;
-        public double ItemPrice { get; set; }
+        public string AssetName { get; set; } = null!;
+        public string ImageUrl { get; set; } = null!;
+        public double AssetPrice { get; set; }
         public string Description { get; set; } = null!;
         public bool IsInShop { get; set; }
-        public byte ItemType { get; set; }
+        public byte AssetType { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class GameService : IGameService
+    public class GameService : GameRepository
     {
         public const string SUCCESS = "success";
         private readonly MobileBasedCashFlowGameContext _context;
@@ -25,8 +25,8 @@ namespace MobileBasedCashFlowAPI.Services
                                   select new
                                   {
                                       g.GameId,
-                                      g.GameVersion,
-                                      g.BackgroundImageUrl,
+                                      g.RoomNumber,
+                                      g.RoomName,
                                       g.CreateAt,
                                   }).ToListAsync();
                 return game;
@@ -36,7 +36,7 @@ namespace MobileBasedCashFlowAPI.Services
                 return ex.Message;
             }
         }
-        public async Task<object?> GetAsync(string id)
+        public async Task<object?> GetAsync(int id)
         {
             try
             {
@@ -44,8 +44,8 @@ namespace MobileBasedCashFlowAPI.Services
                     .Select(g => new
                     {
                         g.GameId,
-                        g.GameVersion,
-                        g.BackgroundImageUrl,
+                        g.RoomNumber,
+                        g.RoomName,
                         g.CreateAt,
                     })
                     .Where(b => b.GameId == id)
@@ -57,22 +57,17 @@ namespace MobileBasedCashFlowAPI.Services
                 return ex.Message;
             }
         }
-        public async Task<string> CreateAsync(GameRequest gameRequest)
+        public async Task<string> CreateAsync(int userId, GameRequest gameRequest)
         {
             try
             {
-                var check = await _context.Games.Where(g => g.GameVersion == gameRequest.GameVersion).FirstOrDefaultAsync();
-
-                if (check != null)
-                {
-                    return "This game version already Exist";
-                }
                 var game1 = new Game()
                 {
-                    GameId = Guid.NewGuid().ToString(),
-                    GameVersion = gameRequest.GameVersion,
-                    BackgroundImageUrl = gameRequest.BackgroundImageUrl,
+                    RoomName = gameRequest.RoomName,
+                    RoomNumber = gameRequest.RoomNumber,
                     CreateAt = DateTime.Now,
+                    CreateBy = userId,
+                    GameServerId = 1,
                 };
 
                 _context.Games.Add(game1);
@@ -84,16 +79,17 @@ namespace MobileBasedCashFlowAPI.Services
                 return ex.ToString();
             }
         }
-        public async Task<string> UpdateAsync(string gameId, GameRequest gameRequest)
+        public async Task<string> UpdateAsync(int gameId, int userId, GameRequest gameRequest)
         {
             var oldGame = await _context.Games.FirstOrDefaultAsync(i => i.GameId == gameId);
             if (oldGame != null)
             {
                 try
                 {
-                    oldGame.GameVersion = gameRequest.GameVersion;
-                    oldGame.BackgroundImageUrl = gameRequest.BackgroundImageUrl;
+                    oldGame.RoomName = gameRequest.RoomName;
+                    oldGame.RoomNumber = gameRequest.RoomNumber;
                     oldGame.UpdateAt = DateTime.Now;
+                    oldGame.UpdateBy = userId;
 
                     await _context.SaveChangesAsync();
                     return SUCCESS;
@@ -119,6 +115,9 @@ namespace MobileBasedCashFlowAPI.Services
             return SUCCESS;
         }
 
-
+        public Task<string> DeleteAsync(int gameId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

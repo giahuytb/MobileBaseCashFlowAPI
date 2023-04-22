@@ -12,9 +12,9 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class UserRolesController : ControllerBase
     {
-        private readonly IUserRoleServicecs _userRoleServicecs;
+        private readonly UserRoleRepository _userRoleServicecs;
 
-        public UserRolesController(IUserRoleServicecs userRoleServicecs)
+        public UserRolesController(UserRoleRepository userRoleServicecs)
         {
             _userRoleServicecs = userRoleServicecs;
         }
@@ -38,7 +38,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetById(string id)
+        public async Task<ActionResult> GetById(int id)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUserRole(string id, string roleName)
+        public async Task<ActionResult> UpdateUserRole(int id, string roleName)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteRole(string id)
+        public async Task<ActionResult> DeleteRole(int id)
         {
             try
             {

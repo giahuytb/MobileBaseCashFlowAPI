@@ -10,9 +10,12 @@ namespace MobileBasedCashFlowAPI.Models
             UserAccounts = new HashSet<UserAccount>();
         }
 
-        public string RoleId { get; set; } = null!;
+        public int RoleId { get; set; }
         public string RoleName { get; set; } = null!;
         public DateTime CreateAt { get; set; }
+        public int? CreateBy { get; set; }
+        public DateTime? UpdateAt { get; set; }
+        public int? UpdateBy { get; set; }
 
         public virtual ICollection<UserAccount> UserAccounts { get; set; }
     }

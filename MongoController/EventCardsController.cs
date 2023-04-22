@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using MobileBasedCashFlowAPI.Cache;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
+using System.Collections;
 
 namespace MobileBasedCashFlowAPI.MongoController
 {
@@ -10,21 +13,21 @@ namespace MobileBasedCashFlowAPI.MongoController
     [ApiController]
     public class EventCardsController : ControllerBase
     {
-
         private readonly IEventCardService _eventCardService;
 
         public EventCardsController(IEventCardService eventCardService)
         {
-            _eventCardService = eventCardService;
+            _eventCardService = eventCardService ?? throw new ArgumentNullException(nameof(eventCardService));
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<List<EventCard>>> GetAll()
+        public async Task<ActionResult<IEnumerable<EventCard>>> GetAll()
         {
-            var eventCard = await _eventCardService.GetAsync();
-            if (eventCard != null)
+            var result = await _eventCardService.GetAsync();
+            if (result != null)
             {
-                return Ok(eventCard);
+                //throw new Exception("Exception while fetching all the students from the storage.");
+                return Ok(result);
             }
             return NotFound("list is empty");
         }
@@ -66,92 +69,60 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPost]
         public async Task<IActionResult> PostEvent(EventCardRequest request)
         {
-            try
+
+            var result = await _eventCardService.CreateAsync(request);
+            if (result == Constant.Success)
             {
-                var result = await _eventCardService.CreateAsync(request);
-                if (result == "success")
-                {
-                    return Ok(result);
-                }
-                return BadRequest(result);
+                return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToString());
-            }
+            return BadRequest(result);
         }
 
         [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> UpdateEvent(string id, EventCardRequest request)
         {
-            try
+            var result = await _eventCardService.UpdateAsync(id, request);
+            if (result.Equals(Constant.Success))
             {
-                var eventCard = await _eventCardService.GetAsync(id);
-                if (eventCard is null)
-                {
-                    return NotFound("can not find this event card");
-                }
-                var result = await _eventCardService.UpdateAsync(id, request);
-                if (result == "success")
-                {
-                    return Ok(result);
-                }
-                return BadRequest(result);
-
+                return Ok(result);
             }
-            catch (Exception ex)
+            else if (result.Equals(Constant.NotFound))
             {
-                return BadRequest(ex.ToString());
+                return NotFound("Can not found this event card");
             }
+            return BadRequest(result);
         }
 
         [HttpPut("inactive/{id:length(24)}")]
         public async Task<IActionResult> InActiveEventCard(string id)
         {
-            try
+            var result = await _eventCardService.InActiveCardAsync(id);
+            if (result == Constant.Success)
             {
-                var eventCard = await _eventCardService.GetAsync(id);
-                if (eventCard is null)
-                {
-                    return NotFound("can not find this event card");
-                }
-                var result = await _eventCardService.InActiveCardAsync(id);
-                if (result == "success")
-                {
-                    return Ok(result);
-                }
-                return BadRequest(result);
-
+                return Ok(result);
             }
-            catch (Exception ex)
+            else if (result.Equals(Constant.NotFound))
             {
-                return BadRequest(ex.ToString());
+                return NotFound("Can not found this event card");
             }
+            return BadRequest(result);
         }
 
 
         [HttpDelete("{id:length(24)}")]
         public async Task<IActionResult> DeleteEvent(string id)
         {
-            try
-            {
-                var eventCard = await _eventCardService.GetAsync(id);
-                if (eventCard is null)
-                {
-                    return NotFound("can not find this event card");
-                }
-                var result = await _eventCardService.RemoveAsync(id);
-                if (result == "success")
-                {
-                    return Ok(result);
-                }
-                return BadRequest(result);
 
-            }
-            catch (Exception ex)
+            var result = await _eventCardService.RemoveAsync(id);
+            if (result == Constant.Success)
             {
-                return BadRequest(ex.ToString());
+                return Ok(result);
             }
+            else if (result.Equals(Constant.NotFound))
+            {
+                return NotFound("Can not found this event card");
+            }
+            return BadRequest(result);
         }
 
 
