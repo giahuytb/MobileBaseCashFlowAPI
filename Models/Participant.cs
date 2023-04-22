@@ -5,8 +5,8 @@ namespace MobileBasedCashFlowAPI.Models
 {
     public partial class Participant
     {
-        public string UserId { get; set; } = null!;
-        public string MatchId { get; set; } = null!;
+        public int UserId { get; set; }
+        public int MatchId { get; set; }
         public DateTime CreateAt { get; set; }
 
         public virtual GameMatch Match { get; set; } = null!;

@@ -5,7 +5,7 @@ namespace MobileBasedCashFlowAPI.Models
 {
     public partial class GameReport
     {
-        public string ReportId { get; set; } = null!;
+        public int ReportId { get; set; }
         public int ChildrenAmount { get; set; }
         public int TotalStep { get; set; }
         public double TotalMoney { get; set; }
@@ -14,8 +14,10 @@ namespace MobileBasedCashFlowAPI.Models
         public double IncomePerMonth { get; set; }
         public double ExpensePerMonth { get; set; }
         public DateTime CreateAt { get; set; }
-        public string? UserId { get; set; }
+        public int? MatchId { get; set; }
+        public int? UserId { get; set; }
 
+        public virtual GameMatch? Match { get; set; }
         public virtual UserAccount? User { get; set; }
     }
 }

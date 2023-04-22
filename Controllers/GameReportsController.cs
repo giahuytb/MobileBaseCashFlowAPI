@@ -14,9 +14,9 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class GameReportsController : ControllerBase
     {
-        private readonly IGameReportService _gameReportService;
+        private readonly GameReportRepository _gameReportService;
 
-        public GameReportsController(IGameReportService gameReportService)
+        public GameReportsController(GameReportRepository gameReportService)
         {
             _gameReportService = gameReportService;
         }
@@ -40,7 +40,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GameReport>> GetById(string id)
+        public async Task<ActionResult<GameReport>> GetById(int id)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return Unauthorized("User id not Found, please login");
                 }
-                var result = await _gameReportService.CreateAsync(userId, request);
+                var result = await _gameReportService.CreateAsync(Int32.Parse(userId), request);
                 if (result == "success")
                 {
                     return Ok("Create success");
@@ -101,7 +101,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return Unauthorized("User id not Found, please login");
                 }
-                var result = await _gameReportService.CreateAsync(userId, request);
+                var result = await _gameReportService.CreateAsync(Int32.Parse(userId), request);
                 if (result == "success")
                 {
                     return Ok("Create success");
@@ -116,7 +116,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteGameReport(string id)
+        public async Task<ActionResult> DeleteGameReport(int id)
         {
             try
             {

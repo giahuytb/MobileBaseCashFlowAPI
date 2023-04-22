@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using MobileBasedCashFlowAPI.Cache;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
-using MobileBasedCashFlowAPI.MongoServices;
 using System.Collections;
+
 
 namespace MobileBasedCashFlowAPI.MongoController
 {
@@ -15,6 +17,7 @@ namespace MobileBasedCashFlowAPI.MongoController
     {
         private readonly IGameAccountService _gameAccountService;
 
+
         public GameAccountsController(IGameAccountService gameAccountService)
         {
             _gameAccountService = gameAccountService;
@@ -23,19 +26,12 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
-            try
+            var result = await _gameAccountService.GetAsync();
+            if (result != null)
             {
-                var result = await _gameAccountService.GetAsync();
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("List is empty");
+                return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound("list is empty");
         }
 
         [HttpGet]
@@ -64,60 +60,40 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPost]
         public async Task<ActionResult> CreateGameAccount(AccountRequest request)
         {
-            try
+            var result = await _gameAccountService.CreateAsync(request);
+            if (result == "success")
             {
-                var result = await _gameAccountService.CreateAsync(request);
-                if (result == "success")
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
+                return Ok(result);
             }
-            catch (Exception ex)
+            else
             {
-                return BadRequest(ex.ToString());
+                return BadRequest(result);
             }
         }
 
         [HttpPut("{id:length(24)}")]
         public async Task<ActionResult<List<GameAccount>>> UpdateGameAccount(string id, AccountRequest request)
         {
-            try
+            var result = await _gameAccountService.GetAsync(id);
+            if (result is null)
             {
-                var result = await _gameAccountService.GetAsync(id);
-                if (result is null)
-                {
-                    return NotFound(result);
-                }
-                await _gameAccountService.UpdateAsync(id, request);
-                return Ok(result);
+                return NotFound(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToString());
-            }
+            await _gameAccountService.UpdateAsync(id, request);
+            return Ok(result);
         }
 
         [HttpDelete("{id:length(24)}")]
         public async Task<ActionResult<List<GameAccount>>> DeleteGameAccount(string id)
         {
-            try
+
+            var result = await _gameAccountService.GetAsync(id);
+            if (result is null)
             {
-                var result = await _gameAccountService.GetAsync(id);
-                if (result is null)
-                {
-                    return NotFound(result);
-                }
-                await _gameAccountService.RemoveAsync(id);
-                return Ok(result);
+                return NotFound(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToString());
-            }
+            await _gameAccountService.RemoveAsync(id);
+            return Ok(result);
         }
     }
 }

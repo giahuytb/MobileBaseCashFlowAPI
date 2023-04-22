@@ -13,9 +13,9 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class GamesController : ControllerBase
     {
-        private readonly IGameService _gameService;
+        private readonly GameRepository _gameService;
 
-        public GamesController(IGameService gameService)
+        public GamesController(GameRepository gameService)
         {
             _gameService = gameService;
         }
@@ -41,7 +41,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Game>> GetById(string id)
+        public async Task<ActionResult<Game>> GetById(int id)
         {
             try
             {
@@ -64,7 +64,12 @@ namespace MobileBasedCashFlowAPI.Controllers
         {
             try
             {
-                var result = await _gameService.CreateAsync(game);
+                string userId = HttpContext.User.FindFirstValue("Id");
+                if (userId == null)
+                {
+                    return Unauthorized("User id not Found, please login");
+                }
+                var result = await _gameService.CreateAsync(Int32.Parse(userId), game);
 
                 return Ok(result);
             }
@@ -76,7 +81,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateGame(string id, GameRequest game)
+        public async Task<ActionResult> UpdateGame(int id, GameRequest game)
         {
             try
             {
@@ -85,7 +90,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 {
                     return Unauthorized("User id not Found, please login");
                 }
-                var result = await _gameService.UpdateAsync(id, game);
+                var result = await _gameService.UpdateAsync(id, Int32.Parse(userId), game);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -95,7 +100,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteGame(string id)
+        public async Task<ActionResult> DeleteGame(int id)
         {
             try
             {

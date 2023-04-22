@@ -8,24 +8,46 @@ using MobileBasedCashFlowAPI.MongoDTO;
 using System.Collections;
 using X.PagedList;
 using MongoDB.Driver.Linq;
+using Microsoft.Extensions.Caching.Memory;
+using MobileBasedCashFlowAPI.MongoController;
+using MobileBasedCashFlowAPI.Cache;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
     public class EventCardService : IEventCardService
     {
-        public const string SUCCESS = "success";
         private readonly IMongoCollection<EventCard> _collection;
-        public EventCardService(MongoDbSettings settings)
+        private readonly IMemoryCache _cache;
+        private readonly ILogger<EventCardsController> _logger;
+
+        public EventCardService(MongoDbSettings settings, ILogger<EventCardsController> logger, IMemoryCache cache)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<EventCard>("Event_card");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable<EventCard>> GetAsync()
         {
-            var eventCards = await _collection.Find(evt => evt.Status.Equals(true)).ToListAsync();
-            return eventCards;
+            _logger.Log(LogLevel.Information, "Trying to fetch the list of event card from cache.");
+            if (_cache.TryGetValue(CacheKeys.EventCards, out IEnumerable<EventCard> eventCardList))
+            {
+                _logger.Log(LogLevel.Information, "Employee list found in cache.");
+            }
+            else
+            {
+                _logger.Log(LogLevel.Information, "Event Card list not found in cache. Fetching from database.");
+                eventCardList = await _collection.Find(evt => evt.Status.Equals(true)).ToListAsync();
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromHours(5))
+                .SetAbsoluteExpiration(TimeSpan.FromHours(5))
+                .SetPriority(CacheItemPriority.Normal)
+                .SetSize(1024);
+                _cache.Set(CacheKeys.EventCards, eventCardList, cacheEntryOptions);
+            }
+            return eventCardList;
         }
 
         public async Task<object?> GetAsync(PaginationFilter filter, double? from, double? to)
@@ -69,153 +91,127 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<string> CreateAsync(EventCardRequest request)
         {
-            try
+            var eventCard = new EventCard()
             {
-                if (request.Event_name == null)
-                {
-                    return "You need to fill name for this event card";
-                }
-                else if (request.Trading_range == null)
-                {
-                    return "You need to fill tranding range for this event card";
-                }
-                else if (request.Event_description == null)
-                {
-                    return "You need to fill description for this event card";
-                }
-                else if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost < 0)
-                {
-                    return "Cost must be greater than or equal to 0";
-                }
-                else if (!ValidateInput.isNumber(request.Down_pay.ToString()) || request.Down_pay < 0)
-                {
-                    return "Down pay must be greater than or equal to 0";
-                }
-                else if (!ValidateInput.isNumber(request.Dept.ToString()) || request.Down_pay < 0)
-                {
-                    return "Dept must be greater than or equal to 0";
-                }
-                else if (!ValidateInput.isNumber(request.Cash_flow.ToString()) || request.Cash_flow < 0)
-                {
-                    return "Cash flow must be greater than or equal to 0";
-                }
-                var eventCard = new EventCard()
-                {
-                    Event_name = request.Event_name,
-                    Image_url = request.Image_url,
-                    Account_name = request.Account_Name,
-                    Event_description = request.Event_description,
-                    Trading_range = request.Trading_range,
-                    Cost = request.Cost,
-                    Down_pay = request.Down_pay,
-                    Dept = request.Dept,
-                    Cash_flow = request.Cash_flow,
-                    Event_type_id = request.Event_type_id,
-                    Action = request.Action,
-                    Status = true,
-                };
-                await _collection.InsertOneAsync(eventCard);
-                return SUCCESS;
-            }
-            catch (Exception ex)
+                Event_name = request.Event_name,
+                Image_url = request.Image_url,
+                Account_name = request.Account_Name,
+                Event_description = request.Event_description,
+                Trading_range = request.Trading_range,
+                Cost = request.Cost,
+                Down_pay = request.Down_pay,
+                Dept = request.Dept,
+                Cash_flow = request.Cash_flow,
+                Event_type_id = request.Event_type_id,
+                Action = request.Action,
+                Status = true,
+            };
+            await _collection.InsertOneAsync(eventCard);
+
+            var eventCardListInMemory = _cache.Get(CacheKeys.EventCards) as List<EventCard>;
+            if (eventCardListInMemory != null)
             {
-                return ex.Message;
+                eventCardListInMemory.Add(eventCard);
+                _cache.Remove(CacheKeys.EventCards);
+                _cache.Set(CacheKeys.EventCards, eventCardListInMemory);
             }
+            return Constant.Success;
         }
 
         public async Task<string> UpdateAsync(string id, EventCardRequest request)
         {
-            try
+            var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
+            if (oldEventCard != null)
             {
-                var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
-                if (oldEventCard != null)
+                oldEventCard.Event_name = request.Event_name;
+                oldEventCard.Image_url = request.Image_url;
+                oldEventCard.Account_name = request.Account_Name;
+                oldEventCard.Event_description = request.Event_description;
+                oldEventCard.Trading_range = request.Trading_range;
+                oldEventCard.Cost = request.Cost;
+                oldEventCard.Down_pay = request.Down_pay;
+                oldEventCard.Dept = request.Dept;
+                oldEventCard.Cash_flow = request.Cash_flow;
+                oldEventCard.Event_type_id = request.Event_type_id;
+                oldEventCard.Action = request.Action;
+
+                await _collection.ReplaceOneAsync(x => x.id == id, oldEventCard);
+
+                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards) as List<EventCard>;
+                if (eventCardListInMemory != null)
                 {
-                    if (request.Event_name == null)
+                    var oldEventCardInMemory = eventCardListInMemory.FirstOrDefault(x => x.id == id);
+                    var oldEventCardInMemoryIndex = eventCardListInMemory.FindIndex(x => x.id == id);
+                    if (oldEventCardInMemory != null)
                     {
-                        return "You need to fill name for this event card";
-                    }
-                    else if (request.Trading_range == null)
-                    {
-                        return "You need to fill tranding range for this event card";
-                    }
-                    else if (request.Event_description == null)
-                    {
-                        return "You need to fill description for this event card";
-                    }
-                    else if (!ValidateInput.isNumber(request.Cost.ToString()) || request.Cost < 0)
-                    {
-                        return "Cost must be greater than or equal to 0";
-                    }
-                    else if (!ValidateInput.isNumber(request.Down_pay.ToString()) || request.Down_pay < 0)
-                    {
-                        return "Down pay must be greater than or equal to 0";
-                    }
-                    else if (!ValidateInput.isNumber(request.Dept.ToString()) || request.Down_pay < 0)
-                    {
-                        return "Dept must be greater than or equal to 0";
-                    }
-                    else if (!ValidateInput.isNumber(request.Cash_flow.ToString()) || request.Cash_flow < 0)
-                    {
-                        return "Cash flow must be greater than or equal to 0";
+                        eventCardListInMemory.Remove(oldEventCardInMemory);
+                        eventCardListInMemory.Insert(oldEventCardInMemoryIndex, oldEventCard);
+
+                        _cache.Remove(CacheKeys.EventCards);
+                        _cache.Set(CacheKeys.EventCards, eventCardListInMemory);
                     }
 
-                    oldEventCard.Event_name = request.Event_name;
-                    oldEventCard.Image_url = request.Image_url;
-                    oldEventCard.Account_name = request.Account_Name;
-                    oldEventCard.Event_description = request.Event_description;
-                    oldEventCard.Trading_range = request.Trading_range;
-                    oldEventCard.Cost = request.Cost;
-                    oldEventCard.Down_pay = request.Down_pay;
-                    oldEventCard.Dept = request.Dept;
-                    oldEventCard.Cash_flow = request.Cash_flow;
-                    oldEventCard.Event_type_id = request.Event_type_id;
-                    oldEventCard.Action = request.Action;
+                }
+                return Constant.Success;
+            }
+            return Constant.NotFound;
 
-                    await _collection.ReplaceOneAsync(x => x.id == id, oldEventCard);
-                    return SUCCESS;
-                }
-                else
-                {
-                    return "Can not found this event card";
-                }
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
         }
 
         public async Task<string> InActiveCardAsync(string id)
         {
-            try
+            var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
+            if (oldEventCard != null)
             {
-                var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
-                if (oldEventCard != null)
+                oldEventCard.Status = false;
+                await _collection.ReplaceOneAsync(x => x.id == id, oldEventCard);
+
+                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards) as List<EventCard>;
+                if (eventCardListInMemory != null)
                 {
-                    oldEventCard.Status = false;
-                    await _collection.ReplaceOneAsync(x => x.id == id, oldEventCard);
-                    return SUCCESS;
+                    var EventCardToDelete = eventCardListInMemory.FirstOrDefault(x => x.id == id);
+                    if (EventCardToDelete != null)
+                    {
+                        eventCardListInMemory.Remove(EventCardToDelete);
+                        _cache.Remove(CacheKeys.EventCards);
+                        _cache.Set(CacheKeys.EventCards, eventCardListInMemory);
+                    }
                 }
-                else
-                {
-                    return "Can not found this event card";
-                }
+                return Constant.Success;
             }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            return Constant.NotFound;
+
         }
 
         public async Task<string> RemoveAsync(string id)
         {
-            //var checkExist = _
-            var result = await _collection.DeleteOneAsync(x => x.id == id);
-            if (result != null)
+            // Find this event card by id
+            var eventCardExist = GetAsync(id);
+            if (eventCardExist != null)
             {
-                return SUCCESS;
+                // Check if delete action is success or not
+                var result = await _collection.DeleteOneAsync(x => x.id == id);
+
+                if (result != null)
+                {
+                    // Check if the event card list is in memory or not
+                    var eventCardListInMemory = _cache.Get(CacheKeys.EventCards) as List<EventCard>;
+                    if (eventCardListInMemory != null)
+                    {
+                        // Find event card to delete in cache memory
+                        var EventCardToDelete = eventCardListInMemory.FirstOrDefault(x => x.id == id);
+                        if (EventCardToDelete != null)
+                        {
+                            // Remove old cache and set new cache that deleted the event card we choice
+                            eventCardListInMemory.Remove(EventCardToDelete);
+                            _cache.Remove(CacheKeys.EventCards);
+                            _cache.Set(CacheKeys.EventCards, eventCardListInMemory);
+                        }
+                    }
+                    return Constant.Success;
+                }
             }
-            return "Can not found this event card";
+            return Constant.NotFound;
         }
 
 

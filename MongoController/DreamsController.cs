@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
@@ -18,6 +19,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _dreamService = dreamService;
         }
 
+        [Authorize(Roles = "Player, Admin")]
         [HttpGet("all")]
         public async Task<ActionResult<List<Dream?>>> getAll()
         {
@@ -29,6 +31,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("List is empty");
         }
 
+        [Authorize(Roles = "Player, Admin")]
         [HttpGet]
         public async Task<ActionResult<List<Dream>>> GetByPaging([FromQuery] PaginationFilter filter, double? from, double? to)
         {
@@ -41,6 +44,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
+        [Authorize(Roles = "Player, Admin")]
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Dream>> GetById(string id)
         {
@@ -52,64 +56,60 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("Can not found this dream");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateDream(DreamRequest request)
         {
-            try
+            var result = await _dreamService.CreateAsync(request);
+            if (result.Equals(Constant.Success))
             {
-                var result = await _dreamService.CreateAsync(request);
-                if (result == "success")
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
+                return Ok(result);
             }
-            catch (Exception ex)
+            else
             {
-                return BadRequest(ex.ToString());
+                return BadRequest(result);
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:length(24)}")]
         public async Task<ActionResult<List<Dream>>> UpdateDream(string id, DreamRequest request)
         {
-            try
+            var result = await _dreamService.UpdateAsync(id, request);
+            if (result.Equals(Constant.Success))
             {
-                var result = await _dreamService.GetAsync(id);
-                if (result is null)
-                {
-                    return NotFound(result);
-                }
-                await _dreamService.UpdateAsync(id, request);
                 return Ok(result);
             }
-            catch (Exception ex)
+            else if (result.Equals(Constant.NotFound))
             {
-                return BadRequest(ex.ToString());
+                return NotFound("Can not found this dream");
+            }
+            else
+            {
+                return BadRequest(result);
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:length(24)}")]
         public async Task<ActionResult<List<Dream>>> DeleteDream(string id)
         {
-            try
+            var result = await _dreamService.RemoveAsync(id);
+            if (result.Equals(Constant.Success))
             {
-                var result = await _dreamService.GetAsync(id);
-                if (result is null)
-                {
-                    return NotFound(result);
-                }
-                await _dreamService.RemoveAsync(id);
                 return Ok(result);
             }
-            catch (Exception ex)
+            else if (result.Equals(Constant.NotFound))
             {
-                return BadRequest(ex.ToString());
+                return NotFound("Can not found this dream");
+            }
+            else
+            {
+                return BadRequest(result);
             }
         }
+
+
 
     }
 }

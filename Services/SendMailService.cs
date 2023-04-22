@@ -9,7 +9,7 @@ using MobileBasedCashFlowAPI.IServices;
 namespace MobileBasedCashFlowAPI.Services
 {
 
-    public class SendMailService : ISendMailService
+    public class SendMailService : SendMailRepository
     {
         private readonly MailSettings _mailSettings;
 

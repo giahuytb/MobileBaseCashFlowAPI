@@ -12,6 +12,9 @@ using MobileBasedCashFlowAPI.Settings;
 using MobileBasedCashFlowAPI.Services;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
+using Microsoft.AspNetCore.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
+using MobileBasedCashFlowAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var secretKey = builder.Configuration["Jwt:Key"];
@@ -50,18 +53,15 @@ builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
 });
 
 // Register Service For SqlServer Database
-builder.Services.AddTransient<ISendMailService, SendMailService>();
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IUserRoleServicecs, UserRoleService>();
+builder.Services.AddTransient<SendMailRepository, SendMailService>();
+builder.Services.AddTransient<UserRepository, UserService>();
+builder.Services.AddTransient<UserRoleRepository, UserRoleService>();
 
-builder.Services.AddTransient<IFriendShipService, FriendShipService>();
-builder.Services.AddTransient<IGameMatchService, GameMatchService>();
-builder.Services.AddTransient<IGameReportService, GameReportService>();
-builder.Services.AddTransient<IGameService, GameService>();
-builder.Services.AddTransient<IInventoryService, InventoryService>();
-builder.Services.AddTransient<IItemService, ItemService>();
-builder.Services.AddTransient<ILeaderboardService, LeaderboardService>();
-builder.Services.AddTransient<ILoginHistoryService, LoginHistoryService>();
+builder.Services.AddTransient<GameMatchRepository, GameMatchService>();
+builder.Services.AddTransient<GameReportRepository, GameReportService>();
+builder.Services.AddTransient<GameRepository, GameService>();
+builder.Services.AddTransient<UserAssetRepository, UserAssetService>();
+builder.Services.AddTransient<AssetRepository, AssetService>();
 
 
 // Register Service For MongoDatabase
@@ -71,6 +71,12 @@ builder.Services.AddTransient<IEventCardService, EventCardService>();
 builder.Services.AddTransient<IGameAccountService, GameAccountService>();
 builder.Services.AddTransient<IJobCardService, JobCardService>();
 builder.Services.AddTransient<ITileService, TileService>();
+
+// Register Service For Cache
+builder.Services.AddMemoryCache();
+
+
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 
 // Config Authentication
@@ -170,6 +176,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     //});
 }
 
+//var logger = app.Services.GetRequiredService<ILogger>();
+
+//app.ConfigureExceptionHandler(logger);
+
+
 app.UseHttpsRedirection();
 
 app.UseCors(myAllowSpecificOrigins);
@@ -181,6 +192,8 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

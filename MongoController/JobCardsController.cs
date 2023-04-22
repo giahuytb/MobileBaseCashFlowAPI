@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Amazon.Runtime.Internal.Util;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using MobileBasedCashFlowAPI.Cache;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.MongoServices;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System.Data;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -19,18 +23,18 @@ namespace MobileBasedCashFlowAPI.MongoController
 
         public JobCardsController(IJobCardService jobCardService)
         {
-            _jobCardService = jobCardService;
+            _jobCardService = jobCardService ?? throw new ArgumentNullException(nameof(jobCardService));
         }
 
         [HttpGet("all")]
         public async Task<ActionResult<JobCard>> GetAll()
         {
-            var jobCard = await _jobCardService.GetAsync();
-            if (jobCard != null)
+            var result = await _jobCardService.GetAsync();
+            if (result != null)
             {
-                return Ok(jobCard);
+                return Ok(result);
             }
-            return NotFound("List is empty");
+            return NotFound("list is empty");
         }
 
         [HttpGet]
@@ -60,56 +64,47 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPost]
         public async Task<ActionResult> PostJobCard(JobCardRequest request)
         {
-            try
+
+            var result = await _jobCardService.CreateAsync(request);
+            if (result.Equals(Constant.Success))
             {
-                var result = await _jobCardService.CreateAsync(request);
                 return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToString());
-            }
+            return BadRequest("Create job card failed");
+
+
         }
 
         [HttpPut("{id:length(24)}")]
         public async Task<ActionResult> UpdateJobCard(string id, JobCardRequest request)
         {
-            try
+            var result = await _jobCardService.UpdateAsync(id, request);
+            if (result.Equals(Constant.Success))
             {
-                var jobCard1 = await _jobCardService.GetAsync(id);
-
-                if (jobCard1 is null)
-                {
-                    return NotFound("can not find this job card");
-                }
-                var result = await _jobCardService.UpdateAsync(id, request);
                 return Ok(result);
             }
-            catch (Exception ex)
+            else if (result.Equals(Constant.NotFound))
             {
-                return BadRequest(ex.ToString());
+                return NotFound(result);
             }
+            return BadRequest(result);
         }
 
 
         [HttpDelete("{id:length(24)}")]
         public async Task<ActionResult> DeleteJobCard(string id)
         {
-            try
+            var result = await _jobCardService.RemoveAsync(id);
+            if (result.Equals(Constant.Success))
             {
-                var jobCard1 = await _jobCardService.GetAsync(id);
-
-                if (jobCard1 is null)
-                {
-                    return NotFound("can not find this job card");
-                }
-                await _jobCardService.RemoveAsync(id);
-                return Ok("Delete success");
+                return Ok(result);
             }
-            catch (Exception ex)
+            else if (result.Equals(Constant.NotFound))
             {
-                return BadRequest(ex.ToString());
+                return NotFound(result);
             }
+            return BadRequest(result);
         }
+
     }
 }

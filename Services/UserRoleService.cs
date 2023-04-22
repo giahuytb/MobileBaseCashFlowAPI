@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class UserRoleService : IUserRoleServicecs
+    public class UserRoleService : UserRoleRepository
     {
         public const string SUCCESS = "success";
         private readonly MobileBasedCashFlowGameContext _context;
@@ -32,7 +32,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public async Task<object?> GetAsync(string roleId)
+        public async Task<object?> GetAsync(int roleId)
         {
             try
             {
@@ -57,7 +57,6 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 var role = new UserRole
                 {
-                    RoleId = Guid.NewGuid() + "",
                     RoleName = roleName,
                     CreateAt = DateTime.Now,
                 };
@@ -81,7 +80,7 @@ namespace MobileBasedCashFlowAPI.Services
 
         }
 
-        public async Task<string> UpdateAsync(string roleId, string roleName)
+        public async Task<string> UpdateAsync(int roleId, string roleName)
         {
             try
             {
@@ -108,7 +107,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public async Task<string> DeleteAsync(string roleId)
+        public async Task<string> DeleteAsync(int roleId)
         {
             var role = await _context.UserRoles.Where(g => g.RoleId == roleId).FirstOrDefaultAsync();
             if (role != null)

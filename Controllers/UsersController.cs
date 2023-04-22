@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.DTO;
 using System.Collections;
-using System.Security.Claims;
+using MobileBasedCashFlowAPI.Common;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -12,14 +12,11 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
-        private readonly ILoginHistoryService _loginHistoryService;
+        private readonly UserRepository _userService;
 
-        public UsersController(IUserService userService,
-                               ILoginHistoryService loginHistoryService)
+        public UsersController(UserRepository userService)
         {
             _userService = userService;
-            _loginHistoryService = loginHistoryService;
         }
 
         [AllowAnonymous]
@@ -32,11 +29,11 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
             var result = await _userService.Authenticate(request);
 
-            if (result.Equals("User not found"))
+            if (result.Equals(Constant.NotFound))
             {
                 return BadRequest("Can not found your account.");
             }
-            else if (result.Equals("Wrong password"))
+            else if (result.Equals(Constant.WrongPassword))
             {
                 return BadRequest("Your password is not correct, please try again.");
             }
@@ -54,41 +51,31 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            try
+            var result = await _userService.Register(request);
+            if (result.Equals("success"))
             {
-                var result = await _userService.Register(request);
-                if (result.Equals("success"))
-                {
-                    return Ok(result);
-                }
-                return BadRequest(result);
+                return Ok(result);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return BadRequest();
-            }
+            return BadRequest(result);
+
         }
 
         [AllowAnonymous]
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string token)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var result = await _userService.VerifyEmail(token);
-                if (result.Equals("success"))
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _userService.VerifyEmail(token);
+            if (result.Equals("success"))
             {
-                return BadRequest(ex.ToString());
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
             }
         }
 
@@ -96,44 +83,38 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(string email)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var result = await _userService.ForgotPassword(email);
-                if (result)
-                {
-                    return Ok("Success");
-                }
-                else
-                {
-                    return BadRequest("Failed");
-                }
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _userService.ForgotPassword(email);
+            if (result)
             {
-                return BadRequest(ex.ToString());
+                return Ok("Success");
+            }
+            else
+            {
+                return BadRequest("Failed");
             }
         }
 
 
         [HttpPut("profile")]
         [Authorize(Roles = "Player, Admin, Moderator")]
-        public async Task<IActionResult> EditProfile(string userId, EditProfileRequest request)
+        public async Task<IActionResult> EditProfile(int userId, EditProfileRequest request)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var result = await _userService.EditProfile(userId, request);
-                if (result == "success")
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _userService.EditProfile(userId, request);
+            if (result == "success")
             {
-                return BadRequest(ex.ToString());
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
             }
         }
 
@@ -141,62 +122,71 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var result = await _userService.ResetPassword(request);
-                if (result)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _userService.ResetPassword(request);
+            if (result)
             {
-                return BadRequest(ex.ToString());
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
             }
         }
 
         [HttpGet("user-list")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var result = await _userService.GetAsync();
-                if (result == null)
-                {
-                    return NotFound("list is empty");
-                }
-                return Ok(result);
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _userService.GetAsync();
+            if (result == null)
             {
-                return BadRequest(ex.Message);
+                return NotFound("list is empty");
             }
+            return Ok(result);
         }
 
         [HttpPut("coin")]
-        public async Task<IActionResult> AddCoinToUser(string userId, int coin)
+        public async Task<IActionResult> AddCoinToUser(int userId, int coin)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var result = await _userService.UpdateCoin(userId, coin);
-                if (result == "success")
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _userService.UpdateCoin(userId, coin);
+            if (result == "success")
             {
-                return BadRequest(ex.ToString());
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
             }
         }
+
+        [HttpGet("id")]
+        public async Task<ActionResult<IEnumerable>> FindUserById(int userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _userService.FindUserById(userId);
+            if (result == null)
+            {
+                return NotFound("Can not find this user");
+            }
+            return Ok(result);
+
+        }
+
+
 
     }
 }

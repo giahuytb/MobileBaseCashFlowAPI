@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class GameMatchService : IGameMatchService
+    public class GameMatchService : GameMatchRepository
     {
         public const string SUCCESS = "success";
         private readonly MobileBasedCashFlowGameContext _context;
@@ -32,7 +32,7 @@ namespace MobileBasedCashFlowAPI.Services
                                            match.EndTime,
                                            match.TotalRound,
                                            match.GameId,
-                                       }).ToListAsync();
+                                       }).AsNoTracking().ToListAsync();
                 return gameMatch;
             }
             catch (Exception ex)
@@ -41,7 +41,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public async Task<object?> GetAsync(string id)
+        public async Task<object?> GetAsync(int id)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace MobileBasedCashFlowAPI.Services
                                            match.EndTime,
                                            match.TotalRound,
                                            match.GameId,
-                                       }).ToListAsync();
+                                       }).AsNoTracking().ToListAsync();
                 return gameMatch;
             }
             catch (Exception ex)
@@ -67,21 +67,12 @@ namespace MobileBasedCashFlowAPI.Services
             }
         }
 
-        public async Task<string> CreateAsync(string userId, GameMatchRequest request)
+        public async Task<string> CreateAsync(int userId, int gameId, GameMatchRequest request)
         {
             try
             {
-                var gameId = await (from game in _context.Games
-                                    where game.GameVersion == "Ver_1"
-                                    select new { gameId = game.GameId }).FirstOrDefaultAsync();
-
-                if (gameId == null)
-                {
-                    return "can not find this game version";
-                }
                 var match = new GameMatch()
                 {
-                    MatchId = Guid.NewGuid().ToString(),
                     MaxNumberPlayer = request.MaxNumberPlayer,
                     WinnerId = request.WinnerId,
                     HostId = userId,
@@ -89,7 +80,7 @@ namespace MobileBasedCashFlowAPI.Services
                     StartTime = DateTime.Now,
                     EndTime = DateTime.Now,
                     TotalRound = request.TotalRound,
-                    GameId = gameId.gameId,
+                    GameId = gameId,
                 };
 
                 _context.GameMatches.Add(match);
@@ -101,22 +92,13 @@ namespace MobileBasedCashFlowAPI.Services
                 return ex.ToString();
             }
         }
-        public async Task<string> UpdateAsync(string gameMatchId, string userId, GameMatchRequest request)
+        public async Task<string> UpdateAsync(int gameMatchId, int userId, GameMatchRequest request)
         {
             var oldMatch = await _context.GameMatches.Where(i => i.MatchId == gameMatchId).FirstOrDefaultAsync();
             if (oldMatch != null)
             {
                 try
                 {
-                    var gameId = await (from game in _context.Games
-                                        where game.GameVersion == "Ver_1"
-                                        select new { gameId = game.GameId }).FirstOrDefaultAsync();
-
-                    if (gameId == null)
-                    {
-                        return "can not find this game version";
-                    }
-                    oldMatch.MatchId = Guid.NewGuid().ToString();
                     oldMatch.WinnerId = request.WinnerId;
                     oldMatch.HostId = userId;
                     oldMatch.LastHostId = request.LastHostId;
@@ -134,7 +116,7 @@ namespace MobileBasedCashFlowAPI.Services
             return "Can not find this match";
         }
 
-        public async Task<string> DeleteAsync(string gameMatchId)
+        public async Task<string> DeleteAsync(int gameMatchId)
         {
             var match = await _context.GameMatches.FindAsync(gameMatchId);
             if (match == null)

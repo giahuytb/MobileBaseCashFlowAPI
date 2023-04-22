@@ -8,25 +8,39 @@ using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
 using MobileBasedCashFlowAPI.Common;
 using X.PagedList;
+using Amazon.Runtime.Internal.Util;
+using Microsoft.Extensions.Caching.Memory;
+using MobileBasedCashFlowAPI.Cache;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
     public class JobCardService : IJobCardService
     {
-        public const string SUCCESS = "success";
         private readonly IMongoCollection<JobCard> _collection;
+        private readonly IMemoryCache _cache;
 
-        public JobCardService(MongoDbSettings settings)
+        public JobCardService(MongoDbSettings settings, IMemoryCache cache)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<JobCard>("Job_card");
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache)); ;
         }
 
-        public async Task<List<JobCard>> GetAsync()
+        public async Task<IEnumerable<JobCard>> GetAsync()
         {
-            var result = await _collection.Find(_ => true).ToListAsync();
-            return result;
+            if (!_cache.TryGetValue(CacheKeys.JobCards, out IEnumerable<JobCard> jobcardList))
+            {
+                jobcardList = await _collection.Find(_ => true).ToListAsync();
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromHours(5))
+                .SetAbsoluteExpiration(TimeSpan.FromHours(5))
+                .SetPriority(CacheItemPriority.Normal)
+                .SetSize(1024);
+
+                _cache.Set(CacheKeys.JobCards, jobcardList, cacheEntryOptions);
+            }
+            return jobcardList;
         }
 
         public async Task<object?> GetAsync(PaginationFilter filter)
@@ -51,51 +65,49 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<string> CreateAsync(JobCardRequest request)
         {
-            try
+
+            var jobCard = new JobCard()
             {
-                var jobCard = new JobCard()
-                {
-                    Job_card_name = request.Job_card_name,
-                    Children_cost = request.Children_cost,
-                    Game_accounts = request.Game_accounts,
-                };
-                await _collection.InsertOneAsync(jobCard);
-                return SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+                Job_card_name = request.Job_card_name,
+                Children_cost = request.Children_cost,
+                Game_accounts = request.Game_accounts,
+            };
+            await _collection.InsertOneAsync(jobCard);
+            return Constant.Success;
         }
 
         public async Task<string> UpdateAsync(string id, JobCardRequest request)
         {
-            try
+            var oldJobCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
+            if (oldJobCard != null)
             {
-                var oldJobCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
-                if (oldJobCard != null)
-                {
-                    oldJobCard.Job_card_name = request.Job_card_name;
-                    oldJobCard.Children_cost = request.Children_cost;
+                oldJobCard.Job_card_name = request.Job_card_name;
+                oldJobCard.Children_cost = request.Children_cost;
 
-                    await _collection.ReplaceOneAsync(x => x.id == id, oldJobCard);
-                    return SUCCESS;
-                }
-                else
+                var result = await _collection.ReplaceOneAsync(x => x.id == id, oldJobCard);
+                if (result != null)
                 {
-                    return "Can not found this job card";
+                    return Constant.Success;
                 }
+                return "Update this job card failed";
             }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            return Constant.NotFound;
+
         }
 
         public async Task<string> RemoveAsync(string id)
         {
-            await _collection.DeleteOneAsync(x => x.id == id);
-            return SUCCESS;
+            var jobCardExist = GetAsync(id);
+            if (jobCardExist != null)
+            {
+                var result = await _collection.DeleteOneAsync(x => x.id == id);
+                if (result != null)
+                {
+                    return Constant.Success;
+                }
+                return "Delete this job card failed";
+            }
+            return Constant.Success;
         }
 
 
