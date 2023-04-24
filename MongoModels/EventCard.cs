@@ -19,6 +19,7 @@ namespace MobileBasedCashFlowAPI.MongoModels
         public string Event_description { get; set; } = string.Empty;
         public int Event_type_id { get; set; } = int.MaxValue;
         public int Action { get; set; } = int.MaxValue;
+        public int Game_mode_id { get; set; } = int.MaxValue;
         public bool Status { get; set; }
     }
 }

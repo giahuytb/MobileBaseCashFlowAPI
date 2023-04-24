@@ -20,22 +20,17 @@ namespace MobileBasedCashFlowAPI.MongoServices
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<GameAccount>("Game_account");
-            _cache = cache;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         public async Task<IEnumerable<GameAccount>> GetAsync()
         {
-
+            // when call this method for the first time then using cache to store the list object
             if (!_cache.TryGetValue(CacheKeys.GameAccounts, out IEnumerable<GameAccount> gameAccountList))
             {
                 gameAccountList = await _collection.Find(account => account.Status.Equals(true)).ToListAsync();
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromHours(5))
-                .SetAbsoluteExpiration(TimeSpan.FromHours(5))
-                .SetPriority(CacheItemPriority.Normal)
-                .SetSize(1024);
 
-                _cache.Set(CacheKeys.GameAccounts, gameAccountList, cacheEntryOptions);
+                _cache.Set(CacheKeys.GameAccounts, gameAccountList, CacheEntryOption.MemoryCacheEntryOption());
             }
             return gameAccountList;
         }
@@ -63,12 +58,24 @@ namespace MobileBasedCashFlowAPI.MongoServices
         public async Task<string> CreateAsync(AccountRequest request)
         {
 
-            var account = new GameAccount()
+            var gameAccount = new GameAccount()
             {
                 Game_account_name = request.Game_account_name,
                 Game_account_type_id = request.Game_account_type,
             };
-            await _collection.InsertOneAsync(account);
+            await _collection.InsertOneAsync(gameAccount);
+
+            var gameAccountListInMemory = _cache.Get(CacheKeys.GameAccounts) as List<GameAccount>;
+            // check if the cache have value or not
+            if (gameAccountListInMemory != null)
+            {
+                // add new object for this list
+                gameAccountListInMemory.Add(gameAccount);
+                // remove all value from this cache key
+                _cache.Remove(CacheKeys.GameAccounts);
+                // set new list for this cache by using the list above
+                _cache.Set(CacheKeys.GameAccounts, gameAccountListInMemory);
+            }
             return Constant.Success;
         }
 
@@ -81,12 +88,31 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 oldGameAccount.Game_account_name = request.Game_account_name;
                 oldGameAccount.Game_account_type_id = request.Game_account_type;
 
-                var result = await _collection.ReplaceOneAsync(x => x.id == id, oldGameAccount);
-                if (result != null)
+                await _collection.ReplaceOneAsync(x => x.id == id, oldGameAccount);
+
+                var gameAccountListInMemory = _cache.Get(CacheKeys.GameAccounts) as List<GameAccount>;
+                // check if the cache have value or not
+                if (gameAccountListInMemory != null)
                 {
-                    return Constant.Success;
+                    // find object that match the id
+                    var oldGameAccountInMemory = gameAccountListInMemory.FirstOrDefault(x => x.id == id);
+                    // find it index for update
+                    var oldGameAccountInMemoryIndex = gameAccountListInMemory.FindIndex(x => x.id == id);
+                    // check if it exist or not
+                    if (oldGameAccountInMemory != null)
+                    {
+                        // remove old object from this list
+                        gameAccountListInMemory.Remove(oldGameAccountInMemory);
+                        // insert to list based on index and new object 
+                        gameAccountListInMemory.Insert(oldGameAccountInMemoryIndex, oldGameAccount);
+
+                        // remove all value from this cache key
+                        _cache.Remove(CacheKeys.GameAccounts);
+                        // set new list for this cache by using the list above
+                        _cache.Set(CacheKeys.GameAccounts, gameAccountListInMemory);
+                        return Constant.Success;
+                    }
                 }
-                return "Update this game account failed";
             }
             return Constant.NotFound;
         }
@@ -96,12 +122,27 @@ namespace MobileBasedCashFlowAPI.MongoServices
             var gameAccountExist = GetAsync(id);
             if (gameAccountExist != null)
             {
-                var result = await _collection.DeleteOneAsync(x => x.id == id);
-                if (result != null)
+                await _collection.DeleteOneAsync(x => x.id == id);
+                var gameAccountListInMemory = _cache.Get(CacheKeys.GameAccounts) as List<GameAccount>;
+                // check if the cache have value or not
+                if (gameAccountListInMemory != null)
                 {
-                    return Constant.Success;
+                    // Find game account to delete in cache memory by id
+                    var gameAccountToDelete = gameAccountListInMemory.FirstOrDefault(x => x.id == id);
+                    // check if it exist or not 
+                    if (gameAccountToDelete != null)
+                    {
+                        // Remove old cache and set new cache that deleted the game account we choice
+                        gameAccountListInMemory.Remove(gameAccountToDelete);
+
+                        // remove all value from this cache key
+                        _cache.Remove(CacheKeys.GameAccounts);
+                        // set new list for this cache by using the list above
+                        _cache.Set(CacheKeys.GameAccounts, gameAccountListInMemory);
+
+                        return Constant.Success;
+                    }
                 }
-                return "Delete this game account failed";
             }
             return Constant.NotFound;
         }

@@ -25,6 +25,8 @@ namespace MobileBasedCashFlowAPI.MongoDTO
         [Required]
         [Range(1, 6, ErrorMessage = "Event type must between 1 to 6")]
         public int Event_type_id { get; set; } = int.MaxValue;
+        [Required(ErrorMessage = "Your game mode id can not be blank")]
+        public int Game_mode_id { get; set; } = int.MaxValue;
         [Required]
         [Range(1, 7, ErrorMessage = "Acction must between 1 to 7")]
         public int Action { get; set; } = int.MaxValue;

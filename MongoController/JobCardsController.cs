@@ -12,6 +12,7 @@ using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.MongoServices;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.Data;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.MongoController
 {
@@ -64,8 +65,13 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPost]
         public async Task<ActionResult> PostJobCard(JobCardRequest request)
         {
-
-            var result = await _jobCardService.CreateAsync(request);
+            // get the current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _jobCardService.CreateAsync(Int32.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -78,7 +84,12 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPut("{id:length(24)}")]
         public async Task<ActionResult> UpdateJobCard(string id, JobCardRequest request)
         {
-            var result = await _jobCardService.UpdateAsync(id, request);
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _jobCardService.UpdateAsync(id, Int32.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);

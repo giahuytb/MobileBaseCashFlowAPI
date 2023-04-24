@@ -10,7 +10,6 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.DTO;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 
 namespace MobileBasedCashFlowAPI.Services
@@ -321,9 +320,16 @@ namespace MobileBasedCashFlowAPI.Services
             return Constant.Failed;
         }
 
-        public async Task<UserAccount?> FindUserById(int userId)
+        public async Task<object?> FindUserById(int userId)
         {
-            var user = await _context.UserAccounts.FirstOrDefaultAsync(i => i.UserId == userId);
+            var user = await (from u in _context.UserAccounts
+                              where u.UserId == userId
+                              select new
+                              {
+                                  u.NickName,
+                                  u.Gender,
+                                  u.ImageUrl,
+                              }).FirstOrDefaultAsync();
             return user;
         }
     }

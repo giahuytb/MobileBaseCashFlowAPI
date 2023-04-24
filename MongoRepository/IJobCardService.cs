@@ -8,9 +8,9 @@ namespace MobileBasedCashFlowAPI.IMongoServices
     {
         public Task<IEnumerable<JobCard>> GetAsync();
         public Task<Object?> GetAsync(PaginationFilter filter);
-        public Task<object?> GetAsync(string id);
-        public Task<string> CreateAsync(JobCardRequest request);
-        public Task<string> UpdateAsync(string id, JobCardRequest request);
-        public Task<string> RemoveAsync(string id);
+        public Task<object?> GetAsync(string JobCardId);
+        public Task<string> CreateAsync(int userId, JobCardRequest request);
+        public Task<string> UpdateAsync(string JobCardId, int userId, JobCardRequest request);
+        public Task<string> RemoveAsync(string JobCardId);
     }
 }
