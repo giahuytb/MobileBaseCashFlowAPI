@@ -5,7 +5,6 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
-using MobileBasedCashFlowAPI.MongoServices;
 
 namespace MobileBasedCashFlowAPI.MongoController
 {
@@ -19,9 +18,9 @@ namespace MobileBasedCashFlowAPI.MongoController
             _dreamService = dreamService;
         }
 
-        [Authorize(Roles = "Player, Admin")]
+        //[Authorize(Roles = "Player, Admin")]
         [HttpGet("all")]
-        public async Task<ActionResult<List<Dream?>>> getAll()
+        public async Task<ActionResult<List<Dream?>>> GetAll()
         {
             var result = await _dreamService.GetAsync();
             if (result != null)
@@ -31,7 +30,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("List is empty");
         }
 
-        [Authorize(Roles = "Player, Admin")]
+        //[Authorize(Roles = "Player, Admin")]
         [HttpGet]
         public async Task<ActionResult<List<Dream>>> GetByPaging([FromQuery] PaginationFilter filter, double? from, double? to)
         {
@@ -44,7 +43,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [Authorize(Roles = "Player, Admin")]
+        //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Dream>> GetById(string id)
         {
@@ -56,7 +55,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("Can not found this dream");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateDream(DreamRequest request)
         {
@@ -71,7 +70,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id:length(24)}")]
         public async Task<ActionResult<List<Dream>>> UpdateDream(string id, DreamRequest request)
         {
@@ -90,7 +89,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id:length(24)}")]
         public async Task<ActionResult<List<Dream>>> DeleteDream(string id)
         {

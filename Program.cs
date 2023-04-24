@@ -12,8 +12,6 @@ using MobileBasedCashFlowAPI.Settings;
 using MobileBasedCashFlowAPI.Services;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
-using Microsoft.AspNetCore.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 using MobileBasedCashFlowAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,7 +73,7 @@ builder.Services.AddTransient<ITileService, TileService>();
 // Register Service For Cache
 builder.Services.AddMemoryCache();
 
-
+// Register Global Exception Handler Midddleware
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 
@@ -130,6 +128,7 @@ builder.Services.AddSwaggerGen(c =>
 }
 );
 
+// lower case endpoint url
 builder.Services.Configure<RouteOptions>(options =>
 {
     options.LowercaseUrls = true;
@@ -149,37 +148,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         // Set URl as /index.html
         c.RoutePrefix = String.Empty;
     });
-    //app.UseExceptionHandler(exceptionHandlerApp =>
-    //{
-    //    exceptionHandlerApp.Run(async context =>
-    //    {
-    //        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-
-    //        // using static System.Net.Mime.MediaTypeNames;
-    //        context.Response.ContentType = Text.Plain;
-
-    //        await context.Response.WriteAsync("An exception was thrown.");
-
-    //        var exceptionHandlerPathFeature =
-    //            context.Features.Get<IExceptionHandlerPathFeature>();
-
-    //        if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
-    //        {
-    //            await context.Response.WriteAsync(" The file was not found.");
-    //        }
-
-    //        if (exceptionHandlerPathFeature?.Path == "/")
-    //        {
-    //            await context.Response.WriteAsync(" Page: Home.");
-    //        }
-    //    });
-    //});
 }
-
-//var logger = app.Services.GetRequiredService<ILogger>();
-
-//app.ConfigureExceptionHandler(logger);
-
 
 app.UseHttpsRedirection();
 

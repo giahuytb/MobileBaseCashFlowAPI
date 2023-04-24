@@ -15,6 +15,6 @@ namespace MobileBasedCashFlowAPI.IServices
         public Task<string> EditProfile(int userId, EditProfileRequest request);
         public Task<object?> ViewProfile(int userId);
         public Task<string> UpdateCoin(int userId, int coin);
-        public Task<UserAccount?> FindUserById(int userId);
+        public Task<object?> FindUserById(int userId);
     }
 }

@@ -37,83 +37,55 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<Asset>> GetById(int id)
         {
-            try
+            var result = await _assetService.GetAsync(id);
+            if (result != null)
             {
-                var result = await _assetService.GetAsync(id);
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("Can not found this asset");
+                return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound("Can not found this asset");
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         public async Task<ActionResult> PostItem(AssetRequest request)
         {
-            try
+            // get the current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
             {
-                // get the current user logging in system
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _assetService.CreateAsync(Int32.Parse(userId), request);
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _assetService.CreateAsync(Int32.Parse(userId), request);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(result);
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateItem(int id, AssetRequest request)
         {
-            try
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
             {
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _assetService.UpdateAsync(id, Int32.Parse(userId), request);
-                if (result != "success")
-                {
-                    return BadRequest(result);
-                }
-                return Ok(result);
+                return Unauthorized("User id not Found, please login");
             }
-            catch (Exception ex)
+            var result = await _assetService.UpdateAsync(id, Int32.Parse(userId), request);
+            if (result != "success")
             {
-                return BadRequest(ex.Message);
+                return BadRequest(result);
             }
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsset(int id)
         {
-            try
+            var result = await _assetService.DeleteAsync(id);
+            if (result != "success")
             {
-                var result = await _assetService.DeleteAsync(id);
-                if (result != "success")
-                {
-                    return BadRequest(result);
-                }
-                return Ok(result);
+                return BadRequest(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(result);
         }
     }
 }
