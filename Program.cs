@@ -13,6 +13,7 @@ using MobileBasedCashFlowAPI.Services;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Extensions;
+using MobileBasedCashFlowAPI.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 var secretKey = builder.Configuration["Jwt:Key"];
@@ -60,6 +61,7 @@ builder.Services.AddTransient<GameReportRepository, GameReportService>();
 builder.Services.AddTransient<GameRepository, GameService>();
 builder.Services.AddTransient<UserAssetRepository, UserAssetService>();
 builder.Services.AddTransient<AssetRepository, AssetService>();
+builder.Services.AddTransient<AssetTypeRepository, AssetTypeService>();
 
 
 // Register Service For MongoDatabase

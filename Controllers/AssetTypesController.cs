@@ -1,38 +1,30 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.Repository;
+
 using System.Collections;
 using System.Security.Claims;
-
-using MobileBasedCashFlowAPI.IServices;
-using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.DTO;
-using Org.BouncyCastle.Utilities;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AssetsController : ControllerBase
+    public class AssetTypesController : ControllerBase
     {
-        private readonly AssetRepository _assetService;
-
-        public AssetsController(AssetRepository itemService)
+        private readonly AssetTypeRepository _assetTypeRepository;
+        public AssetTypesController(AssetTypeRepository assetTypeRepository)
         {
-            _assetService = itemService;
+            _assetTypeRepository = assetTypeRepository;
         }
 
         [HttpGet]
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-
-            // get the current user logging in system
-            string userId = HttpContext.User.FindFirstValue("Id");
-            if (userId == null)
-            {
-                return Unauthorized("User id not Found, please login");
-            }
-            var result = await _assetService.GetAsync(Int32.Parse(userId));
+            var result = await _assetTypeRepository.GetAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -42,9 +34,9 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [HttpGet("{id}")]
         //[Authorize(Roles = "Player, Admin")]
-        public async Task<ActionResult<Asset>> GetById(int id)
+        public async Task<ActionResult<AssetType>> GetById(int id)
         {
-            var result = await _assetService.GetByIdAsync(id);
+            var result = await _assetTypeRepository.GetAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -54,7 +46,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
-        public async Task<ActionResult> PostItem(AssetRequest request)
+        public async Task<ActionResult> PostItem(AssetTypeRequest request)
         {
             // get the current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
@@ -62,37 +54,41 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _assetService.CreateAsync(Int32.Parse(userId), request);
-
-            return Ok(result);
+            var result = await _assetTypeRepository.CreateAsync(Int32.Parse(userId), request);
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateItem(int id, AssetRequest request)
+        public async Task<ActionResult> UpdateItem(int id, AssetTypeRequest request)
         {
             string userId = HttpContext.User.FindFirstValue("Id");
             if (userId == null)
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _assetService.UpdateAsync(id, Int32.Parse(userId), request);
-            if (result != "success")
+            var result = await _assetTypeRepository.UpdateAsync(id, Int32.Parse(userId), request);
+            if (result.Equals(Constant.Success))
             {
-                return BadRequest(result);
+                return Ok(result);
             }
-            return Ok(result);
+            return NotFound(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsset(int id)
         {
-            var result = await _assetService.DeleteAsync(id);
-            if (result != "success")
+            var result = await _assetTypeRepository.DeleteAsync(id);
+            if (result.Equals(Constant.Success))
             {
-                return BadRequest(result);
+                return Ok(result);
             }
-            return Ok(result);
+            return NotFound(result);
         }
+
     }
 }

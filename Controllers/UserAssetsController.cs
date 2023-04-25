@@ -6,6 +6,7 @@ using System.Security.Claims;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using MobileBasedCashFlowAPI.Common;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -13,30 +14,23 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class UserAssetsController : ControllerBase
     {
-        private readonly UserAssetRepository _inventoryService;
+        private readonly UserAssetRepository _userAssetRepository;
 
         public UserAssetsController(UserAssetRepository inventoryService)
         {
-            _inventoryService = inventoryService;
+            _userAssetRepository = inventoryService;
         }
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
-            try
+            var result = await _userAssetRepository.GetAsync();
+            if (result != null)
             {
-                var result = await _inventoryService.GetAsync();
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("List is empty");
+                return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound("List is empty");
         }
 
 
@@ -44,48 +38,56 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpGet("my-asset")]
         public async Task<ActionResult<UserAsset>> GetById()
         {
-            try
+            // get the current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            string users = HttpContext.User.FindFirstValue("roleName");
+            if (userId == null)
             {
-                // get the current user logging in system
-                string userId = HttpContext.User.FindFirstValue("Id");
-                string users = HttpContext.User.FindFirstValue("roleName");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _inventoryService.GetAsync(Int32.Parse(userId));
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("Can not found this user iventory ");
+                return Unauthorized("User id not Found, please login");
             }
-            catch (Exception ex)
+            var result = await _userAssetRepository.GetAsync(Int32.Parse(userId));
+            if (result != null)
             {
-                return BadRequest(ex.Message);
+                return Ok(result);
             }
+            return NotFound("Can not found this user inventory ");
+
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         public async Task<ActionResult> BuyItem(int itemId)
         {
-            try
+            // get the id of current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
             {
-                // get the id of current user logging in system
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _inventoryService.CreateAsync(itemId, Int32.Parse(userId));
-
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _userAssetRepository.CreateAsync(itemId, Int32.Parse(userId));
+            if (result.Equals(Constant.Success))
+            {
                 return Ok(result);
             }
-            catch (Exception ex)
+            return BadRequest(result);
+
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateLastUsed(int itemId)
+        {
+            // get the id of current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
             {
-                return BadRequest(ex.Message);
+                return Unauthorized("User id not Found, please login");
             }
+            var result = await _userAssetRepository.UpdateLastUsedAsync(itemId, Int32.Parse(userId));
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
         }
     }
 }
