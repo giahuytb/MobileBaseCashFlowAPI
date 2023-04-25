@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IServices;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.MongoModels;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
@@ -86,24 +85,31 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 return "You don't have enough coin to buy this item";
             }
-            try
+            var invent = new UserAsset()
             {
-                var invent = new UserAsset()
-                {
-                    AssetId = assetId,
-                    UserId = userId,
-                    CreateAt = DateTime.Now,
-                };
-                user.Coin = user.Coin - asset.AssetPrice;
-                await _context.UserAssets.AddAsync(invent);
+                AssetId = assetId,
+                UserId = userId,
+                CreateAt = DateTime.Now,
+            };
+
+            user.Coin = user.Coin - asset.AssetPrice;
+            await _context.UserAssets.AddAsync(invent);
+            await _context.SaveChangesAsync();
+            return Constant.Success;
+
+        }
+
+        public async Task<string> UpdateLastUsedAsync(int assetId, int userId)
+        {
+            var userAsset = await _context.UserAssets.Where(i => i.UserId == assetId && i.AssetId == assetId).FirstOrDefaultAsync();
+            if (userAsset != null)
+            {
+                userAsset.LastUsed = DateTime.Now;
                 await _context.SaveChangesAsync();
                 return Constant.Success;
             }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
-        }
 
+            return Constant.NotFound;
+        }
     }
 }

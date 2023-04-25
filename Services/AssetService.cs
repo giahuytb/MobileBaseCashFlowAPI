@@ -12,7 +12,6 @@ namespace MobileBasedCashFlowAPI.Services
 {
     public class AssetService : AssetRepository
     {
-        public const string SUCCESS = "success";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public AssetService(MobileBasedCashFlowGameContext context)
@@ -20,9 +19,13 @@ namespace MobileBasedCashFlowAPI.Services
             _context = context;
         }
 
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAsync(int userId)
         {
             var asset = await (from i in _context.Assets
+                               join userAsset in _context.UserAssets on i.AssetId equals userAsset.AssetId
+                               into g
+                               from userAsset in g.DefaultIfEmpty()
+                               where userAsset.UserId != userId
                                select new
                                {
                                    i.AssetId,
@@ -37,7 +40,7 @@ namespace MobileBasedCashFlowAPI.Services
             return asset;
         }
 
-        public async Task<Object?> GetAsync(int id)
+        public async Task<Object?> GetByIdAsync(int id)
         {
             var asset = await _context.Assets.Select(i => new
             {
@@ -55,15 +58,14 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> CreateAsync(int userId, AssetRequest request)
         {
-
             try
             {
                 var checkName = await _context.Assets
                                 .Where(d => d.AssetName == request.AssetName)
-                                .Select(d => new { assetmName = d.AssetName }).FirstOrDefaultAsync();
+                                .Select(d => new { assetName = d.AssetName }).FirstOrDefaultAsync();
                 if (checkName != null)
                 {
-                    return "This Asset name is existed";
+                    return "This asset name is existed";
                 }
                 if (request.AssetName == null)
                 {
@@ -86,7 +88,7 @@ namespace MobileBasedCashFlowAPI.Services
                     return "Asset Type must be number and bigger than 0";
                 }
 
-                var asset1 = new Asset()
+                var asset = new Asset()
                 {
                     AssetName = request.AssetName,
                     ImageUrl = request.ImageUrl,
@@ -98,9 +100,9 @@ namespace MobileBasedCashFlowAPI.Services
                     AssetType = request.AssetType,
                 };
 
-                await _context.Assets.AddAsync(asset1);
+                await _context.Assets.AddAsync(asset);
                 await _context.SaveChangesAsync();
-                return SUCCESS;
+                return Constant.Success;
             }
             catch (Exception ex)
             {
@@ -149,7 +151,7 @@ namespace MobileBasedCashFlowAPI.Services
                     oldAsset.AssetType = request.AssetType;
 
                     await _context.SaveChangesAsync();
-                    return SUCCESS;
+                    return Constant.Success;
                 }
                 catch (Exception ex)
                 {
@@ -169,7 +171,7 @@ namespace MobileBasedCashFlowAPI.Services
             _context.Assets.Remove(Asset);
             await _context.SaveChangesAsync();
 
-            return SUCCESS;
+            return Constant.Success;
         }
 
     }
