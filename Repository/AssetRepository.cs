@@ -1,7 +1,7 @@
 ﻿using MobileBasedCashFlowAPI.DTO;
 using System.Collections;
 
-namespace MobileBasedCashFlowAPI.IServices
+namespace MobileBasedCashFlowAPI.Repository
 {
     public interface AssetRepository
     {

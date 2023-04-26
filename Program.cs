@@ -10,10 +10,9 @@ using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.Settings;
 
 using MobileBasedCashFlowAPI.Services;
-using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Extensions;
-using MobileBasedCashFlowAPI.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 var secretKey = builder.Configuration["Jwt:Key"];
@@ -56,21 +55,27 @@ builder.Services.AddTransient<SendMailRepository, SendMailService>();
 builder.Services.AddTransient<UserRepository, UserService>();
 builder.Services.AddTransient<UserRoleRepository, UserRoleService>();
 
-builder.Services.AddTransient<GameMatchRepository, GameMatchService>();
-builder.Services.AddTransient<GameReportRepository, GameReportService>();
-builder.Services.AddTransient<GameRepository, GameService>();
-builder.Services.AddTransient<UserAssetRepository, UserAssetService>();
 builder.Services.AddTransient<AssetRepository, AssetService>();
 builder.Services.AddTransient<AssetTypeRepository, AssetTypeService>();
+
+builder.Services.AddTransient<GameRepository, GameService>();
+builder.Services.AddTransient<GameMatchRepository, GameMatchService>();
+builder.Services.AddTransient<GameModeRepository, GameModeService>();
+builder.Services.AddTransient<GameReportRepository, GameReportService>();
+builder.Services.AddTransient<GameServerRepository, GameServerService>();
+builder.Services.AddTransient<ParticipantRepository, ParticipantService>();
+
+builder.Services.AddTransient<UserAssetRepository, UserAssetService>();
+
 
 
 // Register Service For MongoDatabase
 builder.Services.AddTransient<MongoDbSettings>(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
-builder.Services.AddTransient<IDreamService, DreamService>();
-builder.Services.AddTransient<IEventCardService, EventCardService>();
-builder.Services.AddTransient<IGameAccountService, GameAccountService>();
-builder.Services.AddTransient<IJobCardService, JobCardService>();
-builder.Services.AddTransient<ITileService, TileService>();
+builder.Services.AddTransient<DreamRepository, DreamService>();
+builder.Services.AddTransient<EventCardRepository, EventCardService>();
+builder.Services.AddTransient<GameAccountRepository, GameAccountService>();
+builder.Services.AddTransient<JobCardRepository, JobCardService>();
+builder.Services.AddTransient<TileRepository, TileService>();
 
 // Register Service For Cache
 builder.Services.AddMemoryCache();
@@ -164,7 +169,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+app.UseMiddleware(typeof(GlobalExceptionHandlingMiddleware));
 
 app.MapControllers();
 

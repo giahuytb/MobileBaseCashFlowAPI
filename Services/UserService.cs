@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Collections;
 
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.DTO;
 
@@ -71,7 +71,7 @@ namespace MobileBasedCashFlowAPI.Services
 
             var token = new JwtSecurityToken(
                 _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Issuer"],
+                _configuration["Jwt:Audience"],
                 claims,
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: creds);
@@ -83,6 +83,7 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 user = new
                 {
+                    user.UserId,
                     user.NickName,
                     user.Email,
                     user.Address,

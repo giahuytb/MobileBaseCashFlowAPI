@@ -11,9 +11,9 @@ namespace MobileBasedCashFlowAPI.MongoController
     [ApiController]
     public class TilesController : ControllerBase
     {
-        private readonly ITileService _tileService;
+        private readonly TileRepository _tileService;
 
-        public TilesController(ITileService tileService)
+        public TilesController(TileRepository tileService)
         {
             _tileService = tileService;
         }

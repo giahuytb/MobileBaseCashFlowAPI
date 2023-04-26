@@ -1,5 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.Repository;
+using MobileBasedCashFlowAPI.Services;
+using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -7,5 +14,94 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class GameModesController : ControllerBase
     {
+        private readonly GameModeRepository _gameModeRepository;
+
+        public GameModesController(GameModeRepository gameModeRepository)
+        {
+            _gameModeRepository = gameModeRepository;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable>> GetAll()
+        {
+
+            var result = await _gameModeRepository.GetAsync();
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GameReport>> GetById(int id)
+        {
+
+            var result = await _gameModeRepository.GetAsync(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> PostGameMode(GameModeRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            // get the current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _gameModeRepository.CreateAsync(Int32.Parse(userId), request);
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateGameMode(int gameModeId, GameModeRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            // get the current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _gameModeRepository.UpdateAsync(gameModeId, Int32.Parse(userId), request);
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteGameMode(int id)
+        {
+
+            var result = await _gameModeRepository.DeleteAsync(id);
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+
+
     }
 }

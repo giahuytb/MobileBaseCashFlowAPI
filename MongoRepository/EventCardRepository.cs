@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace MobileBasedCashFlowAPI.IMongoServices
 {
-    public interface IEventCardService
+    public interface EventCardRepository
     {
         public Task<IEnumerable<EventCard>> GetAsync();
         public Task<Object?> GetAsync(PaginationFilter filter, double? from, double? to);

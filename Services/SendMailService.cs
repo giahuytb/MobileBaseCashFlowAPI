@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 using MobileBasedCashFlowAPI.Settings;
 using MobileBasedCashFlowAPI.DTO;
-using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Repository;
 
 namespace MobileBasedCashFlowAPI.Services
 {

@@ -13,7 +13,7 @@ using MobileBasedCashFlowAPI.Cache;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
-    public class JobCardService : IJobCardService
+    public class JobCardService : JobCardRepository
     {
         private readonly IMongoCollection<JobCard> _collection;
         private readonly IMemoryCache _cache;

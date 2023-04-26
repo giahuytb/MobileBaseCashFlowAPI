@@ -14,7 +14,7 @@ using MobileBasedCashFlowAPI.Cache;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
-    public class EventCardService : IEventCardService
+    public class EventCardService : EventCardRepository
     {
         private readonly IMongoCollection<EventCard> _collection;
         private readonly IMemoryCache _cache;

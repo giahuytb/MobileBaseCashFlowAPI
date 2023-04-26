@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.DTO;
-using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
 using System.Collections;
-using System.Data;
+
 using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
@@ -24,109 +24,67 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            try
+            var result = await _gameReportService.GetAsync();
+            if (result == null)
             {
-                var result = await _gameReportService.GetAsync();
-                if (result == null)
-                {
-                    return NotFound();
-                }
-                return Ok(result);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<GameReport>> GetById(int id)
         {
-            try
+            var result = await _gameReportService.GetAsync(id);
+            if (result == null)
             {
-                var result = await _gameReportService.GetAsync(id);
-                if (result == null)
-                {
-                    return NotFound();
-                }
-                return Ok(result);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<ActionResult> PostGameReport(GameReportRequest request)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-                // get the current user logging in system
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _gameReportService.CreateAsync(Int32.Parse(userId), request);
-                if (result == "success")
-                {
-                    return Ok("Create success");
-                }
-                return BadRequest(result);
-
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            // get the current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
             {
-                return BadRequest(ex.Message);
+                return Unauthorized("User id not Found, please login");
             }
+            var result = await _gameReportService.CreateAsync(Int32.Parse(userId), request);
+            return Ok(result);
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateGameReport(GameReportRequest request)
+        public async Task<ActionResult> UpdateGameReport(int gameReportId, GameReportRequest request)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-                // get the current user logging in system
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _gameReportService.CreateAsync(Int32.Parse(userId), request);
-                if (result == "success")
-                {
-                    return Ok("Create success");
-                }
-                return BadRequest(result);
-
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _gameReportService.UpdateAsync(gameReportId, request);
+            if (result.Equals(Constant.Success))
             {
-                return BadRequest(ex.Message);
+                return Ok(result);
             }
+            return NotFound(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteGameReport(int id)
         {
-            try
+
+            var result = await _gameReportService.DeleteAsync(id);
+            if (result.Equals(Constant.Success))
             {
-                var result = await _gameReportService.DeleteAsync(id);
                 return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound(result);
         }
 
 

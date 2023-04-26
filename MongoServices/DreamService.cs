@@ -13,7 +13,7 @@ using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
-    public class DreamService : IDreamService
+    public class DreamService : DreamRepository
     {
         private readonly IMongoCollection<Dream> _collection;
         private readonly IMemoryCache _cache;

@@ -2,7 +2,7 @@
 using MobileBasedCashFlowAPI.Models;
 using System.Collections;
 
-namespace MobileBasedCashFlowAPI.IServices
+namespace MobileBasedCashFlowAPI.Repository
 {
     public interface UserRepository
     {

@@ -1,6 +1,6 @@
 ﻿using MobileBasedCashFlowAPI.DTO;
 
-namespace MobileBasedCashFlowAPI.IServices
+namespace MobileBasedCashFlowAPI.Repository
 {
     public interface SendMailRepository
     {

@@ -12,8 +12,8 @@ namespace MobileBasedCashFlowAPI.MongoController
     [ApiController]
     public class DreamsController : ControllerBase
     {
-        private readonly IDreamService _dreamService;
-        public DreamsController(IDreamService dreamService)
+        private readonly DreamRepository _dreamService;
+        public DreamsController(DreamRepository dreamService)
         {
             _dreamService = dreamService;
         }
