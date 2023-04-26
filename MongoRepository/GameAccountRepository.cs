@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace MobileBasedCashFlowAPI.IMongoServices
 {
-    public interface IGameAccountService
+    public interface GameAccountRepository
     {
         public Task<IEnumerable<GameAccount>> GetAsync();
         public Task<Object?> GetAsync(PaginationFilter filter);

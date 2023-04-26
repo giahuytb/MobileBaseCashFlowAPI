@@ -3,7 +3,7 @@ using MobileBasedCashFlowAPI.MongoModels;
 
 namespace MobileBasedCashFlowAPI.IMongoServices
 {
-    public interface ITileService
+    public interface TileRepository
     {
         public Task<List<Tile>> GetAsync();
         public Task<Object?> GetAsync(PaginationFilter filter);

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.DTO;
 using System.Collections;
 using MobileBasedCashFlowAPI.Common;

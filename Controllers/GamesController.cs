@@ -1,9 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.DTO;
-using MobileBasedCashFlowAPI.IServices;
+using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.Services;
 using System.Collections;
 using System.Security.Claims;
 
@@ -24,93 +24,72 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            try
+            var result = await _gameService.GetAsync();
+            if (result != null)
             {
-                var result = await _gameService.GetAsync();
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("List is empty");
+                return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound("List is empty");
         }
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Game>> GetById(int id)
         {
-            try
+
+            var result = await _gameService.GetAsync(id);
+            if (result != null)
             {
-                var result = await _gameService.GetAsync(id);
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("Can not find this game");
+                return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound("Can not find this game");
+
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         public async Task<ActionResult> PostGame(GameRequest game)
         {
-            try
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
             {
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _gameService.CreateAsync(Int32.Parse(userId), game);
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _gameService.CreateAsync(Int32.Parse(userId), game);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(result);
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateGame(int id, GameRequest game)
         {
-            try
+
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
             {
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _gameService.UpdateAsync(id, Int32.Parse(userId), game);
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _gameService.UpdateAsync(id, Int32.Parse(userId), game);
+            if (result.Equals(Constant.Success))
+            {
                 return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound(result);
+
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteGame(int id)
         {
-            try
+
+            var result = await _gameService.DeleteAsync(id);
+            if (result.Equals(Constant.Success))
             {
-                var result = await _gameService.DeleteAsync(id);
                 return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound(result);
         }
     }
+
 }

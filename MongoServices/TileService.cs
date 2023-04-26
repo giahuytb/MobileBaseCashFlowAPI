@@ -7,7 +7,7 @@ using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
-    public class TileService : ITileService
+    public class TileService : TileRepository
     {
         public const string SUCCESS = "success";
         private readonly IMongoCollection<Tile> _collection;
