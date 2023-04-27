@@ -16,8 +16,6 @@ namespace MobileBasedCashFlowAPI.MongoController
     public class GameAccountsController : ControllerBase
     {
         private readonly GameAccountRepository _gameAccountService;
-
-
         public GameAccountsController(GameAccountRepository gameAccountService)
         {
             _gameAccountService = gameAccountService;
@@ -37,6 +35,10 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet]
         public async Task<ActionResult<List<GameAccount>>> GetByPaging([FromQuery] PaginationFilter filter)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
             var result = await _gameAccountService.GetAsync(validFilter);
             if (result != null)
@@ -49,6 +51,10 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<GameAccount>> GetGameAccountById(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _gameAccountService.GetAsync(id);
             if (result != null)
             {
@@ -60,22 +66,23 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPost]
         public async Task<ActionResult> CreateGameAccount(AccountRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _gameAccountService.CreateAsync(request);
-            if (result == "success")
+            if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
-            else
-            {
-                return BadRequest(result);
-            }
+            return BadRequest(result);
         }
 
         [HttpPut("{id:length(24)}")]
-        public async Task<ActionResult<List<GameAccount>>> UpdateGameAccount(string id, AccountRequest request)
+        public async Task<ActionResult> UpdateGameAccount(string id, AccountRequest request)
         {
-            var result = await _gameAccountService.GetAsync(id);
-            if (result is null)
+            var result = await _gameAccountService.UpdateAsync(id, request);
+            if (result.Equals(Constant.Success))
             {
                 return NotFound(result);
             }

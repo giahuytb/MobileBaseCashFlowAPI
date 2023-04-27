@@ -5,6 +5,7 @@ using MobileBasedCashFlowAPI.Services;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.Collections;
 using System.Security.Claims;
+using MobileBasedCashFlowAPI.Common;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -22,101 +23,64 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            try
+            var result = await _userRoleServicecs.GetAsync();
+            if (result != null)
             {
-                var result = await _userRoleServicecs.GetAsync();
-                if (result == null)
-                {
-                    return NotFound();
-                }
                 return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound("List is empty");
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetById(int id)
         {
-            try
+            var result = await _userRoleServicecs.GetAsync(id);
+            if (result != null)
             {
-                var result = await _userRoleServicecs.GetAsync(id);
-                if (result == null)
-                {
-                    return NotFound();
-                }
                 return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound("List is empty");
         }
 
         [HttpPost]
         public async Task<ActionResult> PostUserRole(string roleName)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-                var result = await _userRoleServicecs.CreateAsync(roleName);
-                if (result.Equals("success"))
-                {
-                    return Ok("Create success");
-                }
-                return BadRequest(result);
-
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _userRoleServicecs.CreateAsync(roleName);
+            if (result.Equals("success"))
             {
-                return BadRequest(ex.Message);
+                return Ok("Create success");
             }
+            return BadRequest(result);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateUserRole(int id, string roleName)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-                var result = await _userRoleServicecs.UpdateAsync(id, roleName);
-                if (result.Equals("success"))
-                {
-                    return Ok("Update success");
-                }
-                return BadRequest(result);
-
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _userRoleServicecs.UpdateAsync(id, roleName);
+            if (result.Equals(Constant.Success))
             {
-                return BadRequest(ex.Message);
+                return Ok(result);
             }
+            return BadRequest(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteRole(int id)
         {
-            try
+            var result = await _userRoleServicecs.DeleteAsync(id);
+            if (result.Equals(Constant.Success))
             {
-                var role = await _userRoleServicecs.DeleteAsync(id);
-                if (role.Equals("success"))
-                {
-                    Ok("Delete success");
-                }
-                return NotFound();
+                Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound(result);
         }
     }
 }

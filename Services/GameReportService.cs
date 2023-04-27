@@ -9,7 +9,6 @@ namespace MobileBasedCashFlowAPI.Services
 {
     public class GameReportService : GameReportRepository
     {
-        public const string SUCCESS = "success";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public GameReportService(MobileBasedCashFlowGameContext context)
@@ -88,7 +87,6 @@ namespace MobileBasedCashFlowAPI.Services
                 return "Expense per month must be mumber and bigger than 0";
             }
 
-
             var gameReport = new GameReport()
             {
                 ChildrenAmount = request.ChildrenAmount,
@@ -104,7 +102,7 @@ namespace MobileBasedCashFlowAPI.Services
 
             _context.GameReports.Add(gameReport);
             await _context.SaveChangesAsync();
-            return SUCCESS;
+            return Constant.Success;
         }
 
         public async Task<string> UpdateAsync(int reportId, GameReportRequest request)
@@ -146,7 +144,7 @@ namespace MobileBasedCashFlowAPI.Services
                 oldGameReport.IncomePerMonth = request.IncomePerMonth;
                 oldGameReport.ExpensePerMonth = request.ExpensePerMonth;
                 await _context.SaveChangesAsync();
-                return SUCCESS;
+                return Constant.Success;
             };
             return "Can not found this game report";
         }

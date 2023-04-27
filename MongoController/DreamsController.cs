@@ -34,6 +34,10 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet]
         public async Task<ActionResult<List<Dream>>> GetByPaging([FromQuery] PaginationFilter filter, double? from, double? to)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
             var result = await _dreamService.GetAsync(validFilter, from, to);
             if (result != null)
@@ -47,6 +51,10 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Dream>> GetById(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _dreamService.GetAsync(id);
             if (result != null)
             {
@@ -59,21 +67,26 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPost]
         public async Task<ActionResult> CreateDream(DreamRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _dreamService.CreateAsync(request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
-            else
-            {
-                return BadRequest(result);
-            }
+            return BadRequest(result);
         }
 
         //[Authorize(Roles = "Admin")]
         [HttpPut("{id:length(24)}")]
         public async Task<ActionResult<List<Dream>>> UpdateDream(string id, DreamRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _dreamService.UpdateAsync(id, request);
             if (result.Equals(Constant.Success))
             {
@@ -83,16 +96,17 @@ namespace MobileBasedCashFlowAPI.MongoController
             {
                 return NotFound("Can not found this dream");
             }
-            else
-            {
-                return BadRequest(result);
-            }
+            return BadRequest(result);
         }
 
         //[Authorize(Roles = "Admin")]
         [HttpDelete("{id:length(24)}")]
         public async Task<ActionResult<List<Dream>>> DeleteDream(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _dreamService.RemoveAsync(id);
             if (result.Equals(Constant.Success))
             {
@@ -102,10 +116,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             {
                 return NotFound("Can not found this dream");
             }
-            else
-            {
-                return BadRequest(result);
-            }
+            return BadRequest(result);
         }
 
 

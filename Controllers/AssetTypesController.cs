@@ -36,6 +36,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<AssetType>> GetById(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _assetTypeRepository.GetAsync(id);
             if (result != null)
             {
@@ -48,6 +52,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> PostItem(AssetTypeRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             // get the current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
             if (userId == null)
@@ -66,6 +74,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateItem(int id, AssetTypeRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             string userId = HttpContext.User.FindFirstValue("Id");
             if (userId == null)
             {
@@ -82,6 +94,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsset(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _assetTypeRepository.DeleteAsync(id);
             if (result.Equals(Constant.Success))
             {

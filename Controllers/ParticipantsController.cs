@@ -25,7 +25,6 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-
             var result = await _participantRepository.GetAsync();
             if (result != null)
             {
@@ -38,6 +37,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<Participant>> GetById(int userId, int matchId)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _participantRepository.GetAsync(userId, matchId);
             if (result != null)
             {
@@ -50,6 +53,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> PostItem(ParticipantRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _participantRepository.CreateAsync(request);
             return Ok(result);
         }

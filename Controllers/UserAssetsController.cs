@@ -36,11 +36,10 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [Authorize(Roles = "Player, Admin")]
         [HttpGet("my-asset")]
-        public async Task<ActionResult<UserAsset>> GetById()
+        public async Task<ActionResult<UserAsset>> GetMyAsset()
         {
             // get the current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
-            string users = HttpContext.User.FindFirstValue("roleName");
             if (userId == null)
             {
                 return Unauthorized("User id not Found, please login");
@@ -56,7 +55,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
-        public async Task<ActionResult> BuyItem(int itemId)
+        public async Task<ActionResult> BuyAsset(int itemId)
         {
             // get the id of current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
@@ -73,6 +72,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         }
 
+        //[Authorize(Roles = "Player, Admin")]
         [HttpPut]
         public async Task<ActionResult> UpdateLastUsed(int itemId)
         {

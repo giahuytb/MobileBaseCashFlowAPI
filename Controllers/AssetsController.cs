@@ -7,6 +7,7 @@ using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.DTO;
 using Org.BouncyCastle.Utilities;
+using MobileBasedCashFlowAPI.Common;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -25,7 +26,6 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-
             // get the current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
             if (userId == null)
@@ -44,6 +44,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Player, Admin")]
         public async Task<ActionResult<Asset>> GetById(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _assetService.GetByIdAsync(id);
             if (result != null)
             {
@@ -54,8 +58,12 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
-        public async Task<ActionResult> PostItem(AssetRequest request)
+        public async Task<ActionResult> PostAsset(AssetRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             // get the current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
             if (userId == null)
@@ -69,30 +77,38 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateItem(int id, AssetRequest request)
+        public async Task<ActionResult> UpdateAsset(int id, AssetRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             string userId = HttpContext.User.FindFirstValue("Id");
             if (userId == null)
             {
                 return Unauthorized("User id not Found, please login");
             }
             var result = await _assetService.UpdateAsync(id, Int32.Parse(userId), request);
-            if (result != "success")
+            if (result.Equals(Constant.Success))
             {
-                return BadRequest(result);
+                return Ok(result);
             }
-            return Ok(result);
+            return BadRequest(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsset(int id)
         {
-            var result = await _assetService.DeleteAsync(id);
-            if (result != "success")
+            if (!ModelState.IsValid)
             {
-                return BadRequest(result);
+                return BadRequest(ModelState);
             }
-            return Ok(result);
+            var result = await _assetService.DeleteAsync(id);
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }
