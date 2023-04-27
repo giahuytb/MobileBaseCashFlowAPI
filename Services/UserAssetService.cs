@@ -9,7 +9,6 @@ namespace MobileBasedCashFlowAPI.Services
 {
     public class UserAssetService : UserAssetRepository
     {
-        public const string SUCCESS = "success";
         private readonly MobileBasedCashFlowGameContext _context;
 
         public UserAssetService(MobileBasedCashFlowGameContext context)
@@ -19,47 +18,33 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<IEnumerable> GetAsync()
         {
-            try
-            {
-                var inventory = await (from userAsset in _context.UserAssets
-                                       join user in _context.UserAccounts on userAsset.UserId equals user.UserId
-                                       join asset in _context.Assets on userAsset.AssetId equals asset.AssetId
-                                       select new
-                                       {
-                                           user.UserName,
-                                           asset.AssetName,
-                                           userAsset.CreateAt,
-                                           userAsset.LastUsed,
-                                       }).AsNoTracking().ToListAsync();
-                return inventory;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            var inventory = await (from userAsset in _context.UserAssets
+                                   join user in _context.UserAccounts on userAsset.UserId equals user.UserId
+                                   join asset in _context.Assets on userAsset.AssetId equals asset.AssetId
+                                   select new
+                                   {
+                                       user.UserName,
+                                       asset.AssetName,
+                                       userAsset.CreateAt,
+                                       userAsset.LastUsed,
+                                   }).AsNoTracking().ToListAsync();
+            return inventory;
         }
 
-        public async Task<object?> GetAsync(int id)
+        public async Task<object?> GetAsync(int userId)
         {
-            try
-            {
-                var inventory = await (from userAsset in _context.UserAssets
-                                       join user in _context.UserAccounts on userAsset.UserId equals user.UserId
-                                       join asset in _context.Assets on userAsset.AssetId equals asset.AssetId
-                                       where user.UserId == id
-                                       select new
-                                       {
-                                           user.UserName,
-                                           asset.AssetName,
-                                           userAsset.CreateAt,
-                                           userAsset.LastUsed,
-                                       }).AsNoTracking().ToListAsync();
-                return inventory;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            var inventory = await (from userAsset in _context.UserAssets
+                                   join user in _context.UserAccounts on userAsset.UserId equals user.UserId
+                                   join asset in _context.Assets on userAsset.AssetId equals asset.AssetId
+                                   where user.UserId == userId
+                                   select new
+                                   {
+                                       user.UserName,
+                                       asset.AssetName,
+                                       userAsset.CreateAt,
+                                       userAsset.LastUsed,
+                                   }).AsNoTracking().ToListAsync();
+            return inventory;
         }
 
 
@@ -83,7 +68,7 @@ namespace MobileBasedCashFlowAPI.Services
             }
             if (user.Coin < asset.AssetPrice)
             {
-                return "You don't have enough coin to buy this item";
+                return "You don't have enough coin to buy this asset";
             }
             var invent = new UserAsset()
             {
@@ -108,7 +93,6 @@ namespace MobileBasedCashFlowAPI.Services
                 await _context.SaveChangesAsync();
                 return Constant.Success;
             }
-
             return Constant.NotFound;
         }
     }

@@ -103,17 +103,13 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 UserName = request.UserName,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                NickName = "",
                 Gender = "Male",
                 Email = request.Email,
-                Phone = "",
-                ImageUrl = "",
                 Coin = 0,
                 CreateAt = DateTime.UtcNow,
                 EmailConfirmToken = GenerateEmailConfirmationToken(),
                 RoleId = null,
                 Status = true,
-
             };
 
             var checkUser = await _context.UserAccounts.FirstOrDefaultAsync(u => u.UserName == request.UserName);

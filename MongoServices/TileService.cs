@@ -9,7 +9,6 @@ namespace MobileBasedCashFlowAPI.MongoServices
 {
     public class TileService : TileRepository
     {
-        public const string SUCCESS = "success";
         private readonly IMongoCollection<Tile> _collection;
         public TileService(MongoDbSettings setting)
         {
@@ -44,19 +43,19 @@ namespace MobileBasedCashFlowAPI.MongoServices
         public async Task<string> CreateAsync(Tile newTile)
         {
             await _collection.InsertOneAsync(newTile);
-            return SUCCESS;
+            return Constant.Success;
         }
 
         public async Task<string> UpdateAsync(string id, Tile updatedTile)
         {
             await _collection.ReplaceOneAsync(x => x.id == id, updatedTile);
-            return SUCCESS;
+            return Constant.Success;
         }
 
         public async Task<string> DeleteAsync(string id)
         {
             await _collection.DeleteOneAsync(x => x.id == id);
-            return SUCCESS;
+            return Constant.Success;
         }
 
 

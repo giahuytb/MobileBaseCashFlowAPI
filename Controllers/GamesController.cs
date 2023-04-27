@@ -36,7 +36,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Game>> GetById(int id)
         {
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _gameService.GetAsync(id);
             if (result != null)
             {
@@ -50,6 +53,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> PostGame(GameRequest game)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             string userId = HttpContext.User.FindFirstValue("Id");
             if (userId == null)
             {
@@ -64,7 +71,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateGame(int id, GameRequest game)
         {
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             string userId = HttpContext.User.FindFirstValue("Id");
             if (userId == null)
             {
@@ -82,7 +92,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteGame(int id)
         {
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _gameService.DeleteAsync(id);
             if (result.Equals(Constant.Success))
             {

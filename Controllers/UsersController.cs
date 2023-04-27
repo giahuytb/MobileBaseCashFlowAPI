@@ -31,7 +31,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
             if (result.Equals(Constant.NotFound))
             {
-                return BadRequest("Can not found your account.");
+                return NotFound("Can not found your account.");
             }
             else if (result.Equals(Constant.WrongPassword))
             {
@@ -69,7 +69,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ModelState);
             }
             var result = await _userService.VerifyEmail(token);
-            if (result.Equals("success"))
+            if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
@@ -90,11 +90,11 @@ namespace MobileBasedCashFlowAPI.Controllers
             var result = await _userService.ForgotPassword(email);
             if (result)
             {
-                return Ok("Success");
+                return Ok(Constant.Success);
             }
             else
             {
-                return BadRequest("Failed");
+                return BadRequest(Constant.Failed);
             }
         }
 
@@ -103,12 +103,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         [Authorize(Roles = "Player, Admin, Moderator")]
         public async Task<IActionResult> EditProfile(int userId, EditProfileRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             var result = await _userService.EditProfile(userId, request);
-            if (result == "success")
+            if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
@@ -129,11 +125,11 @@ namespace MobileBasedCashFlowAPI.Controllers
             var result = await _userService.ResetPassword(request);
             if (result)
             {
-                return Ok(result);
+                return Ok(Constant.Success);
             }
             else
             {
-                return BadRequest();
+                return BadRequest(Constant.Failed);
             }
         }
 
@@ -147,7 +143,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             var result = await _userService.GetAsync();
             if (result == null)
             {
-                return NotFound("list is empty");
+                return NotFound("List is empty");
             }
             return Ok(result);
         }
@@ -160,13 +156,13 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ModelState);
             }
             var result = await _userService.UpdateCoin(userId, coin);
-            if (result == "success")
+            if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
             else
             {
-                return BadRequest();
+                return BadRequest(Constant.Failed);
             }
         }
 

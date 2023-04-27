@@ -35,6 +35,10 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet]
         public async Task<ActionResult<List<EventCard>>> GetByPaging([FromQuery] PaginationFilter filter, double? from, double? to)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
             var result = await _eventCardService.GetAsync(validFilter, from, to);
             if (result != null)
@@ -47,6 +51,10 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet("type-id/{id}")]
         public async Task<ActionResult<EventCard>> GetByTypeId(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var eventCard = await _eventCardService.GetAsync(id);
             if (eventCard != null)
             {
@@ -58,6 +66,10 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<EventCard>> GetById(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var eventCard = await _eventCardService.GetAsync(id);
             if (eventCard != null)
             {
@@ -69,9 +81,12 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPost]
         public async Task<IActionResult> PostEvent(EventCardRequest request)
         {
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _eventCardService.CreateAsync(request);
-            if (result == Constant.Success)
+            if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
@@ -96,8 +111,12 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPut("inactive/{id:length(24)}")]
         public async Task<IActionResult> InActiveEventCard(string id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _eventCardService.InActiveCardAsync(id);
-            if (result == Constant.Success)
+            if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
@@ -114,7 +133,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         {
 
             var result = await _eventCardService.RemoveAsync(id);
-            if (result == Constant.Success)
+            if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }

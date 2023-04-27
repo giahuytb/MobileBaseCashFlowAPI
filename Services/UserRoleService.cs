@@ -2,12 +2,12 @@
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
 using System.Collections;
+using MobileBasedCashFlowAPI.Common;
 
 namespace MobileBasedCashFlowAPI.Services
 {
     public class UserRoleService : UserRoleRepository
     {
-        public const string SUCCESS = "success";
         private readonly MobileBasedCashFlowGameContext _context;
         public UserRoleService(MobileBasedCashFlowGameContext context)
         {
@@ -16,95 +16,66 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<IEnumerable> GetAsync()
         {
-            try
-            {
-                var result = await (from role in _context.UserRoles
-                                    select new
-                                    {
-                                        roleId = role.RoleId,
-                                        roleName = role.RoleName,
-                                    }).ToListAsync();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            var result = await (from role in _context.UserRoles
+                                select new
+                                {
+                                    roleId = role.RoleId,
+                                    roleName = role.RoleName,
+                                }).AsNoTracking().ToListAsync();
+            return result;
         }
 
         public async Task<object?> GetAsync(int roleId)
         {
-            try
-            {
-                var result = await (from role in _context.UserRoles
-                                    where role.RoleId == roleId
-                                    select new
-                                    {
-                                        roleId = role.RoleId,
-                                        roleName = role.RoleName,
-                                    }).ToListAsync();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            var result = await (from role in _context.UserRoles
+                                where role.RoleId == roleId
+                                select new
+                                {
+                                    roleId = role.RoleId,
+                                    roleName = role.RoleName,
+                                }).AsNoTracking().ToListAsync();
+            return result;
         }
 
         public async Task<string> CreateAsync(string roleName)
         {
-            try
+            var role = new UserRole
             {
-                var role = new UserRole
-                {
-                    RoleName = roleName,
-                    CreateAt = DateTime.Now,
-                };
-                if (role.RoleName.Length < 1)
-                {
-                    return "You must enter role name";
-                }
-                var check = await _context.UserRoles.FirstOrDefaultAsync(r => r.RoleName == roleName);
-                if (check != null)
-                {
-                    return "This role has already existed";
-                }
-                await _context.AddAsync(role);
-                await _context.SaveChangesAsync();
-                return SUCCESS;
-            }
-            catch (Exception ex)
+                RoleName = roleName,
+                CreateAt = DateTime.Now,
+            };
+            if (role.RoleName.Length < 1)
             {
-                return ex.Message;
+                return "You must enter role name";
             }
-
+            var check = await _context.UserRoles.FirstOrDefaultAsync(r => r.RoleName == roleName);
+            if (check != null)
+            {
+                return "This role has already existed";
+            }
+            await _context.AddAsync(role);
+            await _context.SaveChangesAsync();
+            return Constant.Success;
         }
 
         public async Task<string> UpdateAsync(int roleId, string roleName)
         {
-            try
+            var oldUserRole = await _context.UserRoles.Where(r => r.RoleId == roleId).FirstOrDefaultAsync();
+            if (oldUserRole != null)
             {
-                var oldUserRole = await _context.UserRoles.Where(r => r.RoleId == roleId).FirstOrDefaultAsync();
-                if (oldUserRole != null)
+                if (roleName == null)
                 {
-                    if (roleName == null)
-                    {
-                        return "You must enter role name";
-                    }
-                    var check = await _context.UserRoles.Where(r => r.RoleName == roleName && r.RoleName != oldUserRole.RoleName).FirstOrDefaultAsync();
-                    if (check != null)
-                    {
-                        return "This role has already existed";
-                    }
-                    await _context.SaveChangesAsync();
-                    return SUCCESS;
+                    return "You must enter role name";
                 }
-                return "Can not found this user role";
+                var check = await _context.UserRoles.Where(r => r.RoleName == roleName && r.RoleName != oldUserRole.RoleName).FirstOrDefaultAsync();
+                if (check != null)
+                {
+                    return "This role has already existed";
+                }
+                await _context.SaveChangesAsync();
+                return Constant.Success;
             }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            return "Can not found this role";
         }
 
         public async Task<string> DeleteAsync(int roleId)
@@ -113,11 +84,10 @@ namespace MobileBasedCashFlowAPI.Services
             if (role != null)
             {
                 _context.UserRoles.Remove(role);
-                return SUCCESS;
+                return Constant.Success;
             }
-            return "Can not found this user role";
+            return "Can not found this role";
         }
-
 
 
     }

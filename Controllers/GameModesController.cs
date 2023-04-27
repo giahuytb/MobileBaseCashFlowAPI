@@ -24,27 +24,27 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-
             var result = await _gameModeRepository.GetAsync();
-            if (result == null)
+            if (result != null)
             {
-                return NotFound();
+                return Ok(result);
             }
-            return Ok(result);
-
+            return NotFound("List is empty");
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GameReport>> GetById(int id)
+        public async Task<ActionResult<GameMode>> GetById(int id)
         {
-
-            var result = await _gameModeRepository.GetAsync(id);
-            if (result == null)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return BadRequest(ModelState);
             }
-            return Ok(result);
-
+            var result = await _gameModeRepository.GetAsync(id);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("List is empty");
         }
 
         [HttpPost]
@@ -93,7 +93,10 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteGameMode(int id)
         {
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var result = await _gameModeRepository.DeleteAsync(id);
             if (result.Equals(Constant.Success))
             {

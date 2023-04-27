@@ -6,6 +6,7 @@ using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Services;
 using System.Collections;
 using System.Security.Claims;
+using MobileBasedCashFlowAPI.Common;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -24,102 +25,85 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            try
+            var result = await _gameMatchService.GetAsync();
+            if (result != null)
             {
-                var result = await _gameMatchService.GetAsync();
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("List is empty");
+                return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return NotFound("List is empty");
         }
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<GameMatch>> GetById(int id)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var result = await _gameMatchService.GetAsync(id);
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                return NotFound("Can not find this board");
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+            var result = await _gameMatchService.GetAsync(id);
+            if (result != null)
             {
-                return BadRequest(ex.Message);
+                return Ok(result);
             }
+            return NotFound("Can not find this board");
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         public async Task<ActionResult> PostMatch(int gameId, GameMatchRequest request)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                // get the current user logging in system
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _gameMatchService.CreateAsync(Int32.Parse(userId), gameId, request);
+                return BadRequest(ModelState);
+            }
+            // get the current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _gameMatchService.CreateAsync(Int32.Parse(userId), gameId, request);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(result);
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateMatch(int id, GameMatchRequest request)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                string userId = HttpContext.User.FindFirstValue("Id");
-                if (userId == null)
-                {
-                    return Unauthorized("User id not Found, please login");
-                }
-                var result = await _gameMatchService.UpdateAsync(id, Int32.Parse(userId), request);
-                if (result != "success")
-                {
-                    return BadRequest(result);
-                }
+                return BadRequest(ModelState);
+            }
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _gameMatchService.UpdateAsync(id, Int32.Parse(userId), request);
+            if (result.Equals(Constant.Success))
+            {
                 return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return BadRequest(result);
+
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMatch(int id)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var result = await _gameMatchService.DeleteAsync(id);
-                if (result != "success")
-                {
-                    return BadRequest(result);
-                }
+                return BadRequest(ModelState);
+            }
+            var result = await _gameMatchService.DeleteAsync(id);
+            if (result.Equals(Constant.Success))
+            {
                 return Ok(result);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return BadRequest(result);
+
         }
 
     }
