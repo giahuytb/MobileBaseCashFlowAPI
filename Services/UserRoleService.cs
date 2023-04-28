@@ -67,7 +67,10 @@ namespace MobileBasedCashFlowAPI.Services
                 {
                     return "You must enter role name";
                 }
-                var check = await _context.UserRoles.Where(r => r.RoleName == roleName && r.RoleName != oldUserRole.RoleName).FirstOrDefaultAsync();
+                var check = await _context.UserRoles
+                            .Where(r => r.RoleName == roleName && r.RoleName != oldUserRole.RoleName)
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync();
                 if (check != null)
                 {
                     return "This role has already existed";

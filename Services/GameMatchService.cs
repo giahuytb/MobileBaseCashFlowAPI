@@ -18,53 +18,39 @@ namespace MobileBasedCashFlowAPI.Services
         }
         public async Task<IEnumerable> GetAsync()
         {
-            try
-            {
-                var gameMatch = await (from match in _context.GameMatches
-                                       select new
-                                       {
-                                           match.MatchId,
-                                           match.MaxNumberPlayer,
-                                           match.WinnerId,
-                                           match.HostId,
-                                           match.LastHostId,
-                                           match.StartTime,
-                                           match.EndTime,
-                                           match.TotalRound,
-                                           match.GameId,
-                                       }).AsNoTracking().ToListAsync();
-                return gameMatch;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            var gameMatch = await (from match in _context.GameMatches
+                                   select new
+                                   {
+                                       match.MatchId,
+                                       match.MaxNumberPlayer,
+                                       match.WinnerId,
+                                       match.HostId,
+                                       match.LastHostId,
+                                       match.StartTime,
+                                       match.EndTime,
+                                       match.TotalRound,
+                                       match.GameId,
+                                   }).AsNoTracking().ToListAsync();
+            return gameMatch;
         }
 
         public async Task<object?> GetAsync(int id)
         {
-            try
-            {
-                var gameMatch = await (from match in _context.GameMatches
-                                       where match.MatchId == id
-                                       select new
-                                       {
-                                           match.MatchId,
-                                           match.MaxNumberPlayer,
-                                           match.WinnerId,
-                                           match.HostId,
-                                           match.LastHostId,
-                                           match.StartTime,
-                                           match.EndTime,
-                                           match.TotalRound,
-                                           match.GameId,
-                                       }).AsNoTracking().ToListAsync();
-                return gameMatch;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+            var gameMatch = await (from match in _context.GameMatches
+                                   where match.MatchId == id
+                                   select new
+                                   {
+                                       match.MatchId,
+                                       match.MaxNumberPlayer,
+                                       match.WinnerId,
+                                       match.HostId,
+                                       match.LastHostId,
+                                       match.StartTime,
+                                       match.EndTime,
+                                       match.TotalRound,
+                                       match.GameId,
+                                   }).AsNoTracking().ToListAsync();
+            return gameMatch;
         }
 
         public async Task<string> CreateAsync(int userId, int gameId, GameMatchRequest request)
@@ -88,7 +74,7 @@ namespace MobileBasedCashFlowAPI.Services
         }
         public async Task<string> UpdateAsync(int gameMatchId, int userId, GameMatchRequest request)
         {
-            var oldMatch = await _context.GameMatches.Where(i => i.MatchId == gameMatchId).FirstOrDefaultAsync();
+            var oldMatch = await _context.GameMatches.Where(gm => gm.MatchId == gameMatchId).FirstOrDefaultAsync();
             if (oldMatch != null)
             {
                 oldMatch.WinnerId = request.WinnerId;
@@ -105,7 +91,7 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> DeleteAsync(int gameMatchId)
         {
-            var match = await _context.GameMatches.FindAsync(gameMatchId);
+            var match = await _context.GameMatches.Where(gm => gm.GameId == gameMatchId).FirstOrDefaultAsync();
             if (match != null)
             {
                 _context.GameMatches.Remove(match);

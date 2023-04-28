@@ -52,7 +52,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ModelState);
             }
             var result = await _userService.Register(request);
-            if (result.Equals("success"))
+            if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }

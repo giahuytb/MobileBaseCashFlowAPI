@@ -136,18 +136,11 @@ namespace MobileBasedCashFlowAPI.Services
 
                 if (roleId != null && gameServerId != null)
                 {
-                    try
-                    {
-                        // Add role to user
-                        user.GameServerId = gameServerId.gameId;
-                        user.RoleId = roleId.roleId;
-                        await _context.UserAccounts.AddAsync(user);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        return ex.ToString();
-                    }
+                    // Add role to user
+                    user.GameServerId = gameServerId.gameId;
+                    user.RoleId = roleId.roleId;
+                    await _context.UserAccounts.AddAsync(user);
+                    await _context.SaveChangesAsync();
                     // Create a url path for user to cofirm account in mail
 
                     //var uriBuilder = new UriBuilder(_configuration["ReturnPaths:VerifyEmail"]);
@@ -261,11 +254,19 @@ namespace MobileBasedCashFlowAPI.Services
             return users;
         }
 
+
         public async Task<string> EditProfile(int userId, EditProfileRequest request)
         {
             var oldProfile = await _context.UserAccounts.FirstOrDefaultAsync(i => i.UserId == userId);
             if (oldProfile != null)
             {
+                var checkNickName = await _context.UserAccounts.
+                                Where(u => u.NickName == request.NickName && u.NickName != oldProfile.NickName)
+                                .FirstOrDefaultAsync();
+                if (checkNickName != null)
+                {
+                    return "This name is already use by other user, please use other name";
+                }
                 oldProfile.NickName = request.NickName;
                 oldProfile.Gender = request.Gender;
                 oldProfile.Phone = request.Phone;

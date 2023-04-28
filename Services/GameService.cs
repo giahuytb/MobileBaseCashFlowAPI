@@ -64,7 +64,14 @@ namespace MobileBasedCashFlowAPI.Services
             var oldGame = await _context.Games.Where(i => i.GameId == gameId).FirstOrDefaultAsync();
             if (oldGame != null)
             {
-
+                var checkName = await _context.Games
+                        .Where(a => a.RoomName == request.RoomName && a.RoomName != oldGame.RoomName)
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync();
+                if (checkName != null)
+                {
+                    return "This room name is existed";
+                }
                 oldGame.RoomName = request.RoomName;
                 oldGame.RoomNumber = request.RoomNumber;
                 oldGame.UpdateAt = DateTime.Now;
