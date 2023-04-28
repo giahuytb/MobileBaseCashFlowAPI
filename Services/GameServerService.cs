@@ -50,7 +50,7 @@ namespace MobileBasedCashFlowAPI.Services
         {
             var gameServer = new GameServer()
             {
-                GameVersion = request.gameVersion,
+                GameVersion = request.GameVersion,
                 CreateAt = DateTime.Now,
                 CreateBy = userId,
             };
@@ -65,8 +65,15 @@ namespace MobileBasedCashFlowAPI.Services
             var oldGameServer = await _context.GameServers.Where(i => i.GameServerId == gameServerId).FirstOrDefaultAsync();
             if (oldGameServer != null)
             {
-
-                oldGameServer.GameVersion = request.gameVersion;
+                var checkName = await _context.GameServers
+                        .Where(a => a.GameVersion == request.GameVersion && a.GameVersion != oldGameServer.GameVersion)
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync();
+                if (checkName != null)
+                {
+                    return "This version is existed";
+                }
+                oldGameServer.GameVersion = request.GameVersion;
                 oldGameServer.UpdateAt = DateTime.Now;
                 oldGameServer.UpdateBy = userId;
 

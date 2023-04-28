@@ -33,7 +33,7 @@ namespace MobileBasedCashFlowAPI.Services
                                     gr.CreateAt,
                                     user.NickName,
                                     match.MatchId,
-                                }).ToListAsync();
+                                }).AsNoTracking().ToListAsync();
             return report;
         }
 
@@ -56,37 +56,12 @@ namespace MobileBasedCashFlowAPI.Services
                                     gr.CreateAt,
                                     user.NickName,
                                     match.MatchId,
-                                }).ToListAsync();
+                                }).AsNoTracking().ToListAsync();
             return report;
         }
 
         public async Task<string> CreateAsync(int userId, GameReportRequest request)
         {
-            if (!ValidateInput.isNumber(request.ChildrenAmount.ToString()) || request.ChildrenAmount < 0)
-            {
-                return "Children amount must be mumber and bigger than or equal 0";
-            }
-            if (!ValidateInput.isNumber(request.TotalStep.ToString()) || request.TotalStep <= 0)
-            {
-                return "Total step must be mumber and bigger than 0";
-            }
-            if (!ValidateInput.isNumber(request.TotalMoney.ToString()) || request.TotalMoney <= 0)
-            {
-                return "Total money must be mumber and bigger than 0";
-            }
-            if (!ValidateInput.isNumber(request.Score.ToString()) || request.Score <= 0)
-            {
-                return "Score must be mumber and bigger than 0";
-            }
-            if (!ValidateInput.isNumber(request.IncomePerMonth.ToString()) || request.IncomePerMonth <= 0)
-            {
-                return "Income per month must be mumber and bigger than 0";
-            }
-            if (!ValidateInput.isNumber(request.ExpensePerMonth.ToString()) || request.ExpensePerMonth <= 0)
-            {
-                return "Expense per month must be mumber and bigger than 0";
-            }
-
             var gameReport = new GameReport()
             {
                 ChildrenAmount = request.ChildrenAmount,
@@ -111,31 +86,6 @@ namespace MobileBasedCashFlowAPI.Services
             var oldGameReport = await _context.GameReports.Where(g => g.ReportId == reportId).FirstOrDefaultAsync();
             if (oldGameReport != null)
             {
-                if (!ValidateInput.isNumber(request.ChildrenAmount.ToString()) || request.ChildrenAmount < 0)
-                {
-                    return "Children amount must be mumber and bigger than or equal 0";
-                }
-                if (!ValidateInput.isNumber(request.TotalStep.ToString()) || request.TotalStep <= 0)
-                {
-                    return "Total step must be mumber and bigger than 0";
-                }
-                if (!ValidateInput.isNumber(request.TotalMoney.ToString()) || request.TotalMoney <= 0)
-                {
-                    return "Total money must be mumber and bigger than 0";
-                }
-                if (!ValidateInput.isNumber(request.Score.ToString()) || request.Score <= 0)
-                {
-                    return "Score must be mumber and bigger than 0";
-                }
-                if (!ValidateInput.isNumber(request.IncomePerMonth.ToString()) || request.IncomePerMonth <= 0)
-                {
-                    return "Income per month must be mumber and bigger than 0";
-                }
-                if (!ValidateInput.isNumber(request.ExpensePerMonth.ToString()) || request.ExpensePerMonth <= 0)
-                {
-                    return "Expense per month must be mumber and bigger than 0";
-                }
-
                 oldGameReport.ChildrenAmount = request.ChildrenAmount;
                 oldGameReport.TotalStep = request.TotalStep;
                 oldGameReport.TotalMoney = request.TotalMoney;

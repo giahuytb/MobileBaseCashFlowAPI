@@ -18,30 +18,31 @@ namespace MobileBasedCashFlowAPI.Services
         }
         public async Task<IEnumerable> GetAsync()
         {
-            var assetType = await (from i in _context.AssetTypes
+            var assetType = await (from at in _context.AssetTypes
                                    select new
                                    {
-                                       i.AssetTypeId,
-                                       i.AssetTypeName,
-                                   }).ToListAsync();
+                                       at.AssetTypeId,
+                                       at.AssetTypeName,
+                                   }).AsNoTracking().ToListAsync();
             return assetType;
         }
 
         public async Task<object?> GetAsync(int assetTypeId)
         {
-            var assetType = await (from i in _context.AssetTypes
-                                   where i.AssetTypeId == assetTypeId
+            var assetType = await (from at in _context.AssetTypes
+                                   where at.AssetTypeId == assetTypeId
                                    select new
                                    {
-                                       i.AssetTypeId,
-                                       i.AssetTypeName,
-                                   }).ToListAsync();
+                                       at.AssetTypeId,
+                                       at.AssetTypeName,
+                                   }).AsNoTracking().ToListAsync();
             return assetType;
         }
         public async Task<string> CreateAsync(int userId, AssetTypeRequest request)
         {
             var checkName = await _context.AssetTypes
-                               .Where(d => d.AssetTypeName == request.AssetTypeName)
+                               .Where(at => at.AssetTypeName == request.AssetTypeName)
+                               .AsNoTracking()
                                .FirstOrDefaultAsync();
             if (checkName != null)
             {
@@ -62,12 +63,20 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> UpdateAsync(int assetTypeId, int userId, AssetTypeRequest request)
         {
-            var AssetType = await _context.AssetTypes.Where(i => i.AssetTypeId == assetTypeId).FirstOrDefaultAsync();
-            if (AssetType != null)
+            var oldAssetType = await _context.AssetTypes.Where(at => at.AssetTypeId == assetTypeId).FirstOrDefaultAsync();
+            if (oldAssetType != null)
             {
-                AssetType.AssetTypeName = request.AssetTypeName;
-                AssetType.UpdateAt = DateTime.Now;
-                AssetType.UpdateBy = userId;
+                var checkName = await _context.AssetTypes
+                        .Where(at => at.AssetTypeName == request.AssetTypeName && at.AssetTypeName != oldAssetType.AssetTypeName)
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync();
+                if (checkName != null)
+                {
+                    return "This asset type name is existed";
+                }
+                oldAssetType.AssetTypeName = request.AssetTypeName;
+                oldAssetType.UpdateAt = DateTime.Now;
+                oldAssetType.UpdateBy = userId;
 
                 await _context.SaveChangesAsync();
                 return Constant.Success;
@@ -78,7 +87,7 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> DeleteAsync(int assetTypeId)
         {
-            var AssetType = await _context.AssetTypes.Where(a => a.AssetTypeId == assetTypeId).FirstOrDefaultAsync();
+            var AssetType = await _context.AssetTypes.Where(at => at.AssetTypeId == assetTypeId).FirstOrDefaultAsync();
             if (AssetType == null)
             {
                 return "Can not find this Asset";

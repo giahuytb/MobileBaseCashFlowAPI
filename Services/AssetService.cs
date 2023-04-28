@@ -21,69 +21,51 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<IEnumerable> GetAsync(int userId)
         {
-            var asset = await (from i in _context.Assets
-                               join userAsset in _context.UserAssets on i.AssetId equals userAsset.AssetId
+            var asset = await (from a in _context.Assets
+                               join userAsset in _context.UserAssets on a.AssetId equals userAsset.AssetId
                                into g
                                from userAsset in g.DefaultIfEmpty()
                                where userAsset.UserId != userId
                                select new
                                {
-                                   i.AssetId,
-                                   i.AssetName,
-                                   i.ImageUrl,
-                                   i.AssetPrice,
-                                   i.Description,
-                                   i.IsInShop,
-                                   i.CreateBy,
-                                   i.AssetType,
-                               }).ToListAsync();
+                                   a.AssetId,
+                                   a.AssetName,
+                                   a.ImageUrl,
+                                   a.AssetPrice,
+                                   a.Description,
+                                   a.IsInShop,
+                                   a.CreateBy,
+                                   a.AssetType,
+                               }).AsNoTracking().ToListAsync();
             return asset;
         }
 
         public async Task<Object?> GetByIdAsync(int id)
         {
-            var asset = await _context.Assets.Select(i => new
+            var asset = await _context.Assets.Select(a => new
             {
-                i.AssetId,
-                i.AssetName,
-                i.ImageUrl,
-                i.AssetPrice,
-                i.Description,
-                i.IsInShop,
-                i.CreateBy,
-                i.AssetType,
-            }).Where(i => i.AssetId == id).AsNoTracking().FirstOrDefaultAsync();
+                a.AssetId,
+                a.AssetName,
+                a.ImageUrl,
+                a.AssetPrice,
+                a.Description,
+                a.IsInShop,
+                a.CreateBy,
+                a.AssetType,
+            }).Where(a => a.AssetId == id).AsNoTracking().FirstOrDefaultAsync();
             return asset;
         }
 
         public async Task<string> CreateAsync(int userId, AssetRequest request)
         {
             var checkName = await _context.Assets
-                            .Where(d => d.AssetName == request.AssetName)
-                            .Select(d => new { assetName = d.AssetName }).FirstOrDefaultAsync();
+                            .Where(a => a.AssetName == request.AssetName)
+                            .Select(a => new { assetName = a.AssetName })
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync();
             if (checkName != null)
             {
                 return "This asset name is existed";
-            }
-            if (request.AssetName == null)
-            {
-                return "You need to fill name for this Asset";
-            }
-            if (request.ImageUrl == null)
-            {
-                return "Please Select Image for this Asset";
-            }
-            if (request.Description == null)
-            {
-                return "You need to fill description for this Asset";
-            }
-            if (!ValidateInput.isNumber(request.AssetPrice.ToString()) || request.AssetPrice <= 0)
-            {
-                return "Price must be mumber and bigger than 0";
-            }
-            if (!ValidateInput.isNumber(request.AssetType.ToString()) || request.AssetType <= 0)
-            {
-                return "Asset Type must be number and bigger than 0";
             }
 
             var asset = new Asset()
@@ -101,7 +83,6 @@ namespace MobileBasedCashFlowAPI.Services
             await _context.Assets.AddAsync(asset);
             await _context.SaveChangesAsync();
             return Constant.Success;
-
         }
 
         public async Task<string> UpdateAsync(int assetId, int userId, AssetRequest request)
@@ -109,27 +90,15 @@ namespace MobileBasedCashFlowAPI.Services
             var oldAsset = await _context.Assets.FirstOrDefaultAsync(i => assetId == i.AssetId);
             if (oldAsset != null)
             {
-                if (request.AssetName == null)
+                // check if the new name is already exist in database. (except it's old name)
+                var checkName = await _context.Assets
+                                        .Where(a => a.AssetName == request.AssetName && a.AssetName != oldAsset.AssetName)
+                                        .AsNoTracking()
+                                        .FirstOrDefaultAsync();
+                if (checkName != null)
                 {
-                    return "You need to fill name for this Asset";
+                    return "This asset name is existed";
                 }
-                if (request.ImageUrl == null)
-                {
-                    return "Please Select Image for this Asset";
-                }
-                if (request.Description == null)
-                {
-                    return "You need to fill description for this Asset";
-                }
-                if (!ValidateInput.isNumber(request.AssetPrice.ToString()) || request.AssetPrice <= 0)
-                {
-                    return "Price must be mumber and bigger than 0";
-                }
-                if (!ValidateInput.isNumber(request.AssetType.ToString()) || request.AssetPrice <= 0)
-                {
-                    return "Asset Type must be 1 - 127";
-                }
-
                 oldAsset.AssetName = request.AssetName;
                 oldAsset.ImageUrl = request.ImageUrl;
                 oldAsset.AssetPrice = request.AssetPrice;

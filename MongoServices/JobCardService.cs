@@ -63,9 +63,12 @@ namespace MobileBasedCashFlowAPI.MongoServices
             {
                 Job_card_name = request.Job_card_name,
                 Children_cost = request.Children_cost,
+                Image_url = request.Image_url,
                 Game_accounts = request.Game_accounts,
                 Status = true,
                 Create_at = DateTime.Now,
+                Update_at = DateTime.Now,
+                Update_by = 0,
                 Create_by = userId,
 
             };
@@ -92,6 +95,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             {
                 oldJobCard.Job_card_name = request.Job_card_name;
                 oldJobCard.Children_cost = request.Children_cost;
+                oldJobCard.Image_url = request.Image_url;
                 oldJobCard.Update_at = DateTime.Now;
                 oldJobCard.Update_by = userId;
 

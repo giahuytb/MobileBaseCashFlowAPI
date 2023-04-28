@@ -1,7 +1,11 @@
-﻿namespace MobileBasedCashFlowAPI.Dto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MobileBasedCashFlowAPI.Dto
 {
     public class GameServerRequest
     {
-        public string gameVersion { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Please enter game version")]
+        [MaxLength(30, ErrorMessage = "Do not enter more than 30 characters")]
+        public string GameVersion { get; set; } = string.Empty;
     }
 }
