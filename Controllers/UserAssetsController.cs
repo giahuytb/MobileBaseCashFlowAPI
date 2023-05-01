@@ -73,8 +73,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpPut]
-        public async Task<ActionResult> UpdateLastUsed(int itemId)
+        [HttpPut("asset-last-used")]
+        public async Task<ActionResult> UpdateAssetLastUsed(int itemId)
         {
             // get the id of current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");

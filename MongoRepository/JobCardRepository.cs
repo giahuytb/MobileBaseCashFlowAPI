@@ -11,6 +11,7 @@ namespace MobileBasedCashFlowAPI.IMongoServices
         public Task<object?> GetAsync(string JobCardId);
         public Task<string> CreateAsync(int userId, JobCardRequest request);
         public Task<string> UpdateAsync(string JobCardId, int userId, JobCardRequest request);
+        public Task<string> InActiveAsync(string id);
         public Task<string> RemoveAsync(string JobCardId);
     }
 }

@@ -99,6 +99,8 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 oldJobCard.Update_at = DateTime.Now;
                 oldJobCard.Update_by = userId;
 
+                oldJobCard.Game_accounts = request.Game_accounts;
+
                 await _collection.ReplaceOneAsync(x => x.id == id, oldJobCard);
 
                 var jobCardListInMemory = _cache.Get(CacheKeys.JobCards) as List<JobCard>;
@@ -128,6 +130,42 @@ namespace MobileBasedCashFlowAPI.MongoServices
             }
             return Constant.NotFound;
 
+        }
+
+        public async Task<string> InActiveAsync(string id)
+        {
+            var JobCard = await _collection.Find(evt => evt.id == id).FirstOrDefaultAsync();
+            if (JobCard != null)
+            {
+                if (!JobCard.Status)
+                {
+                    return "This job card is already inactive";
+                }
+                JobCard.Status = false;
+                await _collection.ReplaceOneAsync(x => x.id == id, JobCard);
+
+                var JobCardListInMemory = _cache.Get(CacheKeys.JobCards) as List<JobCard>;
+                // check if the cache have value or not
+                if (JobCardListInMemory != null)
+                {
+                    // Find event card to delete in cache memory by id
+                    var JobCardToDelete = JobCardListInMemory.FirstOrDefault(x => x.id == id);
+                    // check if it exist or not 
+                    if (JobCardToDelete != null)
+                    {
+                        // Remove old cache and set new cache that deleted the event card we choice
+                        JobCardListInMemory.Remove(JobCardToDelete);
+                        // remove all value from this cache key
+                        _cache.Remove(CacheKeys.JobCards);
+                        // set new list for this cache by using the list above
+                        _cache.Set(CacheKeys.JobCards, JobCardListInMemory);
+
+                        return Constant.Success;
+                    }
+                    return Constant.Failed;
+                }
+            }
+            return Constant.NotFound;
         }
 
         public async Task<string> RemoveAsync(string id)

@@ -62,6 +62,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             {
                 Game_account_name = request.Game_account_name,
                 Game_account_type_id = request.Game_account_type,
+                Status = true,
             };
             await _collection.InsertOneAsync(gameAccount);
 
@@ -112,6 +113,42 @@ namespace MobileBasedCashFlowAPI.MongoServices
                         _cache.Set(CacheKeys.GameAccounts, gameAccountListInMemory);
                         return Constant.Success;
                     }
+                }
+            }
+            return Constant.NotFound;
+        }
+
+        public async Task<string> InActiveAsync(string id)
+        {
+            var GameAccount = await _collection.Find(evt => evt.id == id).FirstOrDefaultAsync();
+            if (GameAccount != null)
+            {
+                if (!GameAccount.Status)
+                {
+                    return "This game account is already inactive";
+                }
+                GameAccount.Status = false;
+                await _collection.ReplaceOneAsync(x => x.id == id, GameAccount);
+
+                var GameAccountsListInMemory = _cache.Get(CacheKeys.GameAccounts) as List<GameAccount>;
+                // check if the cache have value or not
+                if (GameAccountsListInMemory != null)
+                {
+                    // Find event card to delete in cache memory by id
+                    var GameAccountToDelete = GameAccountsListInMemory.FirstOrDefault(x => x.id == id);
+                    // check if it exist or not 
+                    if (GameAccountToDelete != null)
+                    {
+                        // Remove old cache and set new cache that deleted the event card we choice
+                        GameAccountsListInMemory.Remove(GameAccountToDelete);
+                        // remove all value from this cache key
+                        _cache.Remove(CacheKeys.GameAccounts);
+                        // set new list for this cache by using the list above
+                        _cache.Set(CacheKeys.GameAccounts, GameAccountsListInMemory);
+
+                        return Constant.Success;
+                    }
+                    return Constant.Failed;
                 }
             }
             return Constant.NotFound;

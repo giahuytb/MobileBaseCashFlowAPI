@@ -6,8 +6,8 @@ using System.Security.Claims;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.DTO;
-using Org.BouncyCastle.Utilities;
 using MobileBasedCashFlowAPI.Common;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -22,8 +22,9 @@ namespace MobileBasedCashFlowAPI.Controllers
             _assetService = itemService;
         }
 
-        [HttpGet]
         //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("asset-in-shop")]
+        [SwaggerOperation(Summary = "Get all asset that player still not buy in shop (Login require)")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             // get the current user logging in system
@@ -40,8 +41,9 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("List is empty");
         }
 
-        [HttpGet("{id}")]
         //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get asset by asset id")]
         public async Task<ActionResult<Asset>> GetById(int id)
         {
             if (!ModelState.IsValid)
@@ -58,6 +60,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new asset")]
         public async Task<ActionResult> PostAsset(AssetRequest request)
         {
             if (!ModelState.IsValid)
@@ -77,6 +80,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Update an existing asset")]
         public async Task<ActionResult> UpdateAsset(int id, AssetRequest request)
         {
             if (!ModelState.IsValid)
@@ -97,6 +101,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Update an existing asset")]
         public async Task<ActionResult> DeleteAsset(int id)
         {
             if (!ModelState.IsValid)
