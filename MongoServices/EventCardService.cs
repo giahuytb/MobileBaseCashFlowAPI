@@ -31,17 +31,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<IEnumerable<EventCard>> GetAsync()
         {
-            _logger.Log(LogLevel.Information, "Trying to fetch the list of event card from cache.");
-            if (_cache.TryGetValue(CacheKeys.EventCards, out IEnumerable<EventCard> eventCardList))
-            {
-                _logger.Log(LogLevel.Information, "Event Card list found in cache.");
-            }
-            else
-            {
-                _logger.Log(LogLevel.Information, "Event Card list not found in cache. Fetching from database.");
-                eventCardList = await _collection.Find(evt => evt.Status.Equals(true)).ToListAsync();
-                _cache.Set(CacheKeys.EventCards, eventCardList, CacheEntryOption.MemoryCacheEntryOption());
-            }
+            var eventCardList = await _collection.Find(evt => evt.Status.Equals(true)).ToListAsync();
             return eventCardList;
         }
 
@@ -72,10 +62,26 @@ namespace MobileBasedCashFlowAPI.MongoServices
             };
         }
 
-        public async Task<IEnumerable> GetAsync(int typeId)
+        public async Task<IEnumerable> GetByTypeIdAsync(int typeId)
         {
             var eventCards = await _collection.Find(evt => evt.Event_type_id == typeId && evt.Status.Equals(true)).ToListAsync();
             return eventCards;
+        }
+
+        public async Task<IEnumerable<EventCard>> GetByModIdAsync(int modId)
+        {
+            _logger.Log(LogLevel.Information, "Trying to fetch the list of event card from cache.");
+            if (_cache.TryGetValue(CacheKeys.EventCards + modId, out IEnumerable<EventCard> eventCardList))
+            {
+                _logger.Log(LogLevel.Information, "Event Card list found in cache.");
+            }
+            else
+            {
+                _logger.Log(LogLevel.Information, "Event Card list not found in cache. Fetching from database.");
+                eventCardList = await _collection.Find(evt => evt.Status.Equals(true) && evt.Game_mode_id.Equals(modId)).ToListAsync();
+                _cache.Set(CacheKeys.EventCards + modId, eventCardList, CacheEntryOption.MemoryCacheEntryOption());
+            }
+            return eventCardList;
         }
 
         public async Task<EventCard?> GetAsync(string id)
@@ -104,16 +110,16 @@ namespace MobileBasedCashFlowAPI.MongoServices
             };
             await _collection.InsertOneAsync(eventCard);
 
-            var eventCardListInMemory = _cache.Get(CacheKeys.EventCards) as List<EventCard>;
+            var eventCardListInMemory = _cache.Get(CacheKeys.EventCards + eventCard.Event_type_id) as List<EventCard>;
             // check if the cache have value or not
             if (eventCardListInMemory != null)
             {
                 // add new object for this list
                 eventCardListInMemory.Add(eventCard);
                 // remove all value from this cache key
-                _cache.Remove(CacheKeys.EventCards);
+                _cache.Remove(CacheKeys.EventCards + eventCard.Event_type_id);
                 // set new list for this cache by using the list above
-                _cache.Set(CacheKeys.EventCards, eventCardListInMemory);
+                _cache.Set(CacheKeys.EventCards + eventCard.Event_type_id, eventCardListInMemory);
 
                 return Constant.Success;
             }
@@ -125,6 +131,8 @@ namespace MobileBasedCashFlowAPI.MongoServices
             var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
             if (oldEventCard != null)
             {
+                int oldGameModeId = oldEventCard.Game_mode_id;
+
                 oldEventCard.Event_name = request.Event_name;
                 oldEventCard.Image_url = request.Image_url;
                 oldEventCard.Account_name = request.Account_Name;
@@ -135,11 +143,12 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 oldEventCard.Dept = request.Dept;
                 oldEventCard.Cash_flow = request.Cash_flow;
                 oldEventCard.Event_type_id = request.Event_type_id;
+                oldEventCard.Game_mode_id = request.Game_mode_id;
                 oldEventCard.Action = request.Action;
 
                 await _collection.ReplaceOneAsync(x => x.id == id, oldEventCard);
 
-                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards) as List<EventCard>;
+                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards + oldGameModeId) as List<EventCard>;
                 // check if the cache have value or not
                 if (eventCardListInMemory != null)
                 {
@@ -156,9 +165,9 @@ namespace MobileBasedCashFlowAPI.MongoServices
                         eventCardListInMemory.Insert(oldEventCardInMemoryIndex, oldEventCard);
 
                         // remove all value from this cache key
-                        _cache.Remove(CacheKeys.EventCards);
+                        _cache.Remove(CacheKeys.EventCards + oldGameModeId);
                         // set new list for this cache by using the list above
-                        _cache.Set(CacheKeys.EventCards, eventCardListInMemory);
+                        _cache.Set(CacheKeys.EventCards + request.Game_mode_id, eventCardListInMemory);
 
                         return Constant.Success;
                     }
@@ -168,15 +177,19 @@ namespace MobileBasedCashFlowAPI.MongoServices
             return Constant.NotFound;
         }
 
-        public async Task<string> InActiveCardAsync(string id)
+        public async Task<string> InActiveAsync(string id)
         {
-            var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
-            if (oldEventCard != null)
+            var EventCard = await _collection.Find(evt => evt.id == id).FirstOrDefaultAsync();
+            if (EventCard != null)
             {
-                oldEventCard.Status = false;
-                await _collection.ReplaceOneAsync(x => x.id == id, oldEventCard);
+                if (!EventCard.Status)
+                {
+                    return "This event card is already inactive";
+                }
+                EventCard.Status = false;
+                await _collection.ReplaceOneAsync(x => x.id == id, EventCard);
 
-                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards) as List<EventCard>;
+                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards + EventCard.Game_mode_id) as List<EventCard>;
                 // check if the cache have value or not
                 if (eventCardListInMemory != null)
                 {
@@ -188,9 +201,9 @@ namespace MobileBasedCashFlowAPI.MongoServices
                         // Remove old cache and set new cache that deleted the event card we choice
                         eventCardListInMemory.Remove(EventCardToDelete);
                         // remove all value from this cache key
-                        _cache.Remove(CacheKeys.EventCards);
+                        _cache.Remove(CacheKeys.EventCards + EventCard.Game_mode_id);
                         // set new list for this cache by using the list above
-                        _cache.Set(CacheKeys.EventCards, eventCardListInMemory);
+                        _cache.Set(CacheKeys.EventCards + EventCard.Game_mode_id, eventCardListInMemory);
 
                         return Constant.Success;
                     }
@@ -198,18 +211,17 @@ namespace MobileBasedCashFlowAPI.MongoServices
                 }
             }
             return Constant.NotFound;
-
         }
 
         public async Task<string> RemoveAsync(string id)
         {
             // Find this event card by id
-            var eventCardExist = GetAsync(id);
+            var eventCardExist = await _collection.Find(evt => evt.id == id).FirstOrDefaultAsync();
             if (eventCardExist != null)
             {
                 var result = await _collection.DeleteOneAsync(x => x.id == id);
 
-                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards) as List<EventCard>;
+                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards + eventCardExist.Game_mode_id) as List<EventCard>;
                 // check if the cache have value or not
                 if (eventCardListInMemory != null)
                 {
@@ -222,9 +234,9 @@ namespace MobileBasedCashFlowAPI.MongoServices
                         eventCardListInMemory.Remove(EventCardToDelete);
 
                         // remove all value from this cache key
-                        _cache.Remove(CacheKeys.EventCards);
+                        _cache.Remove(CacheKeys.EventCards + eventCardExist.Game_mode_id);
                         // set new list for this cache by using the list above
-                        _cache.Set(CacheKeys.EventCards, eventCardListInMemory);
+                        _cache.Set(CacheKeys.EventCards + eventCardExist.Game_mode_id, eventCardListInMemory);
 
                         return Constant.Success;
                     }
@@ -233,6 +245,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             }
             return Constant.NotFound;
         }
+
 
 
     }

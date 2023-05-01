@@ -5,6 +5,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -20,6 +21,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             _eventCardService = eventCardService ?? throw new ArgumentNullException(nameof(eventCardService));
         }
 
+        [SwaggerOperation(Summary = "Get all event card")]
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<EventCard>>> GetAll()
         {
@@ -33,6 +35,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Get list event card by paging and search")]
         public async Task<ActionResult<List<EventCard>>> GetByPaging([FromQuery] PaginationFilter filter, double? from, double? to)
         {
             if (!ModelState.IsValid)
@@ -48,14 +51,15 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet("type-id/{id}")]
+        [HttpGet("type-id/{id:length(24)}")]
+        [SwaggerOperation(Summary = "Get list event card by event card type id")]
         public async Task<ActionResult<EventCard>> GetByTypeId(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var eventCard = await _eventCardService.GetAsync(id);
+            var eventCard = await _eventCardService.GetByTypeIdAsync(id);
             if (eventCard != null)
             {
                 return Ok(eventCard);
@@ -63,7 +67,24 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("can not find event card of this type");
         }
 
+        [HttpGet("mod-id/{id:length(24)}")]
+        [SwaggerOperation(Summary = "Get list event card by mod id")]
+        public async Task<ActionResult<EventCard>> GetByModId(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var eventCard = await _eventCardService.GetByModIdAsync(id);
+            if (eventCard != null)
+            {
+                return Ok(eventCard);
+            }
+            return NotFound("can not find event card of this mod");
+        }
+
         [HttpGet("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Get list event card by event card id")]
         public async Task<ActionResult<EventCard>> GetById(string id)
         {
             if (!ModelState.IsValid)
@@ -79,6 +100,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new event card")]
         public async Task<IActionResult> PostEvent(EventCardRequest request)
         {
             if (!ModelState.IsValid)
@@ -94,6 +116,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPut("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Update an existing event card")]
         public async Task<IActionResult> UpdateEvent(string id, EventCardRequest request)
         {
             var result = await _eventCardService.UpdateAsync(id, request);
@@ -109,13 +132,14 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPut("inactive/{id:length(24)}")]
+        [SwaggerOperation(Summary = "Inactive an existing event card")]
         public async Task<IActionResult> InActiveEventCard(string id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _eventCardService.InActiveCardAsync(id);
+            var result = await _eventCardService.InActiveAsync(id);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -129,6 +153,7 @@ namespace MobileBasedCashFlowAPI.MongoController
 
 
         [HttpDelete("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Delete an event card")]
         public async Task<IActionResult> DeleteEvent(string id)
         {
 

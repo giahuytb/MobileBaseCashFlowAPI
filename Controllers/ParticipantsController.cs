@@ -62,15 +62,15 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
 
-        [HttpDelete("{userId}/{matchId}")]
-        public async Task<ActionResult> DeleteAsset(int userId, int matchId)
-        {
-            var result = await _participantRepository.DeleteAsync(userId, matchId);
-            if (result.Equals(Constant.Success))
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+        //[HttpDelete("{userId}/{matchId}")]
+        //public async Task<ActionResult> DeleteAsset(int userId, int matchId)
+        //{
+        //    var result = await _participantRepository.DeleteAsync(userId, matchId);
+        //    if (result.Equals(Constant.Success))
+        //    {
+        //        return Ok(result);
+        //    }
+        //    return BadRequest(result);
+        //}
     }
 }

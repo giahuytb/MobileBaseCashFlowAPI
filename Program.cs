@@ -57,17 +57,13 @@ builder.Services.AddTransient<UserRoleRepository, UserRoleService>();
 
 builder.Services.AddTransient<AssetRepository, AssetService>();
 builder.Services.AddTransient<AssetTypeRepository, AssetTypeService>();
-
 builder.Services.AddTransient<GameRepository, GameService>();
 builder.Services.AddTransient<GameMatchRepository, GameMatchService>();
 builder.Services.AddTransient<GameModeRepository, GameModeService>();
 builder.Services.AddTransient<GameReportRepository, GameReportService>();
 builder.Services.AddTransient<GameServerRepository, GameServerService>();
 builder.Services.AddTransient<ParticipantRepository, ParticipantService>();
-
 builder.Services.AddTransient<UserAssetRepository, UserAssetService>();
-
-
 
 // Register Service For MongoDatabase
 builder.Services.AddTransient<MongoDbSettings>(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
@@ -80,8 +76,16 @@ builder.Services.AddTransient<TileRepository, TileService>();
 // Register Service For Cache
 builder.Services.AddMemoryCache();
 
+// Register Redis Cache
+builder.Services.AddStackExchangeRedisCache(redisOptions =>
+{
+    string connection = builder.Configuration.GetConnectionString("Redis");
+    redisOptions.Configuration = connection;
+});
+
 // Register Global Exception Handler Midddleware
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
+
 
 
 // Config Authentication
@@ -103,6 +107,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 // Add Swagger And Bearer Authenticate To Project
 builder.Services.AddSwaggerGen(c =>
 {
+    c.EnableAnnotations();
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MobileBaseCashFlowGame", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

@@ -33,13 +33,13 @@ namespace MobileBasedCashFlowAPI.MongoDTO
 
         [Required]
         [Range(1, 6, ErrorMessage = "Event type must between 1 to 6")]
-        public int Event_type_id { get; set; } = int.MaxValue;
+        public int Event_type_id { get; set; } = 0;
 
         [Required(ErrorMessage = "Please choice your game mode")]
-        public int Game_mode_id { get; set; } = int.MaxValue;
+        public int Game_mode_id { get; set; } = 0;
 
         [Required]
         [Range(1, 7, ErrorMessage = "Acction must between 1 to 7")]
-        public int Action { get; set; } = int.MaxValue;
+        public int Action { get; set; } = 0;
     }
 }

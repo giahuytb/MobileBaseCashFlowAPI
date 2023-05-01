@@ -1,17 +1,10 @@
-﻿using Amazon.Runtime.Internal.Util;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using MobileBasedCashFlowAPI.Cache;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
-using MobileBasedCashFlowAPI.MongoServices;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Data;
 using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -50,7 +43,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<JobCard>> GetById(string id)
         {
@@ -77,9 +70,8 @@ namespace MobileBasedCashFlowAPI.MongoController
                 return Ok(result);
             }
             return BadRequest("Create job card failed");
-
-
         }
+
 
         [HttpPut("{id:length(24)}")]
         public async Task<ActionResult> UpdateJobCard(string id, JobCardRequest request)
@@ -90,6 +82,26 @@ namespace MobileBasedCashFlowAPI.MongoController
                 return Unauthorized("User id not Found, please login");
             }
             var result = await _jobCardService.UpdateAsync(id, Int32.Parse(userId), request);
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            else if (result.Equals(Constant.NotFound))
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPut("inactive/{id:length(24)}")]
+        public async Task<ActionResult> InActiveJobCard(string id)
+        {
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _jobCardService.InActiveAsync(id);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);

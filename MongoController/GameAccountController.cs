@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
-using MobileBasedCashFlowAPI.Cache;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using System.Collections;
-
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.MongoController
 {
@@ -88,6 +86,28 @@ namespace MobileBasedCashFlowAPI.MongoController
             }
             await _gameAccountService.UpdateAsync(id, request);
             return Ok(result);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("inactive/{id:length(24)}")]
+        public async Task<ActionResult> InActiveDream(string id)
+        {
+            // get user id from claim
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _gameAccountService.InActiveAsync(id);
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            else if (result.Equals(Constant.NotFound))
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpDelete("{id:length(24)}")]

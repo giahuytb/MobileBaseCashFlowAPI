@@ -9,8 +9,12 @@ namespace MobileBasedCashFlowAPI.MongoModels
         [BsonRepresentation(BsonType.ObjectId)]
         public string? id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
         public double Cost { get; set; } = double.MaxValue;
-        public double Amount { get; set; }
+        public bool Status { get; set; }
+
+        public static implicit operator Dream(List<Dream> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

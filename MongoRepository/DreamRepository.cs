@@ -13,6 +13,7 @@ namespace MobileBasedCashFlowAPI.IMongoServices
         public Task<Dream?> GetAsync(string id);
         public Task<string> CreateAsync(DreamRequest request);
         public Task<string> UpdateAsync(string id, DreamRequest request);
+        public Task<string> InActiveAsync(string id);
         public Task<string> RemoveAsync(string id);
     }
 }

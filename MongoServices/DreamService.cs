@@ -1,4 +1,5 @@
-﻿using Amazon.Runtime.Internal.Util;
+﻿
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using MobileBasedCashFlowAPI.Cache;
 using MobileBasedCashFlowAPI.Common;
@@ -8,7 +9,7 @@ using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using System.Collections;
+using Newtonsoft.Json;
 using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
@@ -16,26 +17,51 @@ namespace MobileBasedCashFlowAPI.MongoServices
     public class DreamService : DreamRepository
     {
         private readonly IMongoCollection<Dream> _collection;
+        private readonly IDistributedCache _distributedCache;
         private readonly IMemoryCache _cache;
 
-        public DreamService(MongoDbSettings settings, IMemoryCache cache)
+        public DreamService(MongoDbSettings settings, IMemoryCache cache, IDistributedCache distributedCache)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<Dream>("Dream");
+
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            _distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
         }
 
         public async Task<IEnumerable<Dream>> GetAsync()
         {
+            //if (!_cache.TryGetValue(CacheKeys.Dreams, out IEnumerable<Dream> dreamList))
+            //{
+            //    dreamList = await _collection.Find(_ => true).ToListAsync();
+            //    _cache.Set(CacheKeys.Dreams, dreamList, CacheEntryOption.MemoryCacheEntryOption());
+            //}
+            //return dreamList;
 
+            string? cacheMember = await _distributedCache.GetStringAsync(CacheKeys.Dreams);
 
-            if (!_cache.TryGetValue(CacheKeys.Dreams, out IEnumerable<Dream> dreamList))
+            IEnumerable<Dream> dream;
+            if (string.IsNullOrEmpty(cacheMember))
             {
-                dreamList = await _collection.Find(_ => true).ToListAsync();
-                _cache.Set(CacheKeys.Dreams, dreamList, CacheEntryOption.MemoryCacheEntryOption());
+                dream = await _collection.Find(_ => true).ToListAsync();
+                if (dream is null)
+                {
+                    return dream ?? Enumerable.Empty<Dream>(); ;
+                }
+
+                await _distributedCache.SetStringAsync(
+                    CacheKeys.Dreams,
+                    JsonConvert.SerializeObject(dream));
+                return dream;
             }
-            return dreamList;
+            dream = JsonConvert.DeserializeObject<IEnumerable<Dream>>(
+                cacheMember,
+                new JsonSerializerSettings
+                {
+                    ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+                }) ?? Enumerable.Empty<Dream>();
+            return dream ?? Enumerable.Empty<Dream>();
         }
 
         public async Task<object?> GetAsync(PaginationFilter filter, double? from, double? to)
@@ -84,6 +110,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             {
                 Name = request.Name,
                 Cost = request.Cost,
+                Status = true,
             };
             await _collection.InsertOneAsync(dream);
 
@@ -131,6 +158,42 @@ namespace MobileBasedCashFlowAPI.MongoServices
                         _cache.Remove(CacheKeys.Dreams);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.Dreams, dreamListInMemory);
+                        return Constant.Success;
+                    }
+                    return Constant.Failed;
+                }
+            }
+            return Constant.NotFound;
+        }
+
+        public async Task<string> InActiveAsync(string id)
+        {
+            var Dream = await _collection.Find(evt => evt.id == id).FirstOrDefaultAsync();
+            if (Dream != null)
+            {
+                if (!Dream.Status)
+                {
+                    return "This dream is already inactive";
+                }
+                Dream.Status = false;
+                await _collection.ReplaceOneAsync(x => x.id == id, Dream);
+
+                var DreamListInMemory = _cache.Get(CacheKeys.Dreams) as List<Dream>;
+                // check if the cache have value or not
+                if (DreamListInMemory != null)
+                {
+                    // Find event card to delete in cache memory by id
+                    var DreamToDelete = DreamListInMemory.FirstOrDefault(x => x.id == id);
+                    // check if it exist or not 
+                    if (DreamToDelete != null)
+                    {
+                        // Remove old cache and set new cache that deleted the event card we choice
+                        DreamListInMemory.Remove(DreamToDelete);
+                        // remove all value from this cache key
+                        _cache.Remove(CacheKeys.Dreams);
+                        // set new list for this cache by using the list above
+                        _cache.Set(CacheKeys.Dreams, DreamListInMemory);
+
                         return Constant.Success;
                     }
                     return Constant.Failed;
