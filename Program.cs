@@ -83,6 +83,8 @@ builder.Services.AddStackExchangeRedisCache(redisOptions =>
     redisOptions.Configuration = connection;
 });
 
+builder.Services.AddDistributedMemoryCache();
+
 // Register Global Exception Handler Midddleware
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
