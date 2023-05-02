@@ -6,6 +6,7 @@ using MobileBasedCashFlowAPI.Models;
 using System.Security.Claims;
 using System.Collections;
 using MobileBasedCashFlowAPI.Dto;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -22,6 +23,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet]
+        [SwaggerOperation(Summary = "Get all game server")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _gameServerRepository.GetAsync();
@@ -34,6 +36,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get game server by game server id")]
         public async Task<ActionResult<Game>> GetById(int id)
         {
             if (!ModelState.IsValid)
@@ -51,6 +54,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new game server")]
         public async Task<ActionResult> PostGameServer(GameServerRequest game)
         {
             if (!ModelState.IsValid)
@@ -69,6 +73,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Update an existing game server")]
         public async Task<ActionResult> UpdateGameServer(int id, GameServerRequest game)
         {
             if (!ModelState.IsValid)
@@ -90,6 +95,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete an existing game server")]
         public async Task<ActionResult> DeleteGameServer(int id)
         {
             if (!ModelState.IsValid)

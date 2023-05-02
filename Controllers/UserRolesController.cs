@@ -43,7 +43,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostUserRole(string roleName)
+        public async Task<ActionResult> PostUserRole([FromBody] string roleName)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +58,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUserRole(int id, string roleName)
+        public async Task<ActionResult> UpdateUserRole(int id, [FromBody] string roleName)
         {
             if (!ModelState.IsValid)
             {

@@ -23,9 +23,22 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("all")]
+        [SwaggerOperation(Summary = "Get all asset")]
+        public async Task<ActionResult<IEnumerable>> GetAll()
+        {
+            var result = await _assetService.GetAsync();
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("List is empty");
+        }
+
+        //[Authorize(Roles = "Player, Admin")]
         [HttpGet("asset-in-shop")]
         [SwaggerOperation(Summary = "Get all asset that player still not buy in shop (Login require)")]
-        public async Task<ActionResult<IEnumerable>> GetAll()
+        public async Task<ActionResult<IEnumerable>> GetAssetInShop()
         {
             // get the current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
@@ -33,7 +46,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _assetService.GetAsync(Int32.Parse(userId));
+            var result = await _assetService.GetAssetInShop(Int32.Parse(userId));
             if (result != null)
             {
                 return Ok(result);
@@ -101,7 +114,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Update an existing asset")]
+        [SwaggerOperation(Summary = "Delete an existing asset")]
         public async Task<ActionResult> DeleteAsset(int id)
         {
             if (!ModelState.IsValid)

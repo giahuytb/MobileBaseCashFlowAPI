@@ -5,6 +5,7 @@ using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Services;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections;
 using System.Security.Claims;
 
@@ -21,8 +22,9 @@ namespace MobileBasedCashFlowAPI.Controllers
             _participantRepository = participantRepository;
         }
 
-        [HttpGet]
         //[Authorize(Roles = "Player, Admin")]
+        [HttpGet]
+        [SwaggerOperation(Summary = "Get all participant")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _participantRepository.GetAsync();
@@ -33,8 +35,9 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("List is empty");
         }
 
-        [HttpGet("{userId}/{matchId}")]
         //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("{userId}/{matchId}")]
+        [SwaggerOperation(Summary = "Get the participant with user id and match id")]
         public async Task<ActionResult<Participant>> GetById(int userId, int matchId)
         {
             if (!ModelState.IsValid)
@@ -51,6 +54,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new participant")]
         public async Task<ActionResult> PostItem(ParticipantRequest request)
         {
             if (!ModelState.IsValid)

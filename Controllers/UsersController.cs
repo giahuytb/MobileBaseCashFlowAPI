@@ -5,6 +5,7 @@ using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.DTO;
 using System.Collections;
 using MobileBasedCashFlowAPI.Common;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
+        [SwaggerOperation(Summary = "Login for get information and access token")]
         public async Task<IActionResult> Authenticate(LoginRequest request)
         {
             if (!ModelState.IsValid)
@@ -45,6 +47,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
+        [SwaggerOperation(Summary = "register an account")]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
             if (!ModelState.IsValid)
@@ -62,6 +65,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("verify-email")]
+        [SwaggerOperation(Summary = "verify email with token")]
         public async Task<IActionResult> VerifyEmail(string token)
         {
             if (!ModelState.IsValid)
@@ -81,13 +85,14 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword(string email)
+        [SwaggerOperation(Summary = "use mail to get reset password code in mail")]
+        public async Task<IActionResult> ForgotPassword(string userName, string email)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _userService.ForgotPassword(email);
+            var result = await _userService.ForgotPassword(userName, email);
             if (result)
             {
                 return Ok(Constant.Success);
@@ -101,6 +106,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [HttpPut("profile")]
         [Authorize(Roles = "Player, Admin, Moderator")]
+        [SwaggerOperation(Summary = "Edit the profile")]
         public async Task<IActionResult> EditProfile(int userId, EditProfileRequest request)
         {
             var result = await _userService.EditProfile(userId, request);
@@ -116,6 +122,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("reset-password")]
+        [SwaggerOperation(Summary = "Change your password after get code in mail")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
         {
             if (!ModelState.IsValid)
@@ -134,6 +141,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet("user-list")]
+        [SwaggerOperation(Summary = "Get all list user")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
             if (!ModelState.IsValid)
@@ -149,6 +157,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPut("coin")]
+        [SwaggerOperation(Summary = "Update coin, coin input will be added to the existing coin)")]
         public async Task<IActionResult> AddCoinToUser(int userId, int coin)
         {
             if (!ModelState.IsValid)
@@ -167,6 +176,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet("id")]
+        [SwaggerOperation(Summary = "Find user by using id")]
         public async Task<ActionResult<IEnumerable>> FindUserById(int userId)
         {
             if (!ModelState.IsValid)

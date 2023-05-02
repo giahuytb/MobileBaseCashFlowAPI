@@ -203,9 +203,9 @@ namespace MobileBasedCashFlowAPI.Services
             return Constant.Success;
         }
 
-        public async Task<bool> ForgotPassword(string email)
+        public async Task<bool> ForgotPassword(string userName, string email)
         {
-            var user = _context.UserAccounts.FirstOrDefault(u => u.Email == email);
+            var user = _context.UserAccounts.FirstOrDefault(u => u.UserName == userName && u.Email == email);
             if (user != null)
             {
                 user.PasswordResetToken = GenerateEmailConfirmationToken();

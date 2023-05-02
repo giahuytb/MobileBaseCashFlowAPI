@@ -5,6 +5,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -21,6 +22,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpGet("all")]
+        [SwaggerOperation(Summary = "Get all job card")]
         public async Task<ActionResult<JobCard>> GetAll()
         {
             var result = await _jobCardService.GetAsync();
@@ -32,6 +34,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Get list job card by paging and search")]
         public async Task<ActionResult<List<JobCard>>> GetByPaging([FromQuery] PaginationFilter filter)
         {
             var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
@@ -43,8 +46,9 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Get list job card by job card id")]
         public async Task<ActionResult<JobCard>> GetById(string id)
         {
             var jobCard = await _jobCardService.GetAsync(id);
@@ -56,6 +60,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new job card")]
         public async Task<ActionResult> PostJobCard(JobCardRequest request)
         {
             // get the current user logging in system
@@ -74,6 +79,7 @@ namespace MobileBasedCashFlowAPI.MongoController
 
 
         [HttpPut("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Update an existing job card")]
         public async Task<ActionResult> UpdateJobCard(string id, JobCardRequest request)
         {
             string userId = HttpContext.User.FindFirstValue("Id");
@@ -94,6 +100,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPut("inactive/{id:length(24)}")]
+        [SwaggerOperation(Summary = "Inactive an existing job card")]
         public async Task<ActionResult> InActiveJobCard(string id)
         {
             string userId = HttpContext.User.FindFirstValue("Id");
@@ -115,6 +122,7 @@ namespace MobileBasedCashFlowAPI.MongoController
 
 
         [HttpDelete("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Delete an job card")]
         public async Task<ActionResult> DeleteJobCard(string id)
         {
             var result = await _jobCardService.RemoveAsync(id);

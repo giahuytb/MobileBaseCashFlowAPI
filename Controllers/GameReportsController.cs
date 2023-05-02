@@ -7,6 +7,7 @@ using MobileBasedCashFlowAPI.Models;
 using System.Collections;
 
 using System.Security.Claims;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -22,6 +23,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Get all game report")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _gameReportService.GetAsync();
@@ -33,6 +35,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get game report by game report id")]
         public async Task<ActionResult<GameReport>> GetById(int id)
         {
             if (!ModelState.IsValid)
@@ -48,6 +51,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new game report")]
         public async Task<ActionResult> PostGameReport(GameReportRequest request)
         {
             if (!ModelState.IsValid)
@@ -65,6 +69,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPut]
+        [SwaggerOperation(Summary = "Update an existing game report")]
         public async Task<ActionResult> UpdateGameReport(int gameReportId, GameReportRequest request)
         {
             if (!ModelState.IsValid)
@@ -80,6 +85,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete an existing game report")]
         public async Task<ActionResult> DeleteGameReport(int id)
         {
             if (!ModelState.IsValid)

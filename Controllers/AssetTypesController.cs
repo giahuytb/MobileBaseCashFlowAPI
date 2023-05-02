@@ -4,7 +4,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repository;
-
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections;
 using System.Security.Claims;
 
@@ -20,8 +20,9 @@ namespace MobileBasedCashFlowAPI.Controllers
             _assetTypeRepository = assetTypeRepository;
         }
 
-        [HttpGet]
         //[Authorize(Roles = "Player, Admin")]
+        [HttpGet]
+        [SwaggerOperation(Summary = "Get all asset type")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _assetTypeRepository.GetAsync();
@@ -32,8 +33,9 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("List is empty");
         }
 
-        [HttpGet("{id}")]
         //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get asset type by id")]
         public async Task<ActionResult<AssetType>> GetById(int id)
         {
             if (!ModelState.IsValid)
@@ -45,11 +47,12 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Ok(result);
             }
-            return NotFound("Can not found this asset");
+            return NotFound("Can not found this asset type");
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new asset type")]
         public async Task<ActionResult> PostItem(AssetTypeRequest request)
         {
             if (!ModelState.IsValid)
@@ -72,6 +75,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Update an existing asset type")]
         public async Task<ActionResult> UpdateItem(int id, AssetTypeRequest request)
         {
             if (!ModelState.IsValid)
@@ -92,6 +96,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete an existing asset type")]
         public async Task<ActionResult> DeleteAsset(int id)
         {
             if (!ModelState.IsValid)
