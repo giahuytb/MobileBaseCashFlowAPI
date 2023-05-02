@@ -5,6 +5,7 @@ using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Services;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections;
 using System.Security.Claims;
 
@@ -22,6 +23,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Get all game mode")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _gameModeRepository.GetAsync();
@@ -33,6 +35,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get game mode by game mode id")]
         public async Task<ActionResult<GameMode>> GetById(int id)
         {
             if (!ModelState.IsValid)
@@ -48,6 +51,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new game mode")]
         public async Task<ActionResult> PostGameMode(GameModeRequest request)
         {
             if (!ModelState.IsValid)
@@ -70,6 +74,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPut]
+        [SwaggerOperation(Summary = "Update an existing game mode")]
         public async Task<ActionResult> UpdateGameMode(int gameModeId, GameModeRequest request)
         {
             if (!ModelState.IsValid)
@@ -91,6 +96,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete an existing game mode")]
         public async Task<ActionResult> DeleteGameMode(int id)
         {
             if (!ModelState.IsValid)

@@ -7,6 +7,7 @@ using MobileBasedCashFlowAPI.Services;
 using System.Collections;
 using System.Security.Claims;
 using MobileBasedCashFlowAPI.Common;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -23,6 +24,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet]
+        [SwaggerOperation(Summary = "Get all game match")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _gameMatchService.GetAsync();
@@ -35,6 +37,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get game match by game match id")]
         public async Task<ActionResult<GameMatch>> GetById(int id)
         {
             if (!ModelState.IsValid)
@@ -51,6 +54,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new game match")]
         public async Task<ActionResult> PostMatch(int gameId, GameMatchRequest request)
         {
             if (!ModelState.IsValid)
@@ -70,6 +74,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Update an existing game match")]
         public async Task<ActionResult> UpdateMatch(int id, GameMatchRequest request)
         {
             if (!ModelState.IsValid)
@@ -91,6 +96,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete an existing game match")]
         public async Task<ActionResult> DeleteMatch(int id)
         {
             if (!ModelState.IsValid)

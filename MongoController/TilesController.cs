@@ -56,35 +56,24 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpPost]
         public async Task<IActionResult> PostTile(Tile tile)
         {
-            try
-            {
-                await _tileService.CreateAsync(tile);
-                return CreatedAtAction(nameof(GetById), new { id = tile.id }, tile);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToString());
-            }
+            await _tileService.CreateAsync(tile);
+            return CreatedAtAction(nameof(GetById), new { id = tile.id }, tile);
+
         }
 
         [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> UpdateTile(string id, Tile tile)
         {
-            try
+            var Tile = await _tileService.GetAsync(id);
+            if (Tile is null)
             {
-                var Tile = await _tileService.GetAsync(id);
-                if (Tile is null)
-                {
-                    return NotFound("can not find this tile");
-                }
-                await _tileService.UpdateAsync(id, tile);
-                return Ok("update success");
+                return NotFound("can not find this tile");
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToString());
-            }
+            await _tileService.UpdateAsync(id, tile);
+            return Ok("update success");
         }
+
+
 
     }
 }

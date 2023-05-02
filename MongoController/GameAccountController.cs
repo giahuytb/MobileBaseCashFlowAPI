@@ -4,6 +4,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections;
 using System.Security.Claims;
 
@@ -20,6 +21,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpGet("all")]
+        [SwaggerOperation(Summary = "Get all game account")]
         public async Task<ActionResult<IEnumerable>> GetALl()
         {
             var result = await _gameAccountService.GetAsync();
@@ -31,6 +33,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Get list game account by paging")]
         public async Task<ActionResult<List<GameAccount>>> GetByPaging([FromQuery] PaginationFilter filter)
         {
             if (!ModelState.IsValid)
@@ -47,6 +50,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpGet("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Get list game account by game account id")]
         public async Task<ActionResult<GameAccount>> GetGameAccountById(string id)
         {
             if (!ModelState.IsValid)
@@ -62,6 +66,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new game account")]
         public async Task<ActionResult> CreateGameAccount(AccountRequest request)
         {
             if (!ModelState.IsValid)
@@ -77,6 +82,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpPut("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Update an existing game account")]
         public async Task<ActionResult> UpdateGameAccount(string id, AccountRequest request)
         {
             var result = await _gameAccountService.UpdateAsync(id, request);
@@ -90,6 +96,7 @@ namespace MobileBasedCashFlowAPI.MongoController
 
         [Authorize(Roles = "Admin")]
         [HttpPut("inactive/{id:length(24)}")]
+        [SwaggerOperation(Summary = "Inactive an existing game account")]
         public async Task<ActionResult> InActiveDream(string id)
         {
             // get user id from claim
@@ -111,6 +118,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         [HttpDelete("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Delete an game account")]
         public async Task<ActionResult<List<GameAccount>>> DeleteGameAccount(string id)
         {
 

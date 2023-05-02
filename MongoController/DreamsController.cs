@@ -6,6 +6,7 @@ using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.MongoServices;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.MongoController
@@ -22,6 +23,7 @@ namespace MobileBasedCashFlowAPI.MongoController
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("all")]
+        [SwaggerOperation(Summary = "Get all dream")]
         public async Task<ActionResult<List<Dream?>>> GetAll()
         {
             var result = await _dreamService.GetAsync();
@@ -32,8 +34,9 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("List is empty");
         }
 
-        [Authorize(Roles = "Player, Admin")]
+        //[Authorize(Roles = "Player, Admin")]
         [HttpGet]
+        [SwaggerOperation(Summary = "Get list dream by paging and search")]
         public async Task<ActionResult<List<Dream>>> GetByPaging([FromQuery] PaginationFilter filter, double? from, double? to)
         {
             if (!ModelState.IsValid)
@@ -49,8 +52,9 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [Authorize(Roles = "Player, Admin")]
+        //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Get list dream by dream id")]
         public async Task<ActionResult<Dream>> GetById(string id)
         {
             if (!ModelState.IsValid)
@@ -65,8 +69,9 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("Can not found this dream");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
+        [SwaggerOperation(Summary = "Create new dream")]
         public async Task<ActionResult> CreateDream(DreamRequest request)
         {
             if (!ModelState.IsValid)
@@ -81,8 +86,9 @@ namespace MobileBasedCashFlowAPI.MongoController
             return BadRequest(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Update an existing dream")]
         public async Task<ActionResult<List<Dream>>> UpdateDream(string id, DreamRequest request)
         {
             if (!ModelState.IsValid)
@@ -101,8 +107,9 @@ namespace MobileBasedCashFlowAPI.MongoController
             return BadRequest(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("inactive/{id:length(24)}")]
+        [SwaggerOperation(Summary = "Inactive an existing dream")]
         public async Task<ActionResult> InActiveDream(string id)
         {
             string userId = HttpContext.User.FindFirstValue("Id");
@@ -124,6 +131,7 @@ namespace MobileBasedCashFlowAPI.MongoController
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id:length(24)}")]
+        [SwaggerOperation(Summary = "Delete an dream")]
         public async Task<ActionResult<List<Dream>>> DeleteDream(string id)
         {
             if (!ModelState.IsValid)

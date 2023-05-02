@@ -19,7 +19,24 @@ namespace MobileBasedCashFlowAPI.Services
             _context = context;
         }
 
-        public async Task<IEnumerable> GetAsync(int userId)
+        public async Task<IEnumerable> GetAsync()
+        {
+            var asset = await (from a in _context.Assets
+                               select new
+                               {
+                                   a.AssetId,
+                                   a.AssetName,
+                                   a.ImageUrl,
+                                   a.AssetPrice,
+                                   a.Description,
+                                   a.IsInShop,
+                                   a.CreateBy,
+                                   a.AssetType,
+                               }).AsNoTracking().ToListAsync();
+            return asset;
+        }
+
+        public async Task<IEnumerable> GetAssetInShop(int userId)
         {
             var asset = await (from a in _context.Assets
                                join userAsset in _context.UserAssets on a.AssetId equals userAsset.AssetId

@@ -51,7 +51,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet("type-id/{id:length(24)}")]
+        [HttpGet("type-id/{id}")]
         [SwaggerOperation(Summary = "Get list event card by event card type id")]
         public async Task<ActionResult<EventCard>> GetByTypeId(int id)
         {
@@ -67,7 +67,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("can not find event card of this type");
         }
 
-        [HttpGet("mod-id/{id:length(24)}")]
+        [HttpGet("mod-id/{id}")]
         [SwaggerOperation(Summary = "Get list event card by mod id")]
         public async Task<ActionResult<EventCard>> GetByModId(int id)
         {

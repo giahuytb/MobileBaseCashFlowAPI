@@ -32,36 +32,36 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<IEnumerable<Dream>> GetAsync()
         {
-            if (!_cache.TryGetValue(CacheKeys.Dreams, out IEnumerable<Dream> dreamList))
-            {
-                dreamList = await _collection.Find(_ => true).ToListAsync();
-                _cache.Set(CacheKeys.Dreams, dreamList, CacheEntryOption.MemoryCacheEntryOption());
-            }
-            return dreamList;
-
-            //string? cacheMember = await _distributedCache.GetStringAsync(CacheKeys.Dreams);
-
-            //IEnumerable<Dream> dream;
-            //if (string.IsNullOrEmpty(cacheMember))
+            //if (!_cache.TryGetValue(CacheKeys.Dreams, out IEnumerable<Dream> dreamList))
             //{
-            //    dream = await _collection.Find(_ => true).ToListAsync();
-            //    if (dream is null)
-            //    {
-            //        return dream ?? Enumerable.Empty<Dream>(); ;
-            //    }
-
-            //    await _distributedCache.SetStringAsync(
-            //        CacheKeys.Dreams,
-            //        JsonConvert.SerializeObject(dream));
-            //    return dream;
+            //    dreamList = await _collection.Find(_ => true).ToListAsync();
+            //    _cache.Set(CacheKeys.Dreams, dreamList, CacheEntryOption.MemoryCacheEntryOption());
             //}
-            //dream = JsonConvert.DeserializeObject<IEnumerable<Dream>>(
-            //    cacheMember,
-            //    new JsonSerializerSettings
-            //    {
-            //        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-            //    }) ?? Enumerable.Empty<Dream>();
-            //return dream ?? Enumerable.Empty<Dream>();
+            //return dreamList;
+
+            string? cacheMember = await _distributedCache.GetStringAsync(CacheKeys.Dreams);
+
+            IEnumerable<Dream> dream;
+            if (string.IsNullOrEmpty(cacheMember))
+            {
+                dream = await _collection.Find(_ => true).ToListAsync();
+                if (dream is null)
+                {
+                    return dream ?? Enumerable.Empty<Dream>();
+                }
+
+                await _distributedCache.SetStringAsync(
+                    CacheKeys.Dreams,
+                    JsonConvert.SerializeObject(dream));
+                return dream;
+            }
+            dream = JsonConvert.DeserializeObject<IEnumerable<Dream>>(
+                cacheMember,
+                new JsonSerializerSettings
+                {
+                    ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
+                }) ?? Enumerable.Empty<Dream>();
+            return dream ?? Enumerable.Empty<Dream>();
         }
 
         public async Task<object?> GetAsync(PaginationFilter filter, double? from, double? to)
