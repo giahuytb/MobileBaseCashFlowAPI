@@ -1,9 +1,9 @@
-﻿using MobileBasedCashFlowAPI.DTO;
+﻿using MobileBasedCashFlowAPI.Dto;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Repository
 {
-    public interface AssetTypeRepository
+    public interface IAssetTypeRepository
     {
         public Task<IEnumerable> GetAsync();
         public Task<object?> GetAsync(int assetTypeId);

@@ -4,7 +4,7 @@ using MobileBasedCashFlowAPI.MongoModels;
 
 namespace MobileBasedCashFlowAPI.IMongoServices
 {
-    public interface JobCardRepository
+    public interface IJobCardRepository
     {
         public Task<IEnumerable<JobCard>> GetAsync();
         public Task<Object?> GetAsync(PaginationFilter filter);

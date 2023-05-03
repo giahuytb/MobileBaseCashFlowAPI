@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repository;
-using MobileBasedCashFlowAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections;
 using System.Security.Claims;
@@ -13,20 +12,21 @@ namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GameModesController : ControllerBase
+    public class PointOfInteractionsController : ControllerBase
     {
-        private readonly GameModeRepository _gameModeRepository;
+        private readonly IPOIRepository _IPOIRepository;
 
-        public GameModesController(GameModeRepository gameModeRepository)
+        public PointOfInteractionsController(IPOIRepository IPOIRepository)
         {
-            _gameModeRepository = gameModeRepository;
+            _IPOIRepository = IPOIRepository;
         }
 
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get all game mode")]
+        //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("all")]
+        [SwaggerOperation(Summary = "Get all Point Of Interaction")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _gameModeRepository.GetAsync();
+            var result = await _IPOIRepository.GetAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -34,25 +34,27 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("List is empty");
         }
 
+        //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get game mode by game mode id")]
-        public async Task<ActionResult<GameMode>> GetById(int id)
+        [SwaggerOperation(Summary = "Get by Point Of Interaction id")]
+        public async Task<ActionResult<PointOfInteraction>> GetById(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameModeRepository.GetAsync(id);
+            var result = await _IPOIRepository.GetByIdAsync(id);
             if (result != null)
             {
                 return Ok(result);
             }
-            return NotFound("List is empty");
+            return NotFound("Can not found this POI");
         }
 
+        //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
-        [SwaggerOperation(Summary = "Create new game mode")]
-        public async Task<ActionResult> PostGameMode(GameModeRequest request)
+        [SwaggerOperation(Summary = "Create new Point Of Interaction")]
+        public async Task<ActionResult> PostAsset(POIRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -64,30 +66,26 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameModeRepository.CreateAsync(Int32.Parse(userId), request);
-            if (result.Equals(Constant.Success))
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
+            var result = await _IPOIRepository.CreateAsync(Int32.Parse(userId), request);
 
+            return Ok(result);
         }
 
-        [HttpPut]
-        [SwaggerOperation(Summary = "Update an existing game mode")]
-        public async Task<ActionResult> UpdateGameMode(int gameModeId, GameModeRequest request)
+        //[Authorize(Roles = "Admin, Moderator")]
+        [HttpPut("{id}")]
+        [SwaggerOperation(Summary = "Update an existing Point Of Interaction")]
+        public async Task<ActionResult> UpdateAsset(int id, POIRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            // get the current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
             if (userId == null)
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameModeRepository.UpdateAsync(gameModeId, Int32.Parse(userId), request);
+            var result = await _IPOIRepository.UpdateAsync(id, Int32.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -96,21 +94,20 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Delete an existing game mode")]
-        public async Task<ActionResult> DeleteGameMode(int id)
+        [SwaggerOperation(Summary = "Delete an existing Point Of Interaction")]
+        public async Task<ActionResult> DeleteAsset(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameModeRepository.DeleteAsync(id);
+            var result = await _IPOIRepository.DeleteAsync(id);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
-            return NotFound(result);
+            return BadRequest(result);
         }
-
 
     }
 }

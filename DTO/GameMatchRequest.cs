@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MobileBasedCashFlowAPI.DTO
+namespace MobileBasedCashFlowAPI.Dto
 {
     public class GameMatchRequest
     {
@@ -20,5 +20,11 @@ namespace MobileBasedCashFlowAPI.DTO
         [Required(ErrorMessage = "Please enter total round of this match")]
         [Range(1, int.MaxValue, ErrorMessage = "Total round must be number and bigger than 1")]
         public int TotalRound { get; set; }
+
+        [Required(ErrorMessage = "Please enter total round of this match")]
+        [Range(0, int.MaxValue, ErrorMessage = "Game room id must be number and bigger than 0")]
+        public int gameRoomId { get; set; }
+
+
     }
 }

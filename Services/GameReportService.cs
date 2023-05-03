@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class GameReportService : GameReportRepository
+    public class GameReportService : IGameReportRepository
     {
         private readonly MobileBasedCashFlowGameContext _context;
 

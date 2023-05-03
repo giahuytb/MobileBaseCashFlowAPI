@@ -9,21 +9,21 @@ using System.Collections;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 
 
 namespace MobileBasedCashFlowAPI.Services
 {
 
-    public class UserService : UserRepository
+    public class UserService : IUserRepository
     {
         private readonly IConfiguration _configuration;
-        private readonly SendMailRepository _sendMailService;
+        private readonly ISendMailRepository _sendMailService;
         private readonly MobileBasedCashFlowGameContext _context;
 
         public UserService(MobileBasedCashFlowGameContext context,
                            IConfiguration configuration,
-                           SendMailRepository sendMailService)
+                           ISendMailRepository sendMailService)
         {
             _configuration = configuration;
             _sendMailService = sendMailService;
@@ -130,14 +130,14 @@ namespace MobileBasedCashFlowAPI.Services
                                     where role.RoleName == "Player"
                                     select new { roleId = role.RoleId }).AsNoTracking().FirstOrDefaultAsync();
                 // Find gameId in database that match version == "ver_1"
-                var gameServerId = await (from game in _context.GameServers
+                var gameServerId = await (from game in _context.Games
                                           where game.GameVersion == "Ver_1"
-                                          select new { gameId = game.GameServerId }).AsNoTracking().FirstOrDefaultAsync();
+                                          select new { gameId = game.GameId }).AsNoTracking().FirstOrDefaultAsync();
 
                 if (roleId != null && gameServerId != null)
                 {
                     // Add role to user
-                    user.GameServerId = gameServerId.gameId;
+                    user.GameId = gameServerId.gameId;
                     user.RoleId = roleId.roleId;
                     await _context.UserAccounts.AddAsync(user);
                     await _context.SaveChangesAsync();
@@ -329,6 +329,71 @@ namespace MobileBasedCashFlowAPI.Services
                                   u.ImageUrl,
                               }).FirstOrDefaultAsync();
             return user;
+        }
+
+        public async Task<object?> GetUserAsset(int userId)
+        {
+            var inventory = await (from userAsset in _context.UserAssets
+                                   join user in _context.UserAccounts on userAsset.UserId equals user.UserId
+                                   join asset in _context.Assets on userAsset.AssetId equals asset.AssetId
+                                   where user.UserId == userId
+                                   select new
+                                   {
+                                       user.UserName,
+                                       asset.AssetName,
+                                       userAsset.CreateAt,
+                                       userAsset.LastUsed,
+                                   }).AsNoTracking().ToListAsync();
+            return inventory;
+        }
+
+        public async Task<string> BuyAsset(int assetId, int userId)
+        {
+            var asset = await _context.Assets.Where(i => i.AssetId == assetId).FirstOrDefaultAsync();
+            if (asset == null)
+            {
+                return "Can not found this asset";
+            }
+            // check if this asset has been purchased by the user 
+            var check = await _context.UserAssets.FirstOrDefaultAsync(i => i.UserId == userId && i.AssetId == assetId);
+            if (check != null)
+            {
+                return "You already bought this asset";
+            }
+            var user = await _context.UserAccounts.Where(u => u.UserId == userId).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return "Can not found this user";
+            }
+            if (user.Coin < asset.AssetPrice)
+            {
+                return "You don't have enough coin to buy this asset";
+            }
+            var invent = new UserAsset()
+            {
+                AssetId = assetId,
+                UserId = userId,
+                CreateAt = DateTime.Now,
+            };
+
+            user.Coin = user.Coin - asset.AssetPrice;
+            await _context.UserAssets.AddAsync(invent);
+            await _context.SaveChangesAsync();
+            return Constant.Success;
+        }
+
+        public async Task<string> UpdateLastUsed(int assetId, int userId)
+        {
+            var userAsset = await _context.UserAssets
+                            .Where(i => i.UserId == assetId && i.AssetId == assetId)
+                            .FirstOrDefaultAsync();
+            if (userAsset != null)
+            {
+                userAsset.LastUsed = DateTime.Now;
+                await _context.SaveChangesAsync();
+                return Constant.Success;
+            }
+            return Constant.NotFound;
         }
     }
 }

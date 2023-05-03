@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Services;
@@ -15,9 +15,9 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class ParticipantsController : ControllerBase
     {
-        private readonly ParticipantRepository _participantRepository;
+        private readonly IParticipantRepository _participantRepository;
 
-        public ParticipantsController(ParticipantRepository participantRepository)
+        public ParticipantsController(IParticipantRepository participantRepository)
         {
             _participantRepository = participantRepository;
         }
@@ -38,7 +38,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{userId}/{matchId}")]
         [SwaggerOperation(Summary = "Get the participant with user id and match id")]
-        public async Task<ActionResult<Participant>> GetById(int userId, int matchId)
+        public async Task<ActionResult<Participant>> GetById(int userId, string matchId)
         {
             if (!ModelState.IsValid)
             {

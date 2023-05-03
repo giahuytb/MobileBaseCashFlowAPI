@@ -2,31 +2,31 @@
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.Dto;
-using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
-using System.Collections;
+using MobileBasedCashFlowAPI.Repository;
 
-using System.Security.Claims;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Collections;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GameReportsController : ControllerBase
+    public class GameModsController : ControllerBase
     {
-        private readonly IGameReportRepository _gameReportService;
+        private readonly IGameModRepository _gameModRepository;
 
-        public GameReportsController(IGameReportRepository gameReportService)
+        public GameModsController(IGameModRepository gameModeRepository)
         {
-            _gameReportService = gameReportService;
+            _gameModRepository = gameModeRepository;
         }
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Get all game report")]
+        [SwaggerOperation(Summary = "Get all game mod")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _gameReportService.GetAsync();
+            var result = await _gameModRepository.GetAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -35,14 +35,14 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get game report by game report id")]
-        public async Task<ActionResult<GameReport>> GetById(int id)
+        [SwaggerOperation(Summary = "Get game mode by game mod id")]
+        public async Task<ActionResult<GameMod>> GetById(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameReportService.GetAsync(id);
+            var result = await _gameModRepository.GetAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -51,8 +51,8 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpPost]
-        [SwaggerOperation(Summary = "Create new game report")]
-        public async Task<ActionResult> PostGameReport(GameReportRequest request)
+        [SwaggerOperation(Summary = "Create new game mod")]
+        public async Task<ActionResult> PostGameMode(GameModeRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -64,35 +64,46 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameReportService.CreateAsync(Int32.Parse(userId), request);
-            return Ok(result);
-        }
-
-        [HttpPut]
-        [SwaggerOperation(Summary = "Update an existing game report")]
-        public async Task<ActionResult> UpdateGameReport(int gameReportId, GameReportRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var result = await _gameReportService.UpdateAsync(gameReportId, request);
+            var result = await _gameModRepository.CreateAsync(Int32.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
-            return NotFound(result);
+            return BadRequest(result);
+
         }
 
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Delete an existing game report")]
-        public async Task<ActionResult> DeleteGameReport(int id)
+        [HttpPut]
+        [SwaggerOperation(Summary = "Update an existing game mod")]
+        public async Task<ActionResult> UpdateGameMode(int gameModeId, GameModeRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameReportService.DeleteAsync(id);
+            // get the current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _gameModRepository.UpdateAsync(gameModeId, Int32.Parse(userId), request);
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Delete an existing game mod")]
+        public async Task<ActionResult> DeleteGameMode(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _gameModRepository.DeleteAsync(id);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);

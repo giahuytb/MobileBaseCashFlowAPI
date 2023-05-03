@@ -5,12 +5,12 @@ using System.Collections;
 using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class AssetService : AssetRepository
+    public class AssetService : IAssetRepository
     {
         private readonly MobileBasedCashFlowGameContext _context;
 
@@ -77,7 +77,6 @@ namespace MobileBasedCashFlowAPI.Services
         {
             var checkName = await _context.Assets
                             .Where(a => a.AssetName == request.AssetName)
-                            .Select(a => new { assetName = a.AssetName })
                             .AsNoTracking()
                             .FirstOrDefaultAsync();
             if (checkName != null)
@@ -104,7 +103,7 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> UpdateAsync(int assetId, int userId, AssetRequest request)
         {
-            var oldAsset = await _context.Assets.FirstOrDefaultAsync(i => assetId == i.AssetId);
+            var oldAsset = await _context.Assets.FirstOrDefaultAsync(a => a.AssetId == assetId);
             if (oldAsset != null)
             {
                 // check if the new name is already exist in database. (except it's old name)

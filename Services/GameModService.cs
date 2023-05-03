@@ -1,26 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repository;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class GameModeService : GameModeRepository
+    public class GameModService : IGameModRepository
     {
         private readonly MobileBasedCashFlowGameContext _context;
 
-        public GameModeService(MobileBasedCashFlowGameContext context)
+        public GameModService(MobileBasedCashFlowGameContext context)
         {
             _context = context;
         }
         public async Task<IEnumerable> GetAsync()
         {
-            var mode = await (from gm in _context.GameModes
+            var mode = await (from gm in _context.GameMods
                               select new
                               {
-                                  gm.GameModeId,
+                                  gm.GameModId,
                                   gm.ImageUrl,
                                   gm.Description,
                                   gm.CreateAt,
@@ -31,13 +31,13 @@ namespace MobileBasedCashFlowAPI.Services
             return mode;
         }
 
-        public async Task<object?> GetAsync(int gameModeId)
+        public async Task<object?> GetAsync(int gameModId)
         {
-            var mode = await (from gm in _context.GameModes
-                              where gm.GameModeId == gameModeId
+            var mode = await (from gm in _context.GameMods
+                              where gm.GameModId == gameModId
                               select new
                               {
-                                  gm.GameModeId,
+                                  gm.GameModId,
                                   gm.ImageUrl,
                                   gm.Description,
                                   gm.CreateAt,
@@ -50,21 +50,21 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> CreateAsync(int userId, GameModeRequest request)
         {
-            var checkName = await _context.GameModes.Where(gm => gm.ModeName == request.ModeName).FirstOrDefaultAsync();
+            var checkName = await _context.GameMods.Where(gm => gm.ModName == request.ModeName).FirstOrDefaultAsync();
             if (checkName != null)
             {
                 return "This mode name is already existed";
             }
-            var gameMode = new GameMode()
+            var gameMode = new GameMod()
             {
-                ModeName = request.ModeName,
+                ModName = request.ModeName,
                 ImageUrl = request.ImageUrl,
                 Description = request.Description,
                 CreateAt = DateTime.Now,
                 CreateBy = userId,
             };
 
-            await _context.GameModes.AddAsync(gameMode);
+            await _context.GameMods.AddAsync(gameMode);
             await _context.SaveChangesAsync();
             return Constant.Success;
         }
@@ -72,12 +72,10 @@ namespace MobileBasedCashFlowAPI.Services
         public async Task<string> UpdateAsync(int gameModeId, int userId, GameModeRequest request)
         {
 
-            var oldGameMode = await _context.GameModes.Where(g => g.GameModeId == gameModeId).FirstOrDefaultAsync();
+            var oldGameMode = await _context.GameMods.Where(g => g.GameModId == gameModeId).FirstOrDefaultAsync();
             if (oldGameMode != null)
             {
-
-
-                oldGameMode.ModeName = request.ModeName;
+                oldGameMode.ModName = request.ModeName;
                 oldGameMode.ImageUrl = request.ImageUrl;
                 oldGameMode.Description = request.Description;
                 oldGameMode.UpdateBy = userId;
@@ -91,10 +89,10 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> DeleteAsync(int gameModeId)
         {
-            var gameMode = await _context.GameModes.Where(g => g.GameModeId == gameModeId).FirstOrDefaultAsync();
+            var gameMode = await _context.GameMods.Where(g => g.GameModId == gameModeId).FirstOrDefaultAsync();
             if (gameMode != null)
             {
-                _context.GameModes.Remove(gameMode);
+                _context.GameMods.Remove(gameMode);
             }
             return "Can not found this game mode";
         }

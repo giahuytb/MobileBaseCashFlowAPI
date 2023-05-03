@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace MobileBasedCashFlowAPI.IMongoServices
 {
-    public interface DreamRepository
+    public interface IDreamRepository
     {
         public Task<IEnumerable<Dream>> GetAsync();
         public Task<Object?> GetAsync(PaginationFilter filter, double? from, double? to);

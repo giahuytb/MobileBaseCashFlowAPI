@@ -1,8 +1,8 @@
-﻿using MobileBasedCashFlowAPI.DTO;
+﻿using MobileBasedCashFlowAPI.Dto;
 
 namespace MobileBasedCashFlowAPI.Repository
 {
-    public interface SendMailRepository
+    public interface ISendMailRepository
     {
         Task<bool> SendMail(MailContent oMailContent);
         Task SendEmailAsync(string email, string subject, string htmlMessage);

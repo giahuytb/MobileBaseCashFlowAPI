@@ -1,11 +1,11 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
-using System.Collections;
 using System.Security.Claims;
+using System.Collections;
+using MobileBasedCashFlowAPI.Dto;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace MobileBasedCashFlowAPI.Controllers
@@ -14,11 +14,11 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class GamesController : ControllerBase
     {
-        private readonly GameRepository _gameService;
+        private readonly IGameRepository _gameRepository;
 
-        public GamesController(GameRepository gameService)
+        public GamesController(IGameRepository gameServerRepository)
         {
-            _gameService = gameService;
+            _gameRepository = gameServerRepository;
         }
 
         //[Authorize(Roles = "Player, Admin")]
@@ -26,7 +26,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         [SwaggerOperation(Summary = "Get all game")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _gameService.GetAsync();
+            var result = await _gameRepository.GetAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -36,14 +36,14 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get game by game id")]
+        [SwaggerOperation(Summary = "Get game server by game id")]
         public async Task<ActionResult<Game>> GetById(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameService.GetAsync(id);
+            var result = await _gameRepository.GetAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -55,7 +55,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         [SwaggerOperation(Summary = "Create new game")]
-        public async Task<ActionResult> PostGame(GameRequest game)
+        public async Task<ActionResult> PostGameServer(GameRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -66,7 +66,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameService.CreateAsync(Int32.Parse(userId), game);
+            var result = await _gameRepository.CreateAsync(Int32.Parse(userId), request);
 
             return Ok(result);
         }
@@ -74,7 +74,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update an existing game")]
-        public async Task<ActionResult> UpdateGame(int id, GameRequest game)
+        public async Task<ActionResult> UpdateGameServer(int id, GameRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameService.UpdateAsync(id, Int32.Parse(userId), game);
+            var result = await _gameRepository.UpdateAsync(id, Int32.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -96,19 +96,19 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete an existing game")]
-        public async Task<ActionResult> DeleteGame(int id)
+        public async Task<ActionResult> DeleteGameServer(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameService.DeleteAsync(id);
+            var result = await _gameRepository.DeleteAsync(id);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
             return NotFound(result);
         }
-    }
 
+    }
 }

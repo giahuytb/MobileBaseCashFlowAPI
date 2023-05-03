@@ -14,7 +14,7 @@ namespace MobileBasedCashFlowAPI.Models
         public double IncomePerMonth { get; set; }
         public double ExpensePerMonth { get; set; }
         public DateTime CreateAt { get; set; }
-        public int? MatchId { get; set; }
+        public string? MatchId { get; set; }
         public int? UserId { get; set; }
 
         public virtual GameMatch? Match { get; set; }

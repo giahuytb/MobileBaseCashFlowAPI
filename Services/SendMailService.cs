@@ -3,13 +3,13 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 
 using MobileBasedCashFlowAPI.Settings;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Repository;
 
 namespace MobileBasedCashFlowAPI.Services
 {
 
-    public class SendMailService : SendMailRepository
+    public class SendMailService : ISendMailRepository
     {
         private readonly MailSettings _mailSettings;
 

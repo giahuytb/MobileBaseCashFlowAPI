@@ -7,7 +7,7 @@ using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
-    public class TileService : TileRepository
+    public class TileService : ITileRepository
     {
         private readonly IMongoCollection<Tile> _collection;
         public TileService(MongoDbSettings setting)

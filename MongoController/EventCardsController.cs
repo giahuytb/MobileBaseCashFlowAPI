@@ -14,9 +14,9 @@ namespace MobileBasedCashFlowAPI.MongoController
     [ApiController]
     public class EventCardsController : ControllerBase
     {
-        private readonly EventCardRepository _eventCardService;
+        private readonly IEventCardRepository _eventCardService;
 
-        public EventCardsController(EventCardRepository eventCardService)
+        public EventCardsController(IEventCardRepository eventCardService)
         {
             _eventCardService = eventCardService ?? throw new ArgumentNullException(nameof(eventCardService));
         }

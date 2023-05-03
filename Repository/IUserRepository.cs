@@ -1,10 +1,10 @@
-﻿using MobileBasedCashFlowAPI.DTO;
+﻿using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Models;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Repository
 {
-    public interface UserRepository
+    public interface IUserRepository
     {
         Task<object> Authenticate(LoginRequest request);
         Task<string> Register(RegisterRequest request);
@@ -16,5 +16,8 @@ namespace MobileBasedCashFlowAPI.Repository
         public Task<object?> ViewProfile(int userId);
         public Task<string> UpdateCoin(int userId, int coin);
         public Task<object?> FindUserById(int userId);
+        public Task<object?> GetUserAsset(int userId);
+        public Task<string> BuyAsset(int assetId, int userId);
+        public Task<string> UpdateLastUsed(int assetId, int userId);
     }
 }

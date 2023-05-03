@@ -12,9 +12,5 @@ namespace MobileBasedCashFlowAPI.MongoModels
         public double Cost { get; set; } = double.MaxValue;
         public bool Status { get; set; }
 
-        public static implicit operator Dream(List<Dream> v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
