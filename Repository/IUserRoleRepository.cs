@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Repository
 {
-    public interface UserRoleRepository
+    public interface IUserRoleRepository
     {
         public Task<IEnumerable> GetAsync();
         public Task<object?> GetAsync(int roleId);

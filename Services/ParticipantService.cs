@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repository;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class ParticipantService : ParticipantRepository
+    public class ParticipantService : IParticipantRepository
     {
         private readonly MobileBasedCashFlowGameContext _context;
 
@@ -28,7 +29,7 @@ namespace MobileBasedCashFlowAPI.Services
             return participant;
         }
 
-        public async Task<object?> GetAsync(int userId, int matchId)
+        public async Task<object?> GetAsync(int userId, string matchId)
         {
             var participant = await (from p in _context.Participants
                                      join u in _context.UserAccounts on p.UserId equals u.UserId
@@ -57,7 +58,7 @@ namespace MobileBasedCashFlowAPI.Services
             return Constant.Success;
         }
 
-        public async Task<string> DeleteAsync(int userId, int matchId)
+        public async Task<string> DeleteAsync(int userId, string matchId)
         {
             var participant = await _context.Participants.Where(p => p.UserId == userId && p.MatchId == matchId).FirstOrDefaultAsync();
             if (participant != null)

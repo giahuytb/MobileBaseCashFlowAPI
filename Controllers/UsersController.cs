@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 
 using MobileBasedCashFlowAPI.Repository;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using System.Collections;
 using MobileBasedCashFlowAPI.Common;
 using Swashbuckle.AspNetCore.Annotations;
+using MobileBasedCashFlowAPI.Models;
+using System.Security.Claims;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -13,9 +15,9 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserRepository _userService;
+        private readonly IUserRepository _userService;
 
-        public UsersController(UserRepository userService)
+        public UsersController(IUserRepository userService)
         {
             _userService = userService;
         }
@@ -189,10 +191,64 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return NotFound("Can not find this user");
             }
             return Ok(result);
-
         }
 
+        [Authorize(Roles = "Player, Admin")]
+        [HttpGet("my-asset")]
+        [SwaggerOperation(Summary = "Get all assets owned by the player (Login require)")]
+        public async Task<ActionResult<UserAsset>> GetMyAsset()
+        {
+            // get the current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _userService.GetUserAsset(Int32.Parse(userId));
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("Can not found this user inventory ");
+        }
 
+        //[Authorize(Roles = "Admin, Moderator")]
+        [HttpPost("buy")]
+        [SwaggerOperation(Summary = "Buy an asset (Login require)")]
+        public async Task<ActionResult> BuyAsset([FromBody] int assetId)
+        {
+            // get the id of current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _userService.BuyAsset(assetId, Int32.Parse(userId));
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        //[Authorize(Roles = "Player, Admin")]
+        [HttpPut("asset-last-used")]
+        [SwaggerOperation(Summary = "Update last use asset (Login require)")]
+        public async Task<ActionResult> UpdateAssetLastUsed(int assetId)
+        {
+            // get the id of current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _userService.UpdateLastUsed(assetId, Int32.Parse(userId));
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
 
     }
 }

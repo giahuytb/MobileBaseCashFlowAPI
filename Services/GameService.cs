@@ -1,14 +1,13 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
-using MobileBasedCashFlowAPI.Repository;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Models;
+using MobileBasedCashFlowAPI.Repository;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class GameService : GameRepository
+    public class GameService : IGameRepository
     {
         private readonly MobileBasedCashFlowGameContext _context;
 
@@ -16,64 +15,65 @@ namespace MobileBasedCashFlowAPI.Services
         {
             _context = context;
         }
+
         public async Task<IEnumerable> GetAsync()
         {
             var game = await (from g in _context.Games
+                              join createBy in _context.UserAccounts on g.CreateBy equals createBy.UserId
+                              join updateBy in _context.UserAccounts on g.UpdateBy equals updateBy.UserId
                               select new
                               {
                                   g.GameId,
-                                  g.RoomNumber,
-                                  g.RoomName,
-                                  g.CreateAt,
+                                  g.GameVersion,
+                                  createBy = createBy.NickName,
+                                  updateBy = updateBy.NickName,
                               }).AsNoTracking().ToListAsync();
             return game;
         }
-        public async Task<object?> GetAsync(int id)
+
+        public async Task<object?> GetAsync(int gameId)
         {
-            var game = await _context.Games
-                .Select(g => new
-                {
-                    g.GameId,
-                    g.RoomNumber,
-                    g.RoomName,
-                    g.CreateAt,
-                })
-                .Where(b => b.GameId == id)
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
+            var game = await (from g in _context.Games
+                              join createBy in _context.UserAccounts on g.CreateBy equals createBy.UserId
+                              join updateBy in _context.UserAccounts on g.UpdateBy equals updateBy.UserId
+                              where g.GameId == gameId
+                              select new
+                              {
+                                  g.GameId,
+                                  g.GameVersion,
+                                  createBy = createBy.NickName,
+                                  updateBy = updateBy.NickName,
+                              }).ToListAsync();
             return game;
         }
         public async Task<string> CreateAsync(int userId, GameRequest request)
         {
-            var game = new Game()
+            var gameServer = new Game()
             {
-                RoomName = request.RoomName,
-                RoomNumber = request.RoomNumber,
+                GameVersion = request.GameVersion,
                 CreateAt = DateTime.Now,
                 CreateBy = userId,
-                GameServerId = 1,
             };
 
-            await _context.Games.AddAsync(game);
+            await _context.Games.AddAsync(gameServer);
             await _context.SaveChangesAsync();
             return Constant.Success;
-
         }
+
         public async Task<string> UpdateAsync(int gameId, int userId, GameRequest request)
         {
             var oldGame = await _context.Games.Where(i => i.GameId == gameId).FirstOrDefaultAsync();
             if (oldGame != null)
             {
                 var checkName = await _context.Games
-                        .Where(a => a.RoomName == request.RoomName && a.RoomName != oldGame.RoomName)
+                        .Where(a => a.GameVersion == request.GameVersion && a.GameVersion != oldGame.GameVersion)
                         .AsNoTracking()
                         .FirstOrDefaultAsync();
                 if (checkName != null)
                 {
-                    return "This room name is existed";
+                    return "This version is existed";
                 }
-                oldGame.RoomName = request.RoomName;
-                oldGame.RoomNumber = request.RoomNumber;
+                oldGame.GameVersion = request.GameVersion;
                 oldGame.UpdateAt = DateTime.Now;
                 oldGame.UpdateBy = userId;
 
@@ -85,10 +85,10 @@ namespace MobileBasedCashFlowAPI.Services
 
         public async Task<string> DeleteAsync(int gameId)
         {
-            var game = await _context.Games.Where(g => g.GameId == gameId).FirstOrDefaultAsync();
-            if (game != null)
+            var gameServer = await _context.Games.Where(gs => gs.GameId == gameId).FirstOrDefaultAsync();
+            if (gameServer != null)
             {
-                _context.Games.Remove(game);
+                _context.Games.Remove(gameServer);
                 await _context.SaveChangesAsync();
 
                 return Constant.Success;

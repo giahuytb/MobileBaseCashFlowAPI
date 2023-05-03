@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class UserAssetService : UserAssetRepository
+    public class UserAssetService : IUserAssetRepository
     {
         private readonly MobileBasedCashFlowGameContext _context;
 

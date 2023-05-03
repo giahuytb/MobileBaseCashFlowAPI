@@ -1,14 +1,14 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repository;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class AssetTypeService : AssetTypeRepository
+    public class AssetTypeService : IAssetTypeRepository
     {
         private readonly MobileBasedCashFlowGameContext _context;
 

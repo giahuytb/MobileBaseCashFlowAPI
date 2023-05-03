@@ -13,9 +13,9 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class UserRolesController : ControllerBase
     {
-        private readonly UserRoleRepository _userRoleServicecs;
+        private readonly IUserRoleRepository _userRoleServicecs;
 
-        public UserRolesController(UserRoleRepository userRoleServicecs)
+        public UserRolesController(IUserRoleRepository userRoleServicecs)
         {
             _userRoleServicecs = userRoleServicecs;
         }
@@ -50,9 +50,9 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return BadRequest(ModelState);
             }
             var result = await _userRoleServicecs.CreateAsync(roleName);
-            if (result.Equals("success"))
+            if (result.Equals(Constant.Success))
             {
-                return Ok("Create success");
+                return Ok(result);
             }
             return BadRequest(result);
         }
@@ -78,7 +78,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             var result = await _userRoleServicecs.DeleteAsync(id);
             if (result.Equals(Constant.Success))
             {
-                Ok(result);
+                return Ok(result);
             }
             return NotFound(result);
         }

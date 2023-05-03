@@ -1,5 +1,5 @@
 ﻿//using MobileBasedCashFlowAPI.SubModels;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;

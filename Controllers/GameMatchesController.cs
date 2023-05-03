@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Services;
@@ -15,9 +15,9 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class GameMatchesController : ControllerBase
     {
-        private readonly GameMatchRepository _gameMatchService;
+        private readonly IGameMatchRepository _gameMatchService;
 
-        public GameMatchesController(GameMatchRepository gameMatchService)
+        public GameMatchesController(IGameMatchRepository gameMatchService)
         {
             _gameMatchService = gameMatchService;
         }
@@ -38,7 +38,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get game match by game match id")]
-        public async Task<ActionResult<GameMatch>> GetById(int id)
+        public async Task<ActionResult<GameMatch>> GetById(string id)
         {
             if (!ModelState.IsValid)
             {
@@ -55,7 +55,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         [SwaggerOperation(Summary = "Create new game match")]
-        public async Task<ActionResult> PostMatch(int gameId, GameMatchRequest request)
+        public async Task<ActionResult> PostMatch(GameMatchRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameMatchService.CreateAsync(Int32.Parse(userId), gameId, request);
+            var result = await _gameMatchService.CreateAsync(Int32.Parse(userId), request);
 
             return Ok(result);
         }
@@ -75,18 +75,13 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update an existing game match")]
-        public async Task<ActionResult> UpdateMatch(int id, GameMatchRequest request)
+        public async Task<ActionResult> UpdateMatch(string id, GameMatchRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            string userId = HttpContext.User.FindFirstValue("Id");
-            if (userId == null)
-            {
-                return Unauthorized("User id not Found, please login");
-            }
-            var result = await _gameMatchService.UpdateAsync(id, Int32.Parse(userId), request);
+            var result = await _gameMatchService.UpdateAsync(id, request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -97,7 +92,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Delete an existing game match")]
-        public async Task<ActionResult> DeleteMatch(int id)
+        public async Task<ActionResult> DeleteMatch(string id)
         {
             if (!ModelState.IsValid)
             {

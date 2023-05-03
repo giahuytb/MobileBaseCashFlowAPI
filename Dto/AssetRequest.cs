@@ -1,7 +1,7 @@
-﻿using System.ComponentModel;
+﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace MobileBasedCashFlowAPI.DTO
+namespace MobileBasedCashFlowAPI.Dto
 {
     public class AssetRequest
     {

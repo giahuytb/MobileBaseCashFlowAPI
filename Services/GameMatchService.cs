@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
-
 using System.Collections;
 using MobileBasedCashFlowAPI.Common;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class GameMatchService : GameMatchRepository
+    public class GameMatchService : IGameMatchRepository
     {
         private readonly MobileBasedCashFlowGameContext _context;
 
@@ -29,15 +28,15 @@ namespace MobileBasedCashFlowAPI.Services
                                        match.StartTime,
                                        match.EndTime,
                                        match.TotalRound,
-                                       match.GameId,
+                                       match.GameRoomId,
                                    }).AsNoTracking().ToListAsync();
             return gameMatch;
         }
 
-        public async Task<object?> GetAsync(int id)
+        public async Task<object?> GetAsync(string matchId)
         {
             var gameMatch = await (from match in _context.GameMatches
-                                   where match.MatchId == id
+                                   where match.MatchId == matchId
                                    select new
                                    {
                                        match.MatchId,
@@ -48,15 +47,21 @@ namespace MobileBasedCashFlowAPI.Services
                                        match.StartTime,
                                        match.EndTime,
                                        match.TotalRound,
-                                       match.GameId,
+                                       match.GameRoomId,
                                    }).AsNoTracking().ToListAsync();
             return gameMatch;
         }
 
-        public async Task<string> CreateAsync(int userId, int gameId, GameMatchRequest request)
+        public async Task<string> CreateAsync(int userId, GameMatchRequest request)
         {
+            var checkGameRoomId = _context.GameRooms.Where(gr => gr.GameRoomId == request.gameRoomId).AsNoTracking().FirstOrDefault();
+            if (checkGameRoomId == null)
+            {
+                return "Can not found this game room";
+            }
             var match = new GameMatch()
             {
+                MatchId = Guid.NewGuid().ToString(),
                 MaxNumberPlayer = request.MaxNumberPlayer,
                 WinnerId = request.WinnerId,
                 HostId = userId,
@@ -64,21 +69,20 @@ namespace MobileBasedCashFlowAPI.Services
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now,
                 TotalRound = request.TotalRound,
-                GameId = gameId,
+                GameRoomId = request.gameRoomId,
             };
 
-            _context.GameMatches.Add(match);
+            await _context.GameMatches.AddAsync(match);
             await _context.SaveChangesAsync();
             return Constant.Success;
 
         }
-        public async Task<string> UpdateAsync(int gameMatchId, int userId, GameMatchRequest request)
+        public async Task<string> UpdateAsync(string matchId, GameMatchRequest request)
         {
-            var oldMatch = await _context.GameMatches.Where(gm => gm.MatchId == gameMatchId).FirstOrDefaultAsync();
+            var oldMatch = await _context.GameMatches.Where(gm => gm.MatchId == matchId).FirstOrDefaultAsync();
             if (oldMatch != null)
             {
                 oldMatch.WinnerId = request.WinnerId;
-                oldMatch.HostId = userId;
                 oldMatch.LastHostId = request.LastHostId;
                 oldMatch.TotalRound = request.TotalRound;
                 oldMatch.EndTime = DateTime.Now;
@@ -89,9 +93,9 @@ namespace MobileBasedCashFlowAPI.Services
             return "Can not find this match";
         }
 
-        public async Task<string> DeleteAsync(int gameMatchId)
+        public async Task<string> DeleteAsync(string matchId)
         {
-            var match = await _context.GameMatches.Where(gm => gm.GameId == gameMatchId).FirstOrDefaultAsync();
+            var match = await _context.GameMatches.Where(gm => gm.MatchId == matchId).FirstOrDefaultAsync();
             if (match != null)
             {
                 _context.GameMatches.Remove(match);

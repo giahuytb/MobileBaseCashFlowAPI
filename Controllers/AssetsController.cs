@@ -5,7 +5,7 @@ using System.Security.Claims;
 
 using MobileBasedCashFlowAPI.Repository;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Common;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -15,11 +15,11 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class AssetsController : ControllerBase
     {
-        private readonly AssetRepository _assetService;
+        private readonly IAssetRepository _assetRepository;
 
-        public AssetsController(AssetRepository itemService)
+        public AssetsController(IAssetRepository itemService)
         {
-            _assetService = itemService;
+            _assetRepository = itemService;
         }
 
         //[Authorize(Roles = "Player, Admin")]
@@ -27,7 +27,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         [SwaggerOperation(Summary = "Get all asset")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _assetService.GetAsync();
+            var result = await _assetRepository.GetAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -36,7 +36,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet("asset-in-shop")]
+        [HttpGet("user/asset-in-shop")]
         [SwaggerOperation(Summary = "Get all asset that player still not buy in shop (Login require)")]
         public async Task<ActionResult<IEnumerable>> GetAssetInShop()
         {
@@ -46,7 +46,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _assetService.GetAssetInShop(Int32.Parse(userId));
+            var result = await _assetRepository.GetAssetInShop(Int32.Parse(userId));
             if (result != null)
             {
                 return Ok(result);
@@ -63,7 +63,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await _assetService.GetByIdAsync(id);
+            var result = await _assetRepository.GetByIdAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -86,7 +86,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _assetService.CreateAsync(Int32.Parse(userId), request);
+            var result = await _assetRepository.CreateAsync(Int32.Parse(userId), request);
 
             return Ok(result);
         }
@@ -105,7 +105,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _assetService.UpdateAsync(id, Int32.Parse(userId), request);
+            var result = await _assetRepository.UpdateAsync(id, Int32.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -121,7 +121,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await _assetService.DeleteAsync(id);
+            var result = await _assetRepository.DeleteAsync(id);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);

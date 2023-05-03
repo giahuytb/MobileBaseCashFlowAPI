@@ -14,8 +14,8 @@ namespace MobileBasedCashFlowAPI.MongoController
     [ApiController]
     public class GameAccountsController : ControllerBase
     {
-        private readonly GameAccountRepository _gameAccountService;
-        public GameAccountsController(GameAccountRepository gameAccountService)
+        private readonly IGameAccountRepository _gameAccountService;
+        public GameAccountsController(IGameAccountRepository gameAccountService)
         {
             _gameAccountService = gameAccountService;
         }

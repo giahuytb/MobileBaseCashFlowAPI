@@ -1,4 +1,4 @@
-﻿namespace MobileBasedCashFlowAPI.DTO
+﻿namespace MobileBasedCashFlowAPI.Dto
 {
     public class MailContent
     {

@@ -14,9 +14,9 @@ namespace MobileBasedCashFlowAPI.MongoController
     [ApiController]
     public class JobCardsController : ControllerBase
     {
-        private readonly JobCardRepository _jobCardService;
+        private readonly IJobCardRepository _jobCardService;
 
-        public JobCardsController(JobCardRepository jobCardService)
+        public JobCardsController(IJobCardRepository jobCardService)
         {
             _jobCardService = jobCardService ?? throw new ArgumentNullException(nameof(jobCardService));
         }

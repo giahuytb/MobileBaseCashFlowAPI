@@ -7,21 +7,21 @@ namespace MobileBasedCashFlowAPI.Models
     {
         public Game()
         {
-            GameMatches = new HashSet<GameMatch>();
-            GameModes = new HashSet<GameMode>();
+            GameRooms = new HashSet<GameRoom>();
+            PointOfInteractions = new HashSet<PointOfInteraction>();
+            UserAccounts = new HashSet<UserAccount>();
         }
 
         public int GameId { get; set; }
-        public string RoomNumber { get; set; } = null!;
-        public string RoomName { get; set; } = null!;
+        public string GameVersion { get; set; } = null!;
         public DateTime CreateAt { get; set; }
-        public int CreateBy { get; set; }
+        public int? CreateBy { get; set; }
         public DateTime? UpdateAt { get; set; }
         public int? UpdateBy { get; set; }
-        public int? GameServerId { get; set; }
+        public bool Status { get; set; }
 
-        public virtual GameServer? GameServer { get; set; }
-        public virtual ICollection<GameMatch> GameMatches { get; set; }
-        public virtual ICollection<GameMode> GameModes { get; set; }
+        public virtual ICollection<GameRoom> GameRooms { get; set; }
+        public virtual ICollection<PointOfInteraction> PointOfInteractions { get; set; }
+        public virtual ICollection<UserAccount> UserAccounts { get; set; }
     }
 }

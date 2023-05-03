@@ -6,7 +6,7 @@ using MobileBasedCashFlowAPI.Common;
 
 namespace MobileBasedCashFlowAPI.Services
 {
-    public class UserRoleService : UserRoleRepository
+    public class UserRoleService : IUserRoleRepository
     {
         private readonly MobileBasedCashFlowGameContext _context;
         public UserRoleService(MobileBasedCashFlowGameContext context)
@@ -87,6 +87,7 @@ namespace MobileBasedCashFlowAPI.Services
             if (role != null)
             {
                 _context.UserRoles.Remove(role);
+                await _context.SaveChangesAsync();
                 return Constant.Success;
             }
             return "Can not found this role";

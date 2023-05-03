@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.DTO;
+using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repository;
 using Swashbuckle.AspNetCore.Annotations;
@@ -14,8 +14,8 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class AssetTypesController : ControllerBase
     {
-        private readonly AssetTypeRepository _assetTypeRepository;
-        public AssetTypesController(AssetTypeRepository assetTypeRepository)
+        private readonly IAssetTypeRepository _assetTypeRepository;
+        public AssetTypesController(IAssetTypeRepository assetTypeRepository)
         {
             _assetTypeRepository = assetTypeRepository;
         }

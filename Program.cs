@@ -51,27 +51,28 @@ builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
 });
 
 // Register Service For SqlServer Database
-builder.Services.AddTransient<SendMailRepository, SendMailService>();
-builder.Services.AddTransient<UserRepository, UserService>();
-builder.Services.AddTransient<UserRoleRepository, UserRoleService>();
+builder.Services.AddTransient<ISendMailRepository, SendMailService>();
+builder.Services.AddTransient<IUserRepository, UserService>();
+builder.Services.AddTransient<IUserRoleRepository, UserRoleService>();
 
-builder.Services.AddTransient<AssetRepository, AssetService>();
-builder.Services.AddTransient<AssetTypeRepository, AssetTypeService>();
-builder.Services.AddTransient<GameRepository, GameService>();
-builder.Services.AddTransient<GameMatchRepository, GameMatchService>();
-builder.Services.AddTransient<GameModeRepository, GameModeService>();
-builder.Services.AddTransient<GameReportRepository, GameReportService>();
-builder.Services.AddTransient<GameServerRepository, GameServerService>();
-builder.Services.AddTransient<ParticipantRepository, ParticipantService>();
-builder.Services.AddTransient<UserAssetRepository, UserAssetService>();
+builder.Services.AddTransient<IAssetRepository, AssetService>();
+builder.Services.AddTransient<IAssetTypeRepository, AssetTypeService>();
+builder.Services.AddTransient<IGameMatchRepository, GameMatchService>();
+builder.Services.AddTransient<IGameModRepository, GameModService>();
+builder.Services.AddTransient<IGameReportRepository, GameReportService>();
+builder.Services.AddTransient<IGameRepository, GameService>();
+builder.Services.AddTransient<IGameRoomRepository, GameRoomService>();
+builder.Services.AddTransient<IParticipantRepository, ParticipantService>();
+builder.Services.AddTransient<IPOIRepository, POIService>();
+builder.Services.AddTransient<IUserAssetRepository, UserAssetService>();
 
 // Register Service For MongoDatabase
 builder.Services.AddTransient<MongoDbSettings>(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
-builder.Services.AddTransient<DreamRepository, DreamService>();
-builder.Services.AddTransient<EventCardRepository, EventCardService>();
-builder.Services.AddTransient<GameAccountRepository, GameAccountService>();
-builder.Services.AddTransient<JobCardRepository, JobCardService>();
-builder.Services.AddTransient<TileRepository, TileService>();
+builder.Services.AddTransient<IDreamRepository, DreamService>();
+builder.Services.AddTransient<IEventCardRepository, EventCardService>();
+builder.Services.AddTransient<IGameAccountRepository, GameAccountService>();
+builder.Services.AddTransient<IJobCardRepository, JobCardService>();
+builder.Services.AddTransient<ITileRepository, TileService>();
 
 // Register Service For Cache
 builder.Services.AddMemoryCache();

@@ -10,7 +10,7 @@ using X.PagedList;
 
 namespace MobileBasedCashFlowAPI.MongoServices
 {
-    public class GameAccountService : GameAccountRepository
+    public class GameAccountService : IGameAccountRepository
     {
         private readonly IMongoCollection<GameAccount> _collection;
         private readonly IMemoryCache _cache;

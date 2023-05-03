@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MobileBasedCashFlowAPI.DTO
+namespace MobileBasedCashFlowAPI.Dto
 {
     public class ParticipantRequest
     {
@@ -9,7 +9,6 @@ namespace MobileBasedCashFlowAPI.DTO
         public int UserId { get; set; } = int.MaxValue;
 
         [Required(ErrorMessage = "You must input matchId")]
-        [Range(0, int.MaxValue, ErrorMessage = "Match id must be integer value ")]
-        public int MatchId { get; set; } = int.MaxValue;
+        public string MatchId { get; set; } = string.Empty;
     }
 }
