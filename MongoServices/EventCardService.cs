@@ -31,7 +31,17 @@ namespace MobileBasedCashFlowAPI.MongoServices
 
         public async Task<IEnumerable<EventCard>> GetAsync()
         {
-            var eventCardList = await _collection.Find(evt => evt.Status.Equals(true)).ToListAsync();
+            _logger.Log(LogLevel.Information, "Trying to fetch the list of event card from cache.");
+            if (_cache.TryGetValue(CacheKeys.EventCards, out IEnumerable<EventCard> eventCardList))
+            {
+                _logger.Log(LogLevel.Information, "Event Card list found in cache.");
+            }
+            else
+            {
+                _logger.Log(LogLevel.Information, "Event Card list not found in cache. Fetching from database.");
+                eventCardList = await _collection.Find(evt => evt.Status.Equals(true)).ToListAsync();
+                _cache.Set(CacheKeys.EventCards, eventCardList, CacheEntryOption.MemoryCacheEntryOption());
+            }
             return eventCardList;
         }
 

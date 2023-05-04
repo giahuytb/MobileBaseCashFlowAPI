@@ -28,23 +28,6 @@ namespace MobileBasedCashFlowAPI.Extensions
                 _logger.LogError(ex, ex.Message);
 
                 await HandleExceptionAsync(context, ex);
-
-                //context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                //ProblemDetails problem = new()
-                //{
-                //    Status = (int)HttpStatusCode.InternalServerError,
-                //    Type = "Server Error",
-                //    Title = "Server Error",
-                //    Detail = "An Server Error Has Occurred"
-                //};
-
-                //string json = JsonSerializer.Serialize(problem);
-
-                //context.Response.ContentType = "application/json";
-
-                //await context.Response.WriteAsync(json);
-
             }
         }
 
