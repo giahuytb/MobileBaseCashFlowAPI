@@ -103,10 +103,10 @@ namespace MobileBasedCashFlowAPI.Services
             {
                 UserName = request.UserName,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                Gender = "Male",
+                Gender = "Nam",
                 Email = request.Email,
                 Coin = 0,
-                CreateAt = DateTime.UtcNow,
+                CreateAt = DateTime.Now,
                 EmailConfirmToken = GenerateEmailConfirmationToken(),
                 RoleId = null,
                 Status = true,
