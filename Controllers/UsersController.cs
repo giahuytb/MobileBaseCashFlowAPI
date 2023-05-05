@@ -158,15 +158,15 @@ namespace MobileBasedCashFlowAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPut("coin")]
-        [SwaggerOperation(Summary = "Update coin, coin input will be added to the existing coin)")]
-        public async Task<IActionResult> AddCoinToUser(int userId, int coin)
+        [HttpPut("coin-point")]
+        [SwaggerOperation(Summary = "Update coin and point, coin, point input will be added to the existing coin, point)")]
+        public async Task<IActionResult> AddCoinToUser(int userId, EditRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _userService.UpdateCoin(userId, coin);
+            var result = await _userService.UpdateCoin(userId, request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);

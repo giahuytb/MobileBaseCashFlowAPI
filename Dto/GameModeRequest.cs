@@ -5,7 +5,7 @@ namespace MobileBasedCashFlowAPI.Dto
     public class GameModeRequest
     {
         [Required(ErrorMessage = "Please enter game mode name")]
-        [MaxLength(20, ErrorMessage = "Do not enter more than 30 characters")]
+        [MaxLength(20, ErrorMessage = "Do not enter more than 20 characters")]
         public string ModeName { get; set; } = null!;
 
         [Required(ErrorMessage = "Please enter image url for this game mode")]

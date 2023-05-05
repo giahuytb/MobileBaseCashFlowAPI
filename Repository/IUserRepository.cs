@@ -1,5 +1,4 @@
 ﻿using MobileBasedCashFlowAPI.Dto;
-using MobileBasedCashFlowAPI.Models;
 using System.Collections;
 
 namespace MobileBasedCashFlowAPI.Repository
@@ -14,7 +13,7 @@ namespace MobileBasedCashFlowAPI.Repository
         Task<IEnumerable> GetAsync();
         public Task<string> EditProfile(int userId, EditProfileRequest request);
         public Task<object?> ViewProfile(int userId);
-        public Task<string> UpdateCoin(int userId, int coin);
+        public Task<string> UpdateCoin(int userId, EditRequest request);
         public Task<object?> FindUserById(int userId);
         public Task<object?> GetUserAsset(int userId);
         public Task<string> BuyAsset(int assetId, int userId);
