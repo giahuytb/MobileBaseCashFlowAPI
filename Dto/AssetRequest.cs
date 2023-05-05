@@ -6,7 +6,7 @@ namespace MobileBasedCashFlowAPI.Dto
     public class AssetRequest
     {
         [Required(ErrorMessage = "Please enter asset name")]
-        [MaxLength(30, ErrorMessage = "Do not enter more than 30 characters")]
+        [MaxLength(20, ErrorMessage = "Do not enter more than 30 characters")]
         public string AssetName { get; set; } = null!;
 
         [Required(ErrorMessage = "Please enter image url for this asset")]

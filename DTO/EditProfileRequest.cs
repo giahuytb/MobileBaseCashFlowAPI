@@ -9,7 +9,7 @@ namespace MobileBasedCashFlowAPI.Dto
         [AllowNull]
         public string? NickName { get; set; }
 
-        [RegularExpression("^male$|^female$")]
+        [RegularExpression("^nam$|^nữ$|^Nam$|^Nữ$", ErrorMessage = "Gender must be Nam, Nữ, nam, nữ")]
         [AllowNull]
         public string? Gender { get; set; }
 
