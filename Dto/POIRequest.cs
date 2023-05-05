@@ -5,7 +5,7 @@ namespace MobileBasedCashFlowAPI.Dto
     public class POIRequest
     {
         [Required(ErrorMessage = "Please enter POI name")]
-        [MaxLength(30, ErrorMessage = "Do not enter more than 30 characters")]
+        [MaxLength(20, ErrorMessage = "Do not enter more than 20 characters")]
         public string PoiName { get; set; } = null!;
 
         [MaxLength(500, ErrorMessage = "Description is too long (max is 500)")]

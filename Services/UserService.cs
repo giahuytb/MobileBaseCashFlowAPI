@@ -88,6 +88,7 @@ namespace MobileBasedCashFlowAPI.Services
                     user.Email,
                     user.Address,
                     user.Coin,
+                    user.Point,
                     user.ImageUrl,
                     user.Phone,
                     user.Gender,
@@ -106,6 +107,7 @@ namespace MobileBasedCashFlowAPI.Services
                 Gender = "Nam",
                 Email = request.Email,
                 Coin = 0,
+                Point = 0,
                 CreateAt = DateTime.Now,
                 EmailConfirmToken = GenerateEmailConfirmationToken(),
                 RoleId = null,
@@ -301,17 +303,13 @@ namespace MobileBasedCashFlowAPI.Services
             return null;
         }
 
-        public async Task<string> UpdateCoin(int userId, int coin)
+        public async Task<string> UpdateCoin(int userId, EditRequest request)
         {
             var oldProfile = await _context.UserAccounts.FirstOrDefaultAsync(i => i.UserId == userId);
             if (oldProfile != null)
             {
-                if (!ValidateInput.isNumber(coin.ToString()))
-                {
-                    return "Coin must be number";
-                }
-                //else if
-                oldProfile.Coin += coin;
+                oldProfile.Coin += request.Coin;
+                oldProfile.Point += request.Point;
                 await _context.SaveChangesAsync();
                 return Constant.Success;
             }

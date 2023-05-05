@@ -34,6 +34,7 @@ namespace MobileBasedCashFlowAPI.Models
         public DateTime? UpdateAt { get; set; }
         public int? GameId { get; set; }
         public int? RoleId { get; set; }
+        public double? Point { get; set; }
 
         public virtual Game? Game { get; set; }
         public virtual UserRole? Role { get; set; }
