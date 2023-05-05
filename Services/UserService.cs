@@ -130,14 +130,14 @@ namespace MobileBasedCashFlowAPI.Services
                                     where role.RoleName == "Player"
                                     select new { roleId = role.RoleId }).AsNoTracking().FirstOrDefaultAsync();
                 // Find gameId in database that match version == "ver_1"
-                var gameServerId = await (from game in _context.Games
-                                          where game.GameVersion == "Ver_1"
-                                          select new { gameId = game.GameId }).AsNoTracking().FirstOrDefaultAsync();
+                var gameId = await (from game in _context.Games
+                                    where game.GameVersion == "Ver_1"
+                                    select new { gameId = game.GameId }).AsNoTracking().FirstOrDefaultAsync();
 
-                if (roleId != null && gameServerId != null)
+                if (roleId != null && gameId != null)
                 {
                     // Add role to user
-                    user.GameId = gameServerId.gameId;
+                    user.GameId = gameId.gameId;
                     user.RoleId = roleId.roleId;
                     await _context.UserAccounts.AddAsync(user);
                     await _context.SaveChangesAsync();
@@ -250,7 +250,7 @@ namespace MobileBasedCashFlowAPI.Services
                                    userId = user.UserId,
                                    userName = user.UserName,
                                    userRole = role.RoleName,
-                               }).ToListAsync();
+                               }).AsNoTracking().ToListAsync();
             return users;
         }
 
