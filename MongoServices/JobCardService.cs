@@ -174,7 +174,7 @@ namespace MobileBasedCashFlowAPI.MongoServices
             if (jobCardExist != null)
             {
                 var result = await _collection.DeleteOneAsync(x => x.id == id);
-                var jobCardListInMemory = _cache.Get(CacheKeys.JobCards) as List<Dream>;
+                var jobCardListInMemory = _cache.Get(CacheKeys.JobCards) as List<JobCard>;
                 // check if the cache have value or not
                 if (jobCardListInMemory != null)
                 {
