@@ -215,7 +215,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost("buy")]
         [SwaggerOperation(Summary = "Buy an asset (Login require)")]
-        public async Task<ActionResult> BuyAsset([FromForm] int assetId)
+        public async Task<ActionResult> BuyAsset([FromBody] int assetId)
         {
             // get the id of current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
