@@ -215,7 +215,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost("buy")]
         [SwaggerOperation(Summary = "Buy an asset (Login require)")]
-        public async Task<ActionResult> BuyAsset([FromBody] int assetId)
+        public async Task<ActionResult> BuyAsset([FromForm] int assetId)
         {
             // get the id of current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
@@ -248,6 +248,24 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return Ok(result);
             }
             return NotFound(result);
+        }
+
+        [HttpDelete("delete-asset")]
+        [SwaggerOperation(Summary = "Delete your asset (Login require)")]
+        public async Task<ActionResult> DeleteAsset(int assetId)
+        {
+            // get the id of current user logging in system
+            string userId = HttpContext.User.FindFirstValue("Id");
+            if (userId == null)
+            {
+                return Unauthorized("User id not Found, please login");
+            }
+            var result = await _userService.DeleteMyAsset(assetId, Int32.Parse(userId));
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
     }

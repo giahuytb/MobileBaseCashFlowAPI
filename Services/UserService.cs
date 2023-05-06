@@ -337,6 +337,7 @@ namespace MobileBasedCashFlowAPI.Services
                                    where user.UserId == userId
                                    select new
                                    {
+                                       asset.AssetId,
                                        user.UserName,
                                        asset.AssetName,
                                        userAsset.CreateAt,
@@ -388,6 +389,18 @@ namespace MobileBasedCashFlowAPI.Services
             if (userAsset != null)
             {
                 userAsset.LastUsed = DateTime.Now;
+                await _context.SaveChangesAsync();
+                return Constant.Success;
+            }
+            return Constant.NotFound;
+        }
+
+        public async Task<string> DeleteMyAsset(int assetId, int userId)
+        {
+            var myAsset = await _context.UserAssets.Where(a => a.AssetId == assetId && a.UserId == userId).FirstOrDefaultAsync();
+            if (myAsset != null)
+            {
+                _context.UserAssets.Remove(myAsset);
                 await _context.SaveChangesAsync();
                 return Constant.Success;
             }
