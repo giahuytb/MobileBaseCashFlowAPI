@@ -1,11 +1,11 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.Repository;
-using MobileBasedCashFlowAPI.Models;
-using System.Security.Claims;
-using System.Collections;
 using MobileBasedCashFlowAPI.Dto;
+using MobileBasedCashFlowAPI.IRepositories;
+using MobileBasedCashFlowAPI.Models;
+using System.Collections;
+using System.Security.Claims;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace MobileBasedCashFlowAPI.Controllers
@@ -14,19 +14,19 @@ namespace MobileBasedCashFlowAPI.Controllers
     [ApiController]
     public class GamesController : ControllerBase
     {
-        private readonly IGameRepository _gameRepository;
+        private readonly IGameRepository _gameRoomRepository;
 
-        public GamesController(IGameRepository gameServerRepository)
+        public GamesController(IGameRepository gameService)
         {
-            _gameRepository = gameServerRepository;
+            _gameRoomRepository = gameService;
         }
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet]
-        [SwaggerOperation(Summary = "Get all game")]
+        [SwaggerOperation(Summary = "Get all game room")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _gameRepository.GetAsync();
+            var result = await _gameRoomRepository.GetAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -36,26 +36,26 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get game server by game id")]
+        [SwaggerOperation(Summary = "Get game by game room id")]
         public async Task<ActionResult<Game>> GetById(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameRepository.GetAsync(id);
+            var result = await _gameRoomRepository.GetAsync(id);
             if (result != null)
             {
                 return Ok(result);
             }
-            return NotFound("Can not find this game");
+            return NotFound("Can not find this game room");
 
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
-        [SwaggerOperation(Summary = "Create new game")]
-        public async Task<ActionResult> PostGameServer(GameRequest request)
+        [SwaggerOperation(Summary = "Create new game room")]
+        public async Task<ActionResult> PostGame(GameRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -66,15 +66,15 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameRepository.CreateAsync(Int32.Parse(userId), request);
+            var result = await _gameRoomRepository.CreateAsync(Int32.Parse(userId), request);
 
             return Ok(result);
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
-        [SwaggerOperation(Summary = "Update an existing game")]
-        public async Task<ActionResult> UpdateGameServer(int id, GameRequest request)
+        [SwaggerOperation(Summary = "Update an existing game room")]
+        public async Task<ActionResult> UpdateGame(int id, GameRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameRepository.UpdateAsync(id, Int32.Parse(userId), request);
+            var result = await _gameRoomRepository.UpdateAsync(id, Int32.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -95,20 +95,20 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Delete an existing game")]
-        public async Task<ActionResult> DeleteGameServer(int id)
+        [SwaggerOperation(Summary = "Delete an existing game room")]
+        public async Task<ActionResult> DeleteGame(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameRepository.DeleteAsync(id);
+            var result = await _gameRoomRepository.DeleteAsync(id);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
             }
             return NotFound(result);
         }
-
     }
+
 }

@@ -32,11 +32,11 @@ namespace MobileBasedCashFlowAPI.Models
         public string? Address { get; set; }
         public DateTime CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
-        public int? GameId { get; set; }
+        public int? GameServerId { get; set; }
         public int? RoleId { get; set; }
         public double? Point { get; set; }
 
-        public virtual Game? Game { get; set; }
+        public virtual GameServer? GameServer { get; set; }
         public virtual UserRole? Role { get; set; }
         public virtual ICollection<GameMatch> GameMatchHosts { get; set; }
         public virtual ICollection<GameMatch> GameMatchLastHosts { get; set; }

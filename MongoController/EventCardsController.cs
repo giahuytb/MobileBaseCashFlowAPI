@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using MobileBasedCashFlowAPI.Cache;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.IMongoRepositories;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using Swashbuckle.AspNetCore.Annotations;

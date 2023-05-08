@@ -1,9 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.IMongoServices;
 using MobileBasedCashFlowAPI.MongoModels;
-using MobileBasedCashFlowAPI.MongoServices;
+using MobileBasedCashFlowAPI.IMongoRepositories;
 
 namespace MobileBasedCashFlowAPI.MongoController
 {

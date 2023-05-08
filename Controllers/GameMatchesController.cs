@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Dto;
-using MobileBasedCashFlowAPI.Repository;
+using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.Services;
+using MobileBasedCashFlowAPI.Repositories;
 using System.Collections;
 using System.Security.Claims;
 using MobileBasedCashFlowAPI.Common;
