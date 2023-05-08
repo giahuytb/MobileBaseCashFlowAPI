@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Security.Claims;
 
-using MobileBasedCashFlowAPI.Repository;
+using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Common;

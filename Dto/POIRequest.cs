@@ -15,6 +15,6 @@ namespace MobileBasedCashFlowAPI.Dto
         public string? PoiVideoUrl { get; set; }
 
         [Required(ErrorMessage = "Please enter game id")]
-        public int? GameId { get; set; }
+        public int? GameServerId { get; set; }
     }
 }

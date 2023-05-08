@@ -5,13 +5,14 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
-using MobileBasedCashFlowAPI.MongoServices;
-using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.MongoRepositories;
+using MobileBasedCashFlowAPI.IMongoRepositories;
 using MobileBasedCashFlowAPI.Settings;
 
-using MobileBasedCashFlowAPI.Services;
-using MobileBasedCashFlowAPI.Repository;
+using MobileBasedCashFlowAPI.Repositories;
+using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
+
 using MobileBasedCashFlowAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,28 +52,28 @@ builder.Services.AddDbContext<MobileBasedCashFlowGameContext>(option =>
 });
 
 // Register Service For SqlServer Database
-builder.Services.AddTransient<ISendMailRepository, SendMailService>();
-builder.Services.AddTransient<IUserRepository, UserService>();
-builder.Services.AddTransient<IUserRoleRepository, UserRoleService>();
+builder.Services.AddTransient<ISendMailRepository, SendMailRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserRoleRepository, UserRoleRepository>();
 
-builder.Services.AddTransient<IAssetRepository, AssetService>();
-builder.Services.AddTransient<IAssetTypeRepository, AssetTypeService>();
-builder.Services.AddTransient<IGameMatchRepository, GameMatchService>();
-builder.Services.AddTransient<IGameModRepository, GameModService>();
-builder.Services.AddTransient<IGameReportRepository, GameReportService>();
-builder.Services.AddTransient<IGameRepository, GameService>();
-builder.Services.AddTransient<IGameRoomRepository, GameRoomService>();
-builder.Services.AddTransient<IParticipantRepository, ParticipantService>();
-builder.Services.AddTransient<IPOIRepository, POIService>();
-builder.Services.AddTransient<IUserAssetRepository, UserAssetService>();
+builder.Services.AddTransient<IAssetRepository, AssetRepository>();
+builder.Services.AddTransient<IAssetTypeRepository, AssetTypeRepository>();
+builder.Services.AddTransient<IGameMatchRepository, GameMatchRepository>();
+builder.Services.AddTransient<IGameModRepository, GameModRepository>();
+builder.Services.AddTransient<IGameReportRepository, GameReportRepository>();
+builder.Services.AddTransient<IGameServerRepository, GameServerRepository>();
+builder.Services.AddTransient<IGameRepository, GameRepository>();
+builder.Services.AddTransient<IParticipantRepository, ParticipantRepository>();
+builder.Services.AddTransient<IPOIRepository, POIRepository>();
+builder.Services.AddTransient<IUserAssetRepository, UserAssetRepository>();
 
 // Register Service For MongoDatabase
 builder.Services.AddTransient<MongoDbSettings>(sp => sp.GetRequiredService<IOptions<MongoDbSettings>>().Value);
-builder.Services.AddTransient<IDreamRepository, DreamService>();
-builder.Services.AddTransient<IEventCardRepository, EventCardService>();
-builder.Services.AddTransient<IGameAccountRepository, GameAccountService>();
-builder.Services.AddTransient<IJobCardRepository, JobCardService>();
-builder.Services.AddTransient<ITileRepository, TileService>();
+builder.Services.AddTransient<IDreamRepository, DreamRepository>();
+builder.Services.AddTransient<IEventCardRepository, EventCardRepository>();
+builder.Services.AddTransient<IGameAccountRepository, GameAccountRepository>();
+builder.Services.AddTransient<IJobCardRepository, JobCardRepository>();
+builder.Services.AddTransient<ITileRepository, TileRepository>();
 
 // Register Service For Cache
 builder.Services.AddMemoryCache();

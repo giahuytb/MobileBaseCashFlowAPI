@@ -14,8 +14,8 @@ namespace MobileBasedCashFlowAPI.Models
         public DateTime? UpdateAt { get; set; }
         public int? UpdateBy { get; set; }
         public bool Status { get; set; }
-        public int? GameId { get; set; }
+        public int? GameServerId { get; set; }
 
-        public virtual Game? Game { get; set; }
+        public virtual GameServer? GameServer { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.IMongoServices;
+using MobileBasedCashFlowAPI.IMongoRepositories;
 using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using Swashbuckle.AspNetCore.Annotations;

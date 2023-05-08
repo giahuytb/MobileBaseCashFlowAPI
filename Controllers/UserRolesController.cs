@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MobileBasedCashFlowAPI.Repository;
+using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
-using MobileBasedCashFlowAPI.Services;
+using MobileBasedCashFlowAPI.Repositories;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.Collections;
 using System.Security.Claims;
@@ -39,7 +39,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Ok(result);
             }
-            return NotFound("List is empty");
+            return NotFound("Can not found this role");
         }
 
         [HttpPost]
@@ -69,7 +69,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return NotFound(result);
         }
 
         [HttpDelete("{id}")]

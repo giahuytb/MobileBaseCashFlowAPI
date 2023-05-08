@@ -19,9 +19,9 @@ namespace MobileBasedCashFlowAPI.Models
         public int? WinnerId { get; set; }
         public int? HostId { get; set; }
         public int? LastHostId { get; set; }
-        public int? GameRoomId { get; set; }
+        public int? GameId { get; set; }
 
-        public virtual GameRoom? GameRoom { get; set; }
+        public virtual Game? Game { get; set; }
         public virtual UserAccount? Host { get; set; }
         public virtual UserAccount? LastHost { get; set; }
         public virtual UserAccount? Winner { get; set; }
