@@ -79,6 +79,21 @@ namespace MobileBasedCashFlowAPI.Repositories
             var jwtToken = tokenHandler.WriteToken(token);
             var stringToken = tokenHandler.WriteToken(token);
 
+            var userAsset = await (from usAs in _context.UserAssets
+                                   join Ast in _context.Assets on usAs.AssetId equals Ast.AssetId
+                                   where Ast.AssetId == Ast.AssetId
+                                      && usAs.UserId == user.UserId
+                                      && usAs.LastUsed == (from NestedUsAs in _context.UserAssets
+                                                           join Ast in _context.Assets on NestedUsAs.AssetId equals Ast.AssetId
+                                                           where Ast.AssetType == 2
+                                                           orderby NestedUsAs.LastUsed descending
+                                                           select NestedUsAs.LastUsed
+                                                            ).FirstOrDefault()
+                                   select new
+                                   {
+                                       CharacterLastUsed = Ast.AssetName,
+                                   }).FirstOrDefaultAsync();
+
             return new
             {
                 user = new
@@ -93,6 +108,10 @@ namespace MobileBasedCashFlowAPI.Repositories
                     user.Phone,
                     user.Gender,
                     role.roleName,
+                },
+                asset = new
+                {
+                    characterLastUsed = userAsset.CharacterLastUsed,
                 },
                 token = stringToken,
             };
@@ -334,12 +353,14 @@ namespace MobileBasedCashFlowAPI.Repositories
             var inventory = await (from userAsset in _context.UserAssets
                                    join user in _context.UserAccounts on userAsset.UserId equals user.UserId
                                    join asset in _context.Assets on userAsset.AssetId equals asset.AssetId
+                                   join assetType in _context.AssetTypes on asset.AssetType equals assetType.AssetTypeId
                                    where user.UserId == userId
                                    select new
                                    {
                                        asset.AssetId,
                                        user.UserName,
                                        asset.AssetName,
+                                       assetType.AssetTypeName,
                                        userAsset.CreateAt,
                                        userAsset.LastUsed,
                                    }).AsNoTracking().ToListAsync();
@@ -384,7 +405,7 @@ namespace MobileBasedCashFlowAPI.Repositories
         public async Task<string> UpdateLastUsed(int assetId, int userId)
         {
             var userAsset = await _context.UserAssets
-                            .Where(i => i.UserId == assetId && i.AssetId == assetId)
+                            .Where(i => i.UserId == userId && i.AssetId == assetId)
                             .FirstOrDefaultAsync();
             if (userAsset != null)
             {
