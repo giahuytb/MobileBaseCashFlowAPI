@@ -52,7 +52,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                    a.IsInShop,
                                    a.CreateBy,
                                    a.AssetType,
-                               }).AsNoTracking().ToListAsync();
+                               }).ToListAsync();
             return asset;
         }
 

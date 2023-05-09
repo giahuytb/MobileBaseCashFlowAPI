@@ -14,7 +14,6 @@ using MobileBasedCashFlowAPI.Dto;
 
 namespace MobileBasedCashFlowAPI.Repositories
 {
-
     public class UserRepository : IUserRepository
     {
         private readonly IConfiguration _configuration;
@@ -88,11 +87,31 @@ namespace MobileBasedCashFlowAPI.Repositories
                                                            where Ast.AssetType == 2
                                                            orderby NestedUsAs.LastUsed descending
                                                            select NestedUsAs.LastUsed
-                                                            ).FirstOrDefault()
+                                                            ).SingleOrDefault()
                                    select new
                                    {
-                                       CharacterLastUsed = Ast.AssetName,
-                                   }).FirstOrDefaultAsync();
+                                       Ast.AssetId,
+                                   }).AsNoTracking().SingleOrDefaultAsync();
+            if (userAsset == null)
+            {
+                return new
+                {
+                    user = new
+                    {
+                        user.UserId,
+                        user.NickName,
+                        user.Email,
+                        user.Address,
+                        user.Coin,
+                        user.Point,
+                        user.ImageUrl,
+                        user.Phone,
+                        user.Gender,
+                        role.roleName,
+                    },
+                    token = stringToken,
+                };
+            }
 
             return new
             {
@@ -108,10 +127,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                     user.Phone,
                     user.Gender,
                     role.roleName,
-                },
-                asset = new
-                {
-                    characterLastUsed = userAsset.CharacterLastUsed,
+                    CharacterLastUsed = userAsset.AssetId,
                 },
                 token = stringToken,
             };
