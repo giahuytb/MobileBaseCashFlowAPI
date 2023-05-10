@@ -35,6 +35,7 @@ namespace MobileBasedCashFlowAPI.Models
         public int? GameServerId { get; set; }
         public int? RoleId { get; set; }
         public double? Point { get; set; }
+        public string? LastJobSelected { get; set; }
 
         public virtual GameServer? GameServer { get; set; }
         public virtual UserRole? Role { get; set; }

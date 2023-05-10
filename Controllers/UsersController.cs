@@ -234,7 +234,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         //[Authorize(Roles = "Player, Admin")]
         [HttpPut("asset-last-used")]
         [SwaggerOperation(Summary = "Update last use asset (Login require)")]
-        public async Task<ActionResult> UpdateAssetLastUsed(int assetId)
+        public async Task<ActionResult> UpdateAssetLastUsed(LastUsedRequest request)
         {
             // get the id of current user logging in system
             string userId = HttpContext.User.FindFirstValue("Id");
@@ -242,7 +242,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _userService.UpdateLastUsed(assetId, Int32.Parse(userId));
+            var result = await _userService.UpdateLastUsed(request, Int32.Parse(userId));
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
