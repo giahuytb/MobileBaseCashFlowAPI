@@ -90,7 +90,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                                             ).SingleOrDefault()
                                    select new
                                    {
-                                       Ast.AssetId,
+                                       Ast.ImageUrl,
                                    }).AsNoTracking().SingleOrDefaultAsync();
             if (userAsset == null)
             {
@@ -127,7 +127,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                     user.Phone,
                     user.Gender,
                     role.roleName,
-                    CharacterLastUsed = userAsset.AssetId,
+                    CharacterLastUsed = userAsset.ImageUrl,
                 },
                 token = stringToken,
             };
