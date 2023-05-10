@@ -50,11 +50,11 @@ namespace MobileBasedCashFlowAPI.Repositories
             {
                 return "Can not found this role";
             }
-            if (user.Coin == null)
+            else if (user.Coin == null)
             {
                 user.Coin = 0;
             }
-            if (user.Address == null)
+            else if (user.Address == null)
             {
                 user.Address = "";
             }
@@ -108,6 +108,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                         user.Phone,
                         user.Gender,
                         role.roleName,
+                        user.LastJobSelected,
                     },
                     token = stringToken,
                 };
@@ -127,7 +128,8 @@ namespace MobileBasedCashFlowAPI.Repositories
                     user.Phone,
                     user.Gender,
                     role.roleName,
-                    CharacterLastUsed = userAsset.ImageUrl,
+                    user.LastJobSelected,
+                    lastCharacterSelected = userAsset.ImageUrl,
                 },
                 token = stringToken,
             };
@@ -418,14 +420,25 @@ namespace MobileBasedCashFlowAPI.Repositories
             return Constant.Success;
         }
 
-        public async Task<string> UpdateLastUsed(int assetId, int userId)
+        public async Task<string> UpdateLastUsed(LastUsedRequest request, int userId)
         {
             var userAsset = await _context.UserAssets
-                            .Where(i => i.UserId == userId && i.AssetId == assetId)
+                            .Where(i => i.UserId == userId && i.AssetId == request.AssetId)
                             .FirstOrDefaultAsync();
+            var user = await _context.UserAccounts.FindAsync(userId);
+            if (user == null)
+            {
+                return "Can not found this user";
+            }
+            if (userAsset == null)
+            {
+                return "Can not found this asset on your inventory";
+            }
+
             if (userAsset != null)
             {
                 userAsset.LastUsed = DateTime.Now;
+                user.LastJobSelected = request.LastJobSelected;
                 await _context.SaveChangesAsync();
                 return Constant.Success;
             }

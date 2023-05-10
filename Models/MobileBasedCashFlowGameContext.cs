@@ -428,6 +428,10 @@ namespace MobileBasedCashFlowAPI.Models
                     .IsUnicode(false)
                     .HasColumnName("image_url");
 
+                entity.Property(e => e.LastJobSelected)
+                    .HasMaxLength(20)
+                    .HasColumnName("lastJobSelected");
+
                 entity.Property(e => e.NickName)
                     .HasMaxLength(30)
                     .HasColumnName("nick_name");
