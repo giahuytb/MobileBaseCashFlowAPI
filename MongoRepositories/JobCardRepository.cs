@@ -97,9 +97,8 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
         {
             var oldJobCard = await _collection.Find(jobcard => jobcard.id == id).FirstOrDefaultAsync();
             // check name update is exist in database except it old name
-            var checkName = await _collection
-                        .FindAsync(jobcard => jobcard.Job_card_name.Equals(request.Job_card_name)
-                                    && jobcard.Job_card_name != oldJobCard.Job_card_name);
+            var checkName = await _collection.AsQueryable().Where(j => j.Job_card_name == request.Job_card_name
+                                    && j.Job_card_name != oldJobCard.Job_card_name).FirstOrDefaultAsync();
             if (checkName != null)
             {
                 return "This jobcard's name is already exist";
@@ -111,7 +110,6 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 oldJobCard.Image_url = request.Image_url;
                 oldJobCard.Update_at = DateTime.Now;
                 oldJobCard.Update_by = userId;
-
                 oldJobCard.Game_accounts = request.Game_accounts;
 
                 await _collection.ReplaceOneAsync(x => x.id == id, oldJobCard);
