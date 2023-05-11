@@ -159,10 +159,10 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.Dreams);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.Dreams, dreamListInMemory);
-                        return Constant.Success;
+
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }
@@ -194,11 +194,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.Dreams);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.Dreams, DreamListInMemory);
-
-                        return Constant.Success;
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }
@@ -226,11 +224,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.Dreams);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.Dreams, dreamListInMemory);
-
-                        return Constant.Success;
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }

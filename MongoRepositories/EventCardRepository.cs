@@ -115,25 +115,23 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 Cash_flow = request.Cash_flow,
                 Event_type_id = request.Event_type_id,
                 Action = request.Action,
-                Game_mode_id = request.Game_mode_id,
+                Game_mode_id = request.Game_mod_id,
                 Status = true,
             };
             await _collection.InsertOneAsync(eventCard);
 
-            var eventCardListInMemory = _cache.Get(CacheKeys.EventCards + eventCard.Event_type_id) as List<EventCard>;
+            var eventCardListInMemory = _cache.Get(CacheKeys.EventCards + eventCard.Game_mode_id) as List<EventCard>;
             // check if the cache have value or not
             if (eventCardListInMemory != null)
             {
                 // add new object for this list
                 eventCardListInMemory.Add(eventCard);
                 // remove all value from this cache key
-                _cache.Remove(CacheKeys.EventCards + eventCard.Event_type_id);
+                _cache.Remove(CacheKeys.EventCards + eventCard.Game_mode_id);
                 // set new list for this cache by using the list above
-                _cache.Set(CacheKeys.EventCards + eventCard.Event_type_id, eventCardListInMemory);
-
-                return Constant.Success;
+                _cache.Set(CacheKeys.EventCards + eventCard.Game_mode_id, eventCardListInMemory);
             }
-            return Constant.Failed;
+            return Constant.Success;
         }
 
         public async Task<string> UpdateAsync(string id, EventCardRequest request)
@@ -141,8 +139,6 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             var oldEventCard = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
             if (oldEventCard != null)
             {
-                int oldGameModeId = oldEventCard.Game_mode_id;
-
                 oldEventCard.Event_name = request.Event_name;
                 oldEventCard.Image_url = request.Image_url;
                 oldEventCard.Account_name = request.Account_Name;
@@ -153,12 +149,12 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 oldEventCard.Dept = request.Dept;
                 oldEventCard.Cash_flow = request.Cash_flow;
                 oldEventCard.Event_type_id = request.Event_type_id;
-                oldEventCard.Game_mode_id = request.Game_mode_id;
+                //oldEventCard.Game_mode_id = request.Game_mod_id;
                 oldEventCard.Action = request.Action;
 
                 await _collection.ReplaceOneAsync(x => x.id == id, oldEventCard);
 
-                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards + oldGameModeId) as List<EventCard>;
+                var eventCardListInMemory = _cache.Get(CacheKeys.EventCards + oldEventCard.Game_mode_id) as List<EventCard>;
                 // check if the cache have value or not
                 if (eventCardListInMemory != null)
                 {
@@ -175,14 +171,12 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         eventCardListInMemory.Insert(oldEventCardInMemoryIndex, oldEventCard);
 
                         // remove all value from this cache key
-                        _cache.Remove(CacheKeys.EventCards + oldGameModeId);
+                        _cache.Remove(CacheKeys.EventCards + oldEventCard.Game_mode_id);
                         // set new list for this cache by using the list above
-                        _cache.Set(CacheKeys.EventCards + request.Game_mode_id, eventCardListInMemory);
-
-                        return Constant.Success;
+                        _cache.Set(CacheKeys.EventCards + oldEventCard.Game_mode_id, eventCardListInMemory);
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }
@@ -214,11 +208,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.EventCards + EventCard.Game_mode_id);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.EventCards + EventCard.Game_mode_id, eventCardListInMemory);
-
-                        return Constant.Success;
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }
@@ -247,11 +239,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.EventCards + eventCardExist.Game_mode_id);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.EventCards + eventCardExist.Game_mode_id, eventCardListInMemory);
-
-                        return Constant.Success;
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }

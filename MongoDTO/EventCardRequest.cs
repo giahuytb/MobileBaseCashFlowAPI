@@ -36,7 +36,7 @@ namespace MobileBasedCashFlowAPI.MongoDTO
         public int Event_type_id { get; set; } = 0;
 
         [Required(ErrorMessage = "Please choice your game mode")]
-        public int Game_mode_id { get; set; } = 0;
+        public int Game_mod_id { get; set; } = 0;
 
         [Required]
         [Range(1, 7, ErrorMessage = "Acction must between 1 to 7")]
