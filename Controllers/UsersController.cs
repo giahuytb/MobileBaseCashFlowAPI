@@ -107,7 +107,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
 
         [HttpPut("profile")]
-        [Authorize(Roles = "Player, Admin, Moderator")]
+        [Authorize(Roles = "Player, Admin")]
         [SwaggerOperation(Summary = "Edit the profile")]
         public async Task<IActionResult> EditProfile(int userId, EditProfileRequest request)
         {

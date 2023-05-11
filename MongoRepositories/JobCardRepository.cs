@@ -134,10 +134,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.JobCards);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.JobCards, jobCardListInMemory);
-                        return Constant.Success;
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
 
@@ -170,11 +169,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.JobCards);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.JobCards, JobCardListInMemory);
-
-                        return Constant.Success;
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }
@@ -201,11 +198,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.JobCards);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.JobCards, jobCardListInMemory);
-
-                        return Constant.Success;
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.Success;
         }

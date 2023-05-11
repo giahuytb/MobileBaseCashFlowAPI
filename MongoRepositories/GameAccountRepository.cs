@@ -111,9 +111,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.GameAccounts);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.GameAccounts, gameAccountListInMemory);
-                        return Constant.Success;
                     }
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }
@@ -145,11 +145,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.GameAccounts);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.GameAccounts, GameAccountsListInMemory);
-
-                        return Constant.Success;
                     }
-                    return Constant.Failed;
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }
@@ -176,10 +174,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         _cache.Remove(CacheKeys.GameAccounts);
                         // set new list for this cache by using the list above
                         _cache.Set(CacheKeys.GameAccounts, gameAccountListInMemory);
-
-                        return Constant.Success;
                     }
                 }
+                return Constant.Success;
             }
             return Constant.NotFound;
         }
