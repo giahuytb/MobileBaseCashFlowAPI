@@ -10,6 +10,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Dto;
+using NuGet.ContentModel;
 
 
 namespace MobileBasedCashFlowAPI.Repositories
@@ -143,7 +144,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 Gender = "Nam",
                 Email = request.Email,
-                Coin = 0,
+                Coin = 100,
                 Point = 0,
                 CreateAt = DateTime.Now,
                 EmailConfirmToken = GenerateEmailConfirmationToken(),
@@ -180,6 +181,37 @@ namespace MobileBasedCashFlowAPI.Repositories
                     user.RoleId = roleId.roleId;
                     await _context.UserAccounts.AddAsync(user);
                     await _context.SaveChangesAsync();
+
+                    int userId = user.UserId;
+
+                    var asset = await _context.Assets.Where(i => i.AssetName == "Default").FirstOrDefaultAsync();
+                    if (asset == null)
+                    {
+                        return "Can not found this asset";
+                    }
+                    // check if this asset has been purchased by the user 
+                    var check = await _context.UserAssets.FirstOrDefaultAsync(i => i.UserId == userId && i.AssetId == asset.AssetId);
+                    if (check != null)
+                    {
+                        return "You already bought this asset";
+                    }
+                    if (user.Coin < asset.AssetPrice)
+                    {
+                        return "You don't have enough coin to buy this asset";
+                    }
+                    var invent = new UserAsset()
+                    {
+                        AssetId = asset.AssetId,
+                        UserId = userId,
+                        CreateAt = DateTime.Now,
+                        LastUsed = DateTime.Now,
+                    };
+
+                    user.Coin = user.Coin - asset.AssetPrice;
+                    await _context.UserAssets.AddAsync(invent);
+                    await _context.SaveChangesAsync();
+
+
                     // Create a url path for user to cofirm account in mail
 
                     //var uriBuilder = new UriBuilder(_configuration["ReturnPaths:VerifyEmail"]);
