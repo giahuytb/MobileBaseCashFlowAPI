@@ -85,7 +85,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                       && usAs.UserId == user.UserId
                                       && usAs.LastUsed == (from NestedUsAs in _context.UserAssets
                                                            join Ast in _context.Assets on NestedUsAs.AssetId equals Ast.AssetId
-                                                           where Ast.AssetType == 2
+                                                           where Ast.AssetType == 2 && usAs.UserId == user.UserId
                                                            orderby NestedUsAs.LastUsed descending
                                                            select NestedUsAs.LastUsed
                                                             ).SingleOrDefault()
