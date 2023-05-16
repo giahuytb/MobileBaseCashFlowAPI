@@ -24,7 +24,6 @@ namespace MobileBasedCashFlowAPI.Models
         public virtual DbSet<GameReport> GameReports { get; set; } = null!;
         public virtual DbSet<GameServer> GameServers { get; set; } = null!;
         public virtual DbSet<Participant> Participants { get; set; } = null!;
-        public virtual DbSet<PointOfInteraction> PointOfInteractions { get; set; } = null!;
         public virtual DbSet<UserAccount> UserAccounts { get; set; } = null!;
         public virtual DbSet<UserAsset> UserAssets { get; set; } = null!;
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
@@ -38,12 +37,12 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.Property(e => e.AssetId).HasColumnName("asset_id");
 
                 entity.Property(e => e.AssetName)
-                    .HasMaxLength(50)
+                    .HasMaxLength(20)
                     .HasColumnName("asset_name");
 
                 entity.Property(e => e.AssetPrice).HasColumnName("asset_price");
 
-                entity.Property(e => e.AssetType).HasColumnName("asset_type");
+                entity.Property(e => e.AssetTypeId).HasColumnName("asset_type_id");
 
                 entity.Property(e => e.CreateAt)
                     .HasColumnType("datetime")
@@ -69,10 +68,10 @@ namespace MobileBasedCashFlowAPI.Models
 
                 entity.Property(e => e.UpdateBy).HasColumnName("update_by");
 
-                entity.HasOne(d => d.AssetTypeNavigation)
+                entity.HasOne(d => d.AssetType)
                     .WithMany(p => p.Assets)
-                    .HasForeignKey(d => d.AssetType)
-                    .HasConstraintName("FK__Asset__asset_typ__4E88ABD4");
+                    .HasForeignKey(d => d.AssetTypeId)
+                    .HasConstraintName("FK__Asset__asset_typ__4AB81AF0");
             });
 
             modelBuilder.Entity<AssetType>(entity =>
@@ -82,7 +81,7 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.Property(e => e.AssetTypeId).HasColumnName("asset_type_id");
 
                 entity.Property(e => e.AssetTypeName)
-                    .HasMaxLength(50)
+                    .HasMaxLength(20)
                     .HasColumnName("asset_type_name");
 
                 entity.Property(e => e.CreateAt)
@@ -135,13 +134,13 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.HasOne(d => d.GameServer)
                     .WithMany(p => p.Games)
                     .HasForeignKey(d => d.GameServerId)
-                    .HasConstraintName("FK__Game_room__game___412EB0B6");
+                    .HasConstraintName("FK__Game__game_serve__3D5E1FD2");
             });
 
             modelBuilder.Entity<GameMatch>(entity =>
             {
                 entity.HasKey(e => e.MatchId)
-                    .HasName("PK__Game_mat__9D7FCBA3595C550D");
+                    .HasName("PK__Game_mat__9D7FCBA32D9EC26E");
 
                 entity.ToTable("Game_match");
 
@@ -155,7 +154,7 @@ namespace MobileBasedCashFlowAPI.Models
                     .HasColumnType("datetime")
                     .HasColumnName("end_time");
 
-                entity.Property(e => e.GameId).HasColumnName("game_id");
+                entity.Property(e => e.GameModId).HasColumnName("game_mod_id");
 
                 entity.Property(e => e.HostId).HasColumnName("host_id");
 
@@ -171,25 +170,25 @@ namespace MobileBasedCashFlowAPI.Models
 
                 entity.Property(e => e.WinnerId).HasColumnName("winner_id");
 
-                entity.HasOne(d => d.Game)
+                entity.HasOne(d => d.GameMod)
                     .WithMany(p => p.GameMatches)
-                    .HasForeignKey(d => d.GameId)
-                    .HasConstraintName("FK__Game_matc__game___5812160E");
+                    .HasForeignKey(d => d.GameModId)
+                    .HasConstraintName("FK__Game_matc__game___5441852A");
 
                 entity.HasOne(d => d.Host)
                     .WithMany(p => p.GameMatchHosts)
                     .HasForeignKey(d => d.HostId)
-                    .HasConstraintName("FK__Game_matc__host___5629CD9C");
+                    .HasConstraintName("FK__Game_matc__host___52593CB8");
 
                 entity.HasOne(d => d.LastHost)
                     .WithMany(p => p.GameMatchLastHosts)
                     .HasForeignKey(d => d.LastHostId)
-                    .HasConstraintName("FK__Game_matc__last___571DF1D5");
+                    .HasConstraintName("FK__Game_matc__last___534D60F1");
 
                 entity.HasOne(d => d.Winner)
                     .WithMany(p => p.GameMatchWinners)
                     .HasForeignKey(d => d.WinnerId)
-                    .HasConstraintName("FK__Game_matc__winne__5535A963");
+                    .HasConstraintName("FK__Game_matc__winne__5165187F");
             });
 
             modelBuilder.Entity<GameMod>(entity =>
@@ -230,13 +229,13 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.HasOne(d => d.Game)
                     .WithMany(p => p.GameMods)
                     .HasForeignKey(d => d.GameId)
-                    .HasConstraintName("FK__Game_mod__game_r__440B1D61");
+                    .HasConstraintName("FK__Game_mod__game_i__403A8C7D");
             });
 
             modelBuilder.Entity<GameReport>(entity =>
             {
                 entity.HasKey(e => e.ReportId)
-                    .HasName("PK__Game_rep__779B7C586108E3C7");
+                    .HasName("PK__Game_rep__779B7C58D2B56994");
 
                 entity.ToTable("Game_report");
 
@@ -271,19 +270,19 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.HasOne(d => d.Match)
                     .WithMany(p => p.GameReports)
                     .HasForeignKey(d => d.MatchId)
-                    .HasConstraintName("FK__Game_repo__match__5EBF139D");
+                    .HasConstraintName("FK__Game_repo__match__5AEE82B9");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.GameReports)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Game_repo__user___5FB337D6");
+                    .HasConstraintName("FK__Game_repo__user___5BE2A6F2");
             });
 
             modelBuilder.Entity<GameServer>(entity =>
             {
                 entity.ToTable("Game_server");
 
-                entity.HasIndex(e => e.GameVersion, "UQ__Game__3BAE19ACA9C524B3")
+                entity.HasIndex(e => e.GameVersion, "UQ__Game_ser__3BAE19AC53A17A5E")
                     .IsUnique();
 
                 entity.Property(e => e.GameServerId).HasColumnName("game_server_id");
@@ -330,69 +329,23 @@ namespace MobileBasedCashFlowAPI.Models
                     .WithMany(p => p.Participants)
                     .HasForeignKey(d => d.MatchId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Participa__match__5BE2A6F2");
+                    .HasConstraintName("FK__Participa__match__5812160E");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Participants)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Participa__user___5AEE82B9");
-            });
-
-            modelBuilder.Entity<PointOfInteraction>(entity =>
-            {
-                entity.HasKey(e => e.PoiId)
-                    .HasName("PK__Point_of__6176E7AC229557FE");
-
-                entity.ToTable("Point_of_interaction");
-
-                entity.HasIndex(e => e.PoiName, "UQ__Point_of__0564CB7D035CA5B1")
-                    .IsUnique();
-
-                entity.Property(e => e.PoiId).HasColumnName("poi_id");
-
-                entity.Property(e => e.CreateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("create_at");
-
-                entity.Property(e => e.CreateBy).HasColumnName("create_by");
-
-                entity.Property(e => e.GameServerId).HasColumnName("game_server_id");
-
-                entity.Property(e => e.PoiDescription)
-                    .HasMaxLength(500)
-                    .HasColumnName("poi_description");
-
-                entity.Property(e => e.PoiName)
-                    .HasMaxLength(20)
-                    .HasColumnName("poi_name");
-
-                entity.Property(e => e.PoiVideoUrl)
-                    .HasMaxLength(200)
-                    .HasColumnName("poi_video_url");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.Property(e => e.UpdateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("update_at");
-
-                entity.Property(e => e.UpdateBy).HasColumnName("update_by");
-
-                entity.HasOne(d => d.GameServer)
-                    .WithMany(p => p.PointOfInteractions)
-                    .HasForeignKey(d => d.GameServerId)
-                    .HasConstraintName("FK__Point_of___game___6383C8BA");
+                    .HasConstraintName("FK__Participa__user___571DF1D5");
             });
 
             modelBuilder.Entity<UserAccount>(entity =>
             {
                 entity.HasKey(e => e.UserId)
-                    .HasName("PK__User_acc__B9BE370F39C64658");
+                    .HasName("PK__User_acc__B9BE370F44659A28");
 
                 entity.ToTable("User_account");
 
-                entity.HasIndex(e => e.UserName, "UQ__User_acc__7C9273C4FB57D0DD")
+                entity.HasIndex(e => e.UserName, "UQ__User_acc__7C9273C4C67A876E")
                     .IsUnique();
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -433,7 +386,7 @@ namespace MobileBasedCashFlowAPI.Models
                     .HasColumnName("lastJobSelected");
 
                 entity.Property(e => e.NickName)
-                    .HasMaxLength(30)
+                    .HasMaxLength(12)
                     .HasColumnName("nick_name");
 
                 entity.Property(e => e.PasswordHash)
@@ -477,12 +430,12 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.HasOne(d => d.GameServer)
                     .WithMany(p => p.UserAccounts)
                     .HasForeignKey(d => d.GameServerId)
-                    .HasConstraintName("FK__User_acco__game___48CFD27E");
+                    .HasConstraintName("FK__User_acco__game___44FF419A");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.UserAccounts)
                     .HasForeignKey(d => d.RoleId)
-                    .HasConstraintName("FK__User_acco__role___49C3F6B7");
+                    .HasConstraintName("FK__User_acco__role___45F365D3");
             });
 
             modelBuilder.Entity<UserAsset>(entity =>
@@ -508,23 +461,23 @@ namespace MobileBasedCashFlowAPI.Models
                     .WithMany(p => p.UserAssets)
                     .HasForeignKey(d => d.AssetId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__User_asse__asset__52593CB8");
+                    .HasConstraintName("FK__User_asse__asset__4E88ABD4");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserAssets)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__User_asse__user___5165187F");
+                    .HasConstraintName("FK__User_asse__user___4D94879B");
             });
 
             modelBuilder.Entity<UserRole>(entity =>
             {
                 entity.HasKey(e => e.RoleId)
-                    .HasName("PK__User_rol__760965CC52B383AA");
+                    .HasName("PK__User_rol__760965CC609DA724");
 
                 entity.ToTable("User_role");
 
-                entity.HasIndex(e => e.RoleName, "UQ__User_rol__783254B18F9A7DBC")
+                entity.HasIndex(e => e.RoleName, "UQ__User_rol__783254B1E1DDC235")
                     .IsUnique();
 
                 entity.Property(e => e.RoleId).HasColumnName("role_id");

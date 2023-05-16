@@ -26,6 +26,6 @@ namespace MobileBasedCashFlowAPI.Dto
 
         [Required(ErrorMessage = "Please enter asset type")]
         [Range(1, int.MaxValue, ErrorMessage = "Asset type must be number and bigger than 0")]
-        public byte AssetType { get; set; }
+        public byte AssetTypeId { get; set; }
     }
 }

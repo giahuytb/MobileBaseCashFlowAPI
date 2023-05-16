@@ -22,8 +22,10 @@ namespace MobileBasedCashFlowAPI.Models
         public string Email { get; set; } = null!;
         public string? ImageUrl { get; set; }
         public string? Phone { get; set; }
-        public double? Coin { get; set; }
+        public double Coin { get; set; }
+        public double Point { get; set; }
         public string? Gender { get; set; }
+        public string? LastJobSelected { get; set; }
         public bool Status { get; set; }
         public string? EmailConfirmToken { get; set; }
         public DateTime? VerifyAt { get; set; }
@@ -34,8 +36,6 @@ namespace MobileBasedCashFlowAPI.Models
         public DateTime? UpdateAt { get; set; }
         public int? GameServerId { get; set; }
         public int? RoleId { get; set; }
-        public double? Point { get; set; }
-        public string? LastJobSelected { get; set; }
 
         public virtual GameServer? GameServer { get; set; }
         public virtual UserRole? Role { get; set; }

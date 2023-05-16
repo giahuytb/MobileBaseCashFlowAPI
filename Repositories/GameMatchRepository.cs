@@ -28,10 +28,20 @@ namespace MobileBasedCashFlowAPI.Repositories
                                        match.StartTime,
                                        match.EndTime,
                                        match.TotalRound,
-                                       match.GameId,
+                                       match.GameModId,
                                    }).AsNoTracking().ToListAsync();
             return gameMatch;
         }
+        public async Task<int> TotalMatchInDay()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> TotalMatchInWeek()
+        {
+            throw new NotImplementedException();
+        }
+
 
         public async Task<object?> GetAsync(string matchId)
         {
@@ -47,14 +57,14 @@ namespace MobileBasedCashFlowAPI.Repositories
                                        match.StartTime,
                                        match.EndTime,
                                        match.TotalRound,
-                                       match.GameId,
+                                       match.GameModId,
                                    }).AsNoTracking().ToListAsync();
             return gameMatch;
         }
 
         public async Task<string> CreateAsync(int userId, GameMatchRequest request)
         {
-            var checkGameRoomId = _context.Games.Where(gr => gr.GameId == request.gameId).AsNoTracking().FirstOrDefault();
+            var checkGameRoomId = _context.Games.Where(gr => gr.GameId == request.gameModId).AsNoTracking().FirstOrDefault();
             if (checkGameRoomId == null)
             {
                 return "Can not found this game room";
@@ -69,7 +79,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now,
                 TotalRound = request.TotalRound,
-                GameId = request.gameId,
+                GameModId = request.gameModId,
             };
 
             await _context.GameMatches.AddAsync(match);

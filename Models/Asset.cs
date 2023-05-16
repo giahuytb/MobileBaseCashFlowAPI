@@ -21,9 +21,9 @@ namespace MobileBasedCashFlowAPI.Models
         public DateTime? UpdateAt { get; set; }
         public int? UpdateBy { get; set; }
         public bool Status { get; set; }
-        public int? AssetType { get; set; }
+        public int? AssetTypeId { get; set; }
 
-        public virtual AssetType? AssetTypeNavigation { get; set; }
+        public virtual AssetType? AssetType { get; set; }
         public virtual ICollection<UserAsset> UserAssets { get; set; }
     }
 }

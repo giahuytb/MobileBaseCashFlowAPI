@@ -51,10 +51,6 @@ namespace MobileBasedCashFlowAPI.Repositories
             {
                 return "Can not found this role";
             }
-            else if (user.Coin == null)
-            {
-                user.Coin = 0;
-            }
             else if (user.Address == null)
             {
                 user.Address = "";
@@ -85,7 +81,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                       && usAs.UserId == user.UserId
                                       && usAs.LastUsed == (from NestedUsAs in _context.UserAssets
                                                            join Ast in _context.Assets on NestedUsAs.AssetId equals Ast.AssetId
-                                                           where Ast.AssetType == 2 && NestedUsAs.UserId == user.UserId
+                                                           where Ast.AssetTypeId == 2 && NestedUsAs.UserId == user.UserId
                                                            orderby NestedUsAs.LastUsed descending
                                                            select NestedUsAs.LastUsed
                                                             ).SingleOrDefault()
@@ -366,7 +362,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             var inventory = await (from userAsset in _context.UserAssets
                                    join user in _context.UserAccounts on userAsset.UserId equals user.UserId
                                    join asset in _context.Assets on userAsset.AssetId equals asset.AssetId
-                                   join assetType in _context.AssetTypes on asset.AssetType equals assetType.AssetTypeId
+                                   join assetType in _context.AssetTypes on asset.AssetTypeId equals assetType.AssetTypeId
                                    where user.UserId == userId
                                    select new
                                    {

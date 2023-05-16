@@ -7,7 +7,6 @@ namespace MobileBasedCashFlowAPI.Models
     {
         public Game()
         {
-            GameMatches = new HashSet<GameMatch>();
             GameMods = new HashSet<GameMod>();
         }
 
@@ -22,7 +21,6 @@ namespace MobileBasedCashFlowAPI.Models
         public int? GameServerId { get; set; }
 
         public virtual GameServer? GameServer { get; set; }
-        public virtual ICollection<GameMatch> GameMatches { get; set; }
         public virtual ICollection<GameMod> GameMods { get; set; }
     }
 }
