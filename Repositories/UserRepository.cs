@@ -211,43 +211,6 @@ namespace MobileBasedCashFlowAPI.Repositories
                     await _context.UserAssets.AddAsync(invent);
                     await _context.SaveChangesAsync();
 
-
-                    // Create a url path for user to cofirm account in mail
-
-                    //var uriBuilder = new UriBuilder(_configuration["ReturnPaths:VerifyEmail"]);
-                    //var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-                    //query["token"] = user.EmailConfirmToken;
-                    //query["userid"] = user.UserId.ToString();
-                    //uriBuilder.Query = query.ToString();
-                    //var urlString = uriBuilder.ToString();
-
-                    //var htmlBody = string.Format(@"<div style='text-align:center;'>
-                    //                            <h1>Welcome to our Web Site</h1>
-                    //                            <h3>Click below button for verify your Email Id</h3>
-                    //                            <a href ='" + urlString + "' type = 'submit' " +
-                    //                                "style='display: block;" +
-                    //                                "text-align: center;" +
-                    //                                "font-weight: bold;" +
-                    //                                "background-color: #008CBA;" +
-                    //                                "font-size: 16px;border-radius: 10px;" +
-                    //                                "color:#ffffff;" +
-                    //                                "cursor:pointer;" +
-                    //                                "width:100%;" +
-                    //                                "padding:10px;'>" +
-                    //                                "Confirm Mail" +
-                    //                                "</a>" +
-                    //                                "</div>)");
-
-                    //MailContent mailContent = new MailContent
-                    //{
-                    //    To = user.Email,
-                    //    Subject = "Confirm Email",
-                    //    Body = htmlBody,
-                    //};
-
-                    //// call method to send mail
-                    //var mailMessage = await _sendMailService.SendMail(mailContent);
-
                     return Constant.Success;
                 }
                 return Constant.Failed;
@@ -377,8 +340,8 @@ namespace MobileBasedCashFlowAPI.Repositories
             var oldProfile = await _context.UserAccounts.FirstOrDefaultAsync(i => i.UserId == userId);
             if (oldProfile != null)
             {
-                oldProfile.Coin += request.Coin;
-                oldProfile.Point += request.Point;
+                oldProfile.Coin = request.Coin;
+                oldProfile.Point = request.Point;
                 await _context.SaveChangesAsync();
                 return Constant.Success;
             }
