@@ -64,7 +64,6 @@ builder.Services.AddTransient<IGameReportRepository, GameReportRepository>();
 builder.Services.AddTransient<IGameServerRepository, GameServerRepository>();
 builder.Services.AddTransient<IGameRepository, GameRepository>();
 builder.Services.AddTransient<IParticipantRepository, ParticipantRepository>();
-builder.Services.AddTransient<IPOIRepository, POIRepository>();
 builder.Services.AddTransient<IUserAssetRepository, UserAssetRepository>();
 
 // Register Service For MongoDatabase

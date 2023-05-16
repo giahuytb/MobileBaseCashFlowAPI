@@ -23,7 +23,7 @@ namespace MobileBasedCashFlowAPI.Dto
 
         [Required(ErrorMessage = "Please enter total round of this match")]
         [Range(0, int.MaxValue, ErrorMessage = "Game room id must be number and bigger than 0")]
-        public int gameId { get; set; }
+        public int gameModId { get; set; }
 
 
     }

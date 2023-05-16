@@ -8,7 +8,6 @@ namespace MobileBasedCashFlowAPI.Models
         public GameServer()
         {
             Games = new HashSet<Game>();
-            PointOfInteractions = new HashSet<PointOfInteraction>();
             UserAccounts = new HashSet<UserAccount>();
         }
 
@@ -21,7 +20,6 @@ namespace MobileBasedCashFlowAPI.Models
         public bool Status { get; set; }
 
         public virtual ICollection<Game> Games { get; set; }
-        public virtual ICollection<PointOfInteraction> PointOfInteractions { get; set; }
         public virtual ICollection<UserAccount> UserAccounts { get; set; }
     }
 }

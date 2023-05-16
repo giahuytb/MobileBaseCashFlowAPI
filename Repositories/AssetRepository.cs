@@ -30,7 +30,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                    a.Description,
                                    a.IsInShop,
                                    a.CreateBy,
-                                   a.AssetType,
+                                   a.AssetTypeId,
                                }).AsNoTracking().ToListAsync();
             return asset;
         }
@@ -41,7 +41,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                join userAsset in _context.UserAssets on a.AssetId equals userAsset.AssetId
                                into g
                                from userAsset in g.DefaultIfEmpty()
-                               where userAsset.UserId != userId
+                               where userAsset.UserId != userId && a.IsInShop != false
                                select new
                                {
                                    a.AssetId,
@@ -51,7 +51,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                    a.Description,
                                    a.IsInShop,
                                    a.CreateBy,
-                                   a.AssetType,
+                                   a.AssetTypeId,
                                }).ToListAsync();
             return asset;
         }
@@ -67,7 +67,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                 a.Description,
                 a.IsInShop,
                 a.CreateBy,
-                a.AssetType,
+                a.AssetTypeId,
             }).Where(a => a.AssetId == id).AsNoTracking().FirstOrDefaultAsync();
             return asset;
         }
@@ -92,7 +92,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                 IsInShop = request.IsInShop,
                 CreateAt = DateTime.Now,
                 CreateBy = userId,
-                AssetType = request.AssetType,
+                AssetTypeId = request.AssetTypeId,
             };
 
             await _context.Assets.AddAsync(asset);
@@ -123,7 +123,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                 oldAsset.CreateBy = oldAsset.CreateBy;
                 oldAsset.UpdateAt = DateTime.Now;
                 oldAsset.UpdateBy = userId;
-                oldAsset.AssetType = request.AssetType;
+                oldAsset.AssetTypeId = request.AssetTypeId;
 
                 await _context.SaveChangesAsync();
                 return Constant.Success;

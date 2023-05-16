@@ -5,6 +5,11 @@ namespace MobileBasedCashFlowAPI.Models
 {
     public partial class GameMod
     {
+        public GameMod()
+        {
+            GameMatches = new HashSet<GameMatch>();
+        }
+
         public int GameModId { get; set; }
         public string ModName { get; set; } = null!;
         public string ImageUrl { get; set; } = null!;
@@ -17,5 +22,6 @@ namespace MobileBasedCashFlowAPI.Models
         public int? GameId { get; set; }
 
         public virtual Game? Game { get; set; }
+        public virtual ICollection<GameMatch> GameMatches { get; set; }
     }
 }
