@@ -16,10 +16,12 @@ namespace MobileBasedCashFlowAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userService;
+        private readonly MobileBasedCashFlowGameContext _context;
 
-        public UsersController(IUserRepository userService)
+        public UsersController(IUserRepository userService, MobileBasedCashFlowGameContext context)
         {
             _userService = userService;
+            _context = context;
         }
 
         [AllowAnonymous]

@@ -72,9 +72,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             };
         }
 
-        public async Task<IEnumerable> GetByTypeIdAsync(int typeId)
+        public async Task<IEnumerable> GetByTypeIdAsync(string typeId)
         {
-            var eventCards = await _collection.Find(evt => evt.Event_type_id == typeId && evt.Status.Equals(true)).ToListAsync();
+            var eventCards = await _collection.Find(evt => evt.Event_type == typeId && evt.Status.Equals(true)).ToListAsync();
             return eventCards;
         }
 
@@ -113,7 +113,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 Down_pay = request.Down_pay,
                 Dept = request.Dept,
                 Cash_flow = request.Cash_flow,
-                Event_type_id = request.Event_type_id,
+                Event_type = request.Event_type,
                 Action = request.Action,
                 Game_mode_id = request.Game_mod_id,
                 Status = true,
@@ -148,7 +148,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 oldEventCard.Down_pay = request.Down_pay;
                 oldEventCard.Dept = request.Dept;
                 oldEventCard.Cash_flow = request.Cash_flow;
-                oldEventCard.Event_type_id = request.Event_type_id;
+                oldEventCard.Event_type = request.Event_type;
                 //oldEventCard.Game_mode_id = request.Game_mod_id;
                 oldEventCard.Action = request.Action;
 

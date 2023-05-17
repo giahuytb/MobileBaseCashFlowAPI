@@ -32,8 +32,7 @@ namespace MobileBasedCashFlowAPI.MongoDTO
         public string Event_description { get; set; } = string.Empty;
 
         [Required]
-        [Range(1, 6, ErrorMessage = "Event type must between 1 to 6")]
-        public int Event_type_id { get; set; } = 0;
+        public string Event_type { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Please choice your game mode")]
         public int Game_mod_id { get; set; } = 0;
