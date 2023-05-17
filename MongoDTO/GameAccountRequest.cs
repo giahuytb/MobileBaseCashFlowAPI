@@ -8,7 +8,7 @@ namespace MobileBasedCashFlowAPI.MongoDTO
         public string Game_account_name { get; set; } = null!;
 
         [Required(ErrorMessage = "Please enter game account type")]
-        public string Game_account_type { get; set; } = null!;
+        public int Game_account_type { get; set; }
 
         [Required(ErrorMessage = "Please enter game account value")]
         [Range(0, double.MaxValue, ErrorMessage = "Game account value must be mumber and bigger than or equal to 0")]
