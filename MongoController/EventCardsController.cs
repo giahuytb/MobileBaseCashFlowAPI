@@ -51,9 +51,9 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet("type-id/{id}")]
+        [HttpGet("type/{id}")]
         [SwaggerOperation(Summary = "Get list event card by event card type id")]
-        public async Task<ActionResult<EventCard>> GetByTypeId(int id)
+        public async Task<ActionResult<EventCard>> GetByTypeId(string id)
         {
             if (!ModelState.IsValid)
             {
