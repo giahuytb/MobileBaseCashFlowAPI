@@ -9,7 +9,7 @@ namespace MobileBasedCashFlowAPI.MongoModels
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? id { get; set; }
-        public int Game_account_type_id { get; set; }
+        public string Game_account_type { get; set; } = null!;
         public string Game_account_name { get; set; } = null!;
         public bool Status { get; set; }
     }

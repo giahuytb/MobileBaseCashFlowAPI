@@ -61,7 +61,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             var gameAccount = new GameAccount()
             {
                 Game_account_name = request.Game_account_name,
-                Game_account_type_id = request.Game_account_type,
+                Game_account_type = request.Game_account_type,
                 Status = true,
             };
             await _collection.InsertOneAsync(gameAccount);
@@ -87,7 +87,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             if (oldGameAccount != null)
             {
                 oldGameAccount.Game_account_name = request.Game_account_name;
-                oldGameAccount.Game_account_type_id = request.Game_account_type;
+                oldGameAccount.Game_account_type = request.Game_account_type;
 
                 await _collection.ReplaceOneAsync(x => x.id == id, oldGameAccount);
 
