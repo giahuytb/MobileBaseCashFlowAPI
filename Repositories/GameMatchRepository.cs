@@ -32,7 +32,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                    }).AsNoTracking().ToListAsync();
             return gameMatch;
         }
-        public async Task<int> TotalMatchInDay()
+        public Task<int> TotalMatchInDay()
         {
             throw new NotImplementedException();
         }

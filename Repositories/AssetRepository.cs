@@ -6,6 +6,7 @@ using MobileBasedCashFlowAPI.Common;
 using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Dto;
+using NuGet.ContentModel;
 
 namespace MobileBasedCashFlowAPI.Repositories
 {
@@ -38,10 +39,10 @@ namespace MobileBasedCashFlowAPI.Repositories
         public async Task<IEnumerable> GetAssetInShop(int userId)
         {
             var asset = await (from a in _context.Assets
-                               join userAsset in _context.UserAssets on a.AssetId equals userAsset.AssetId
-                               into g
-                               from userAsset in g.DefaultIfEmpty()
-                               where userAsset.UserId != userId && a.IsInShop != false
+                               where a.IsInShop == true && !_context.UserAssets
+                                                                  .Where(ua => ua.UserId == userId)
+                                                                  .Select(ua => ua.AssetId)
+                                                                  .Contains(a.AssetId)
                                select new
                                {
                                    a.AssetId,
@@ -52,7 +53,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                    a.IsInShop,
                                    a.CreateBy,
                                    a.AssetTypeId,
-                               }).ToListAsync();
+                               }).AsNoTracking().ToListAsync();
             return asset;
         }
 
@@ -83,7 +84,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                 return "This asset name is existed";
             }
 
-            var asset = new Asset()
+            var asset = new Models.Asset()
             {
                 AssetName = request.AssetName,
                 ImageUrl = request.ImageUrl,
