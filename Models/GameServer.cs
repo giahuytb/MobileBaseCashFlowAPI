@@ -13,11 +13,6 @@ namespace MobileBasedCashFlowAPI.Models
 
         public int GameServerId { get; set; }
         public string GameVersion { get; set; } = null!;
-        public DateTime CreateAt { get; set; }
-        public int? CreateBy { get; set; }
-        public DateTime? UpdateAt { get; set; }
-        public int? UpdateBy { get; set; }
-        public bool Status { get; set; }
 
         public virtual ICollection<Game> Games { get; set; }
         public virtual ICollection<UserAccount> UserAccounts { get; set; }

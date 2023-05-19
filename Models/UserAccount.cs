@@ -27,10 +27,6 @@ namespace MobileBasedCashFlowAPI.Models
         public string? Gender { get; set; }
         public string? LastJobSelected { get; set; }
         public bool Status { get; set; }
-        public string? EmailConfirmToken { get; set; }
-        public DateTime? VerifyAt { get; set; }
-        public string? PasswordResetToken { get; set; }
-        public DateTime? ResetTokenExpire { get; set; }
         public string? Address { get; set; }
         public DateTime CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }

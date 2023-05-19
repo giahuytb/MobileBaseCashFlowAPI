@@ -38,7 +38,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                    }).AsNoTracking().ToListAsync();
             return assetType;
         }
-        public async Task<string> CreateAsync(int userId, AssetTypeRequest request)
+        public async Task<string> CreateAsync(AssetTypeRequest request)
         {
             var checkName = await _context.AssetTypes
                                .Where(at => at.AssetTypeName == request.AssetTypeName)
@@ -52,8 +52,6 @@ namespace MobileBasedCashFlowAPI.Repositories
             var assetType = new AssetType()
             {
                 AssetTypeName = request.AssetTypeName,
-                CreateAt = DateTime.Now,
-                CreateBy = userId,
             };
 
             await _context.AssetTypes.AddAsync(assetType);
@@ -61,7 +59,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             return Constant.Success;
         }
 
-        public async Task<string> UpdateAsync(int assetTypeId, int userId, AssetTypeRequest request)
+        public async Task<string> UpdateAsync(int assetTypeId, AssetTypeRequest request)
         {
             var oldAssetType = await _context.AssetTypes.Where(at => at.AssetTypeId == assetTypeId).FirstOrDefaultAsync();
             if (oldAssetType != null)
@@ -75,8 +73,6 @@ namespace MobileBasedCashFlowAPI.Repositories
                     return "This asset type name is existed";
                 }
                 oldAssetType.AssetTypeName = request.AssetTypeName;
-                oldAssetType.UpdateAt = DateTime.Now;
-                oldAssetType.UpdateBy = userId;
 
                 await _context.SaveChangesAsync();
                 return Constant.Success;

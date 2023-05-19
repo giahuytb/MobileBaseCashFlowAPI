@@ -143,7 +143,6 @@ namespace MobileBasedCashFlowAPI.Repositories
                 Coin = 100,
                 Point = 0,
                 CreateAt = DateTime.Now,
-                EmailConfirmToken = GenerateEmailConfirmationToken(),
                 RoleId = null,
                 Status = true,
             };
@@ -213,62 +212,6 @@ namespace MobileBasedCashFlowAPI.Repositories
             }
         }
 
-        public async Task<string> VerifyEmail(string token)
-        {
-            var user = _context.UserAccounts.FirstOrDefault(u => u.EmailConfirmToken == token);
-
-            if (user == null)
-            {
-                return "Invalid Token";
-            }
-            if (!user.VerifyAt.HasValue)
-            {
-                return "Email has verify already";
-            }
-            user.VerifyAt = DateTime.Now;
-            user.UpdateAt = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-
-            return Constant.Success;
-        }
-
-        public async Task<bool> ForgotPassword(string userName, string email)
-        {
-            var user = _context.UserAccounts.FirstOrDefault(u => u.UserName == userName && u.Email == email);
-            if (user != null)
-            {
-                user.PasswordResetToken = GenerateEmailConfirmationToken();
-                user.ResetTokenExpire = DateTime.Now.AddDays(1);
-                user.UpdateAt = DateTime.Now;
-
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<bool> ResetPassword(ResetPasswordRequest request)
-        {
-            var user = _context.UserAccounts.FirstOrDefault(u => u.PasswordResetToken == request.Token);
-            // 02/03/2023 > 02/02/2023
-            if (user != null && user.ResetTokenExpire >= DateTime.Now)
-            {
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-                user.PasswordResetToken = null;
-                user.ResetTokenExpire = null;
-                user.UpdateAt = DateTime.Now;
-
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            return false;
-        }
-
-        public string GenerateEmailConfirmationToken()
-        {
-            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
-        }
 
         public async Task<IEnumerable> GetAsync()
         {

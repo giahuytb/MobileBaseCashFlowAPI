@@ -61,12 +61,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            string userId = HttpContext.User.FindFirstValue("Id");
-            if (userId == null)
-            {
-                return Unauthorized("User id not Found, please login");
-            }
-            var result = await _gameRepository.CreateAsync(Int32.Parse(userId), request);
+            var result = await _gameRepository.CreateAsync(request);
 
             return Ok(result);
         }
@@ -85,7 +80,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameRepository.UpdateAsync(id, Int32.Parse(userId), request);
+            var result = await _gameRepository.UpdateAsync(id, request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
