@@ -20,14 +20,10 @@ namespace MobileBasedCashFlowAPI.Repositories
         public async Task<IEnumerable> GetAsync()
         {
             var game = await (from g in _context.GameServers
-                              join createBy in _context.UserAccounts on g.CreateBy equals createBy.UserId
-                              join updateBy in _context.UserAccounts on g.UpdateBy equals updateBy.UserId
                               select new
                               {
                                   g.GameServerId,
                                   g.GameVersion,
-                                  createBy = createBy.NickName,
-                                  updateBy = updateBy.NickName,
                               }).AsNoTracking().ToListAsync();
             return game;
         }
@@ -35,19 +31,15 @@ namespace MobileBasedCashFlowAPI.Repositories
         public async Task<object?> GetAsync(int gameServerId)
         {
             var game = await (from g in _context.GameServers
-                              join createBy in _context.UserAccounts on g.CreateBy equals createBy.UserId
-                              join updateBy in _context.UserAccounts on g.UpdateBy equals updateBy.UserId
                               where g.GameServerId == gameServerId
                               select new
                               {
                                   g.GameServerId,
                                   g.GameVersion,
-                                  createBy = createBy.NickName,
-                                  updateBy = updateBy.NickName,
                               }).ToListAsync();
             return game;
         }
-        public async Task<string> CreateAsync(int userId, GameServerRequest request)
+        public async Task<string> CreateAsync(GameServerRequest request)
         {
             var checkVersion = await _context.GameServers
                 .Where(gm => gm.GameVersion == request.GameVersion)
@@ -60,8 +52,6 @@ namespace MobileBasedCashFlowAPI.Repositories
             var gameServer = new GameServer()
             {
                 GameVersion = request.GameVersion,
-                CreateAt = DateTime.Now,
-                CreateBy = userId,
             };
 
             await _context.GameServers.AddAsync(gameServer);
@@ -69,7 +59,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             return Constant.Success;
         }
 
-        public async Task<string> UpdateAsync(int gameServerId, int userId, GameServerRequest request)
+        public async Task<string> UpdateAsync(int gameServerId, GameServerRequest request)
         {
             var oldGame = await _context.GameServers.Where(i => i.GameServerId == gameServerId).FirstOrDefaultAsync();
             if (oldGame != null)
@@ -83,8 +73,6 @@ namespace MobileBasedCashFlowAPI.Repositories
                     return "This version is already existed";
                 }
                 oldGame.GameVersion = request.GameVersion;
-                oldGame.UpdateAt = DateTime.Now;
-                oldGame.UpdateBy = userId;
 
                 await _context.SaveChangesAsync();
                 return Constant.Success;

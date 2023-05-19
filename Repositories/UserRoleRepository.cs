@@ -42,7 +42,6 @@ namespace MobileBasedCashFlowAPI.Repositories
             var role = new UserRole
             {
                 RoleName = roleName,
-                CreateAt = DateTime.Now,
             };
             if (role.RoleName.Length < 1 || role.RoleName == null)
             {

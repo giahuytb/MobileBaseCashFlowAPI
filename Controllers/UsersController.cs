@@ -64,49 +64,7 @@ namespace MobileBasedCashFlowAPI.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
-
         }
-
-        [AllowAnonymous]
-        [HttpGet("verify-email")]
-        [SwaggerOperation(Summary = "verify email with token")]
-        public async Task<IActionResult> VerifyEmail(string token)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var result = await _userService.VerifyEmail(token);
-            if (result.Equals(Constant.Success))
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest();
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpPost("forgot-password")]
-        [SwaggerOperation(Summary = "use mail to get reset password code in mail")]
-        public async Task<IActionResult> ForgotPassword(string userName, string email)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var result = await _userService.ForgotPassword(userName, email);
-            if (result)
-            {
-                return Ok(Constant.Success);
-            }
-            else
-            {
-                return BadRequest(Constant.Failed);
-            }
-        }
-
 
         [HttpPut("profile")]
         [Authorize(Roles = "Player, Admin")]
@@ -121,26 +79,6 @@ namespace MobileBasedCashFlowAPI.Controllers
             else
             {
                 return BadRequest();
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpPost("reset-password")]
-        [SwaggerOperation(Summary = "Change your password after get code in mail")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var result = await _userService.ResetPassword(request);
-            if (result)
-            {
-                return Ok(Constant.Success);
-            }
-            else
-            {
-                return BadRequest(Constant.Failed);
             }
         }
 

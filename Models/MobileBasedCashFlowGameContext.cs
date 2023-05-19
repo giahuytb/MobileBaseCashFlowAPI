@@ -83,20 +83,6 @@ namespace MobileBasedCashFlowAPI.Models
                 entity.Property(e => e.AssetTypeName)
                     .HasMaxLength(20)
                     .HasColumnName("asset_type_name");
-
-                entity.Property(e => e.CreateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("create_at");
-
-                entity.Property(e => e.CreateBy).HasColumnName("create_by");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.Property(e => e.UpdateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("update_at");
-
-                entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             });
 
             modelBuilder.Entity<Game>(entity =>
@@ -140,7 +126,7 @@ namespace MobileBasedCashFlowAPI.Models
             modelBuilder.Entity<GameMatch>(entity =>
             {
                 entity.HasKey(e => e.MatchId)
-                    .HasName("PK__Game_mat__9D7FCBA32D9EC26E");
+                    .HasName("PK__Game_mat__9D7FCBA3CBA9A069");
 
                 entity.ToTable("Game_match");
 
@@ -235,7 +221,7 @@ namespace MobileBasedCashFlowAPI.Models
             modelBuilder.Entity<GameReport>(entity =>
             {
                 entity.HasKey(e => e.ReportId)
-                    .HasName("PK__Game_rep__779B7C58D2B56994");
+                    .HasName("PK__Game_rep__779B7C58E596625E");
 
                 entity.ToTable("Game_report");
 
@@ -282,28 +268,14 @@ namespace MobileBasedCashFlowAPI.Models
             {
                 entity.ToTable("Game_server");
 
-                entity.HasIndex(e => e.GameVersion, "UQ__Game_ser__3BAE19AC53A17A5E")
+                entity.HasIndex(e => e.GameVersion, "UQ__Game_ser__3BAE19ACD4E04069")
                     .IsUnique();
 
                 entity.Property(e => e.GameServerId).HasColumnName("game_server_id");
 
-                entity.Property(e => e.CreateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("create_at");
-
-                entity.Property(e => e.CreateBy).HasColumnName("create_by");
-
                 entity.Property(e => e.GameVersion)
                     .HasMaxLength(20)
                     .HasColumnName("game_version");
-
-                entity.Property(e => e.Status).HasColumnName("status");
-
-                entity.Property(e => e.UpdateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("update_at");
-
-                entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             });
 
             modelBuilder.Entity<Participant>(entity =>
@@ -341,11 +313,11 @@ namespace MobileBasedCashFlowAPI.Models
             modelBuilder.Entity<UserAccount>(entity =>
             {
                 entity.HasKey(e => e.UserId)
-                    .HasName("PK__User_acc__B9BE370F44659A28");
+                    .HasName("PK__User_acc__B9BE370FD53B20AD");
 
                 entity.ToTable("User_account");
 
-                entity.HasIndex(e => e.UserName, "UQ__User_acc__7C9273C4C67A876E")
+                entity.HasIndex(e => e.UserName, "UQ__User_acc__7C9273C415CC0CCB")
                     .IsUnique();
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -364,11 +336,6 @@ namespace MobileBasedCashFlowAPI.Models
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("email");
-
-                entity.Property(e => e.EmailConfirmToken)
-                    .HasMaxLength(150)
-                    .IsUnicode(false)
-                    .HasColumnName("email_confirm_token");
 
                 entity.Property(e => e.GameServerId).HasColumnName("game_server_id");
 
@@ -394,21 +361,12 @@ namespace MobileBasedCashFlowAPI.Models
                     .IsUnicode(false)
                     .HasColumnName("password_hash");
 
-                entity.Property(e => e.PasswordResetToken)
-                    .HasMaxLength(150)
-                    .IsUnicode(false)
-                    .HasColumnName("password_reset_token");
-
                 entity.Property(e => e.Phone)
                     .HasMaxLength(10)
                     .IsUnicode(false)
                     .HasColumnName("phone");
 
                 entity.Property(e => e.Point).HasColumnName("point");
-
-                entity.Property(e => e.ResetTokenExpire)
-                    .HasColumnType("datetime")
-                    .HasColumnName("reset_token_expire");
 
                 entity.Property(e => e.RoleId).HasColumnName("role_id");
 
@@ -422,10 +380,6 @@ namespace MobileBasedCashFlowAPI.Models
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("user_name");
-
-                entity.Property(e => e.VerifyAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("verify_at");
 
                 entity.HasOne(d => d.GameServer)
                     .WithMany(p => p.UserAccounts)
@@ -473,30 +427,18 @@ namespace MobileBasedCashFlowAPI.Models
             modelBuilder.Entity<UserRole>(entity =>
             {
                 entity.HasKey(e => e.RoleId)
-                    .HasName("PK__User_rol__760965CC609DA724");
+                    .HasName("PK__User_rol__760965CC6C46945F");
 
                 entity.ToTable("User_role");
 
-                entity.HasIndex(e => e.RoleName, "UQ__User_rol__783254B1E1DDC235")
+                entity.HasIndex(e => e.RoleName, "UQ__User_rol__783254B124D79B74")
                     .IsUnique();
 
                 entity.Property(e => e.RoleId).HasColumnName("role_id");
 
-                entity.Property(e => e.CreateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("create_at");
-
-                entity.Property(e => e.CreateBy).HasColumnName("create_by");
-
                 entity.Property(e => e.RoleName)
                     .HasMaxLength(10)
                     .HasColumnName("role_name");
-
-                entity.Property(e => e.UpdateAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("update_at");
-
-                entity.Property(e => e.UpdateBy).HasColumnName("update_by");
             });
 
             OnModelCreatingPartial(modelBuilder);

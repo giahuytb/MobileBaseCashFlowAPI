@@ -59,13 +59,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            // get the current user logging in system
-            string userId = HttpContext.User.FindFirstValue("Id");
-            if (userId == null)
-            {
-                return Unauthorized("User id not Found, please login");
-            }
-            var result = await _assetTypeRepository.CreateAsync(Int32.Parse(userId), request);
+            var result = await _assetTypeRepository.CreateAsync(request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -82,12 +76,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            string userId = HttpContext.User.FindFirstValue("Id");
-            if (userId == null)
-            {
-                return Unauthorized("User id not Found, please login");
-            }
-            var result = await _assetTypeRepository.UpdateAsync(id, Int32.Parse(userId), request);
+            var result = await _assetTypeRepository.UpdateAsync(id, request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
