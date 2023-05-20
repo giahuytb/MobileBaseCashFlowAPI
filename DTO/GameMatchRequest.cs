@@ -9,7 +9,7 @@ namespace MobileBasedCashFlowAPI.Dto
         [Range(1, 4, ErrorMessage = "Max number of player must be from 1 - 4")]
         public int MaxNumberPlayer { get; set; }
 
-        [Range(1, 4, ErrorMessage = "winner id must be number")]
+        [Range(1, int.MaxValue, ErrorMessage = "winner id must be number")]
         [AllowNull]
         public int? WinnerId { get; set; }
 
