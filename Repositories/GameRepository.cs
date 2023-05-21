@@ -101,7 +101,7 @@ namespace MobileBasedCashFlowAPI.Repositories
 
                 return Constant.Success;
             }
-            return "Can not find this game room";
+            return "Can not find this game";
         }
 
 

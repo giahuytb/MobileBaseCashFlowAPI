@@ -29,18 +29,6 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Tile>>> GetByPaging([FromQuery] PaginationFilter filter)
-        {
-            var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
-            var result = await _tileService.GetAsync(validFilter);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound("list is empty");
-        }
-
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Tile>> GetById(string id)
         {

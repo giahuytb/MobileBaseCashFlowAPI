@@ -34,15 +34,15 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("List is empty");
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("my-report/{id}")]
         [SwaggerOperation(Summary = "Get game report by game report id")]
-        public async Task<ActionResult<GameReport>> GetById(int id)
+        public async Task<ActionResult<GameReport>> MyReport(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameReportService.GetAsync(id);
+            var result = await _gameReportService.MyReport(id);
             if (result != null)
             {
                 return Ok(result);
@@ -66,38 +66,6 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
             var result = await _gameReportService.CreateAsync(Int32.Parse(userId), request);
             return Ok(result);
-        }
-
-        [HttpPut]
-        [SwaggerOperation(Summary = "Update an existing game report")]
-        public async Task<ActionResult> UpdateGameReport(int gameReportId, GameReportRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var result = await _gameReportService.UpdateAsync(gameReportId, request);
-            if (result.Equals(Constant.Success))
-            {
-                return Ok(result);
-            }
-            return NotFound(result);
-        }
-
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Delete an existing game report")]
-        public async Task<ActionResult> DeleteGameReport(int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var result = await _gameReportService.DeleteAsync(id);
-            if (result.Equals(Constant.Success))
-            {
-                return Ok(result);
-            }
-            return NotFound(result);
         }
 
 

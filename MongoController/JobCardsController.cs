@@ -33,19 +33,6 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get list job card by paging and search")]
-        public async Task<ActionResult<List<JobCard>>> GetByPaging([FromQuery] PaginationFilter filter)
-        {
-            var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
-            var result = await _jobCardService.GetAsync(validFilter);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound("list is empty");
-        }
-
         //[Authorize(Roles = "Admin")]
         [HttpGet("{id:length(24)}")]
         [SwaggerOperation(Summary = "Get list job card by job card id")]

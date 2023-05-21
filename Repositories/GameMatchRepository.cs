@@ -64,10 +64,10 @@ namespace MobileBasedCashFlowAPI.Repositories
 
         public async Task<string> CreateAsync(int userId, GameMatchRequest request)
         {
-            var checkGameRoomId = _context.Games.Where(gr => gr.GameId == request.gameModId).AsNoTracking().FirstOrDefault();
-            if (checkGameRoomId == null)
+            var checkGameId = _context.Games.Where(gr => gr.GameId == request.gameModId).AsNoTracking().FirstOrDefault();
+            if (checkGameId == null)
             {
-                return "Can not found this game room";
+                return "Can not found this game";
             }
             var match = new GameMatch()
             {
@@ -84,7 +84,7 @@ namespace MobileBasedCashFlowAPI.Repositories
 
             await _context.GameMatches.AddAsync(match);
             await _context.SaveChangesAsync();
-            return Constant.Success;
+            return match.MatchId;
 
         }
         public async Task<string> UpdateAsync(string matchId, GameMatchRequest request)

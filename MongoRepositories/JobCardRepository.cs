@@ -37,20 +37,6 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             return jobcardList;
         }
 
-        public async Task<object?> GetAsync(PaginationFilter filter)
-        {
-            var AllJobCard = await _collection.Find(_ => true).ToListAsync();
-            var PagedData = await AllJobCard.ToPagedListAsync(filter.PageIndex, filter.PageSize);
-            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, filter.PageSize);
-            return new
-            {
-                filter.PageIndex,
-                filter.PageSize,
-                totalPage = TotalPage,
-                data = PagedData,
-            };
-        }
-
         public async Task<object?> GetAsync(string id)
         {
             var result = await _collection.Find(x => x.id == id).ToListAsync();
