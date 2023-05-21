@@ -39,59 +39,6 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 _cache.Set(CacheKeys.Dreams, dreamList, CacheEntryOption.MemoryCacheEntryOption());
             }
             return dreamList;
-
-            //string? cacheMember = await _distributedCache.GetStringAsync(CacheKeys.Dreams);
-
-            //IEnumerable<Dream> dream;
-            //if (string.IsNullOrEmpty(cacheMember))
-            //{
-            //    dream = await _collection.Find(_ => true).ToListAsync();
-            //    if (dream is null)
-            //    {
-            //        return dream ?? Enumerable.Empty<Dream>();
-            //    }
-
-            //    await _distributedCache.SetStringAsync(
-            //        CacheKeys.Dreams,
-            //        JsonConvert.SerializeObject(dream));
-            //    return dream;
-            //}
-            //dream = JsonConvert.DeserializeObject<IEnumerable<Dream>>(
-            //    cacheMember,
-            //    new JsonSerializerSettings
-            //    {
-            //        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
-            //    }) ?? Enumerable.Empty<Dream>();
-            //return dream ?? Enumerable.Empty<Dream>();
-        }
-
-        public async Task<object?> GetAsync(PaginationFilter filter, double? from, double? to)
-        {
-            // var AllDream = await _collection.Find(_ => true).ToListAsync();
-            var AllDream = _collection.AsQueryable();
-            #region Filter
-            if (from.HasValue)
-            {
-                AllDream = AllDream.Where(d => d.Cost >= from);
-            }
-            if (to.HasValue)
-            {
-                AllDream = AllDream.Where(d => d.Cost <= to);
-            }
-            #endregion
-
-            #region Paging
-            var PagedData = await AllDream.ToPagedListAsync(filter.PageIndex, filter.PageSize);
-            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, filter.PageSize);
-            #endregion
-
-            return new
-            {
-                filter.PageIndex,
-                filter.PageSize,
-                totalPage = TotalPage,
-                data = PagedData,
-            };
         }
 
         public async Task<Dream?> GetAsync(string id)
@@ -131,9 +78,17 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
 
         public async Task<string> UpdateAsync(string id, DreamRequest request)
         {
+
             var oldDream = await _collection.Find(dream => dream.id == id).FirstOrDefaultAsync();
             if (oldDream != null)
             {
+                var checkName = await _collection.Find(dream => dream.Name == request.Name && dream.Name != oldDream.Name)
+                                       .FirstOrDefaultAsync();
+                if (checkName != null)
+                {
+                    return "This dream name is existed";
+                }
+
                 oldDream.Name = request.Name;
                 oldDream.Cost = request.Cost;
 

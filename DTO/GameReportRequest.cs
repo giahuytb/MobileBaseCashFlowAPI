@@ -30,5 +30,8 @@ namespace MobileBasedCashFlowAPI.Dto
         [Required(ErrorMessage = "Please enter expense per month")]
         [Range(1, double.MaxValue, ErrorMessage = "Expense per month must be a mumber and bigger than 0")]
         public double ExpensePerMonth { get; set; }
+
+        [Required(ErrorMessage = "Please enter expense per month")]
+        public string MatchId { get; set; } = string.Empty;
     }
 }

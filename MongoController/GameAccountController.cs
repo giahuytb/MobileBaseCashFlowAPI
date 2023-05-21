@@ -32,23 +32,6 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get list game account by paging")]
-        public async Task<ActionResult<List<GameAccount>>> GetByPaging([FromQuery] PaginationFilter filter)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
-            var result = await _gameAccountService.GetAsync(validFilter);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound("list is empty");
-        }
-
         [HttpGet("{id:length(24)}")]
         [SwaggerOperation(Summary = "Get list game account by game account id")]
         public async Task<ActionResult<GameAccount>> GetGameAccountById(string id)
@@ -65,6 +48,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("Can not found this game account");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [SwaggerOperation(Summary = "Create new game account")]
         public async Task<ActionResult> CreateGameAccount(AccountRequest request)
@@ -81,6 +65,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             return BadRequest(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:length(24)}")]
         [SwaggerOperation(Summary = "Update an existing game account")]
         public async Task<ActionResult> UpdateGameAccount(string id, AccountRequest request)
@@ -88,10 +73,13 @@ namespace MobileBasedCashFlowAPI.MongoController
             var result = await _gameAccountService.UpdateAsync(id, request);
             if (result.Equals(Constant.Success))
             {
+                return Ok(result);
+            }
+            else if (result.Equals(Constant.NotFound))
+            {
                 return NotFound(result);
             }
-            await _gameAccountService.UpdateAsync(id, request);
-            return Ok(result);
+            return BadRequest(result);
         }
 
         [Authorize(Roles = "Admin")]
@@ -117,18 +105,21 @@ namespace MobileBasedCashFlowAPI.MongoController
             return BadRequest(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:length(24)}")]
         [SwaggerOperation(Summary = "Delete an game account")]
         public async Task<ActionResult<List<GameAccount>>> DeleteGameAccount(string id)
         {
-
-            var result = await _gameAccountService.GetAsync(id);
-            if (result is null)
+            var result = await _gameAccountService.RemoveAsync(id);
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            else if (result.Equals(Constant.NotFound))
             {
                 return NotFound(result);
             }
-            await _gameAccountService.RemoveAsync(id);
-            return Ok(result);
+            return BadRequest(result);
         }
     }
 }

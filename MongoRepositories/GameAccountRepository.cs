@@ -35,20 +35,6 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             return gameAccountList;
         }
 
-        public async Task<object?> GetAsync(PaginationFilter filter)
-        {
-            var AllGameAccount = await _collection.Find(_ => true).ToListAsync();
-            var PagedData = await AllGameAccount.ToPagedListAsync(filter.PageIndex, filter.PageSize);
-            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, filter.PageSize);
-            return new
-            {
-                filter.PageIndex,
-                filter.PageSize,
-                totalPage = TotalPage,
-                data = PagedData,
-            };
-        }
-
         public async Task<GameAccount?> GetAsync(string id)
         {
             var gameAccount = await _collection.Find(account => account.id == id && account.Status.Equals(true)).FirstOrDefaultAsync();
@@ -57,7 +43,11 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
 
         public async Task<string> CreateAsync(AccountRequest request)
         {
-
+            var checkName = await _collection.Find(account => account.Game_account_name.Equals(request.Game_account_name)).FirstOrDefaultAsync();
+            if (checkName != null)
+            {
+                return "This game account is existed";
+            }
             var gameAccount = new GameAccount()
             {
                 Game_account_name = request.Game_account_name,
@@ -86,6 +76,13 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             var oldGameAccount = await _collection.Find(account => account.id == id).FirstOrDefaultAsync();
             if (oldGameAccount != null)
             {
+                var checkName = await _collection.Find(ga => ga.Game_account_name == request.Game_account_name
+                                                    && ga.Game_account_name != oldGameAccount.Game_account_name)
+                                                   .FirstOrDefaultAsync();
+                if (checkName != null)
+                {
+                    return "This dream name is existed";
+                }
                 oldGameAccount.Game_account_name = request.Game_account_name;
                 oldGameAccount.Game_account_type = request.Game_account_type;
 

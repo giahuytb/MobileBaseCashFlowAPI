@@ -34,24 +34,6 @@ namespace MobileBasedCashFlowAPI.MongoController
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get list dream by paging and search")]
-        public async Task<ActionResult<List<Dream>>> GetByPaging([FromQuery] PaginationFilter filter, double? from, double? to)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
-            var result = await _dreamService.GetAsync(validFilter, from, to);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound("list is empty");
-        }
-
-        //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id:length(24)}")]
         [SwaggerOperation(Summary = "Get list dream by dream id")]
         public async Task<ActionResult<Dream>> GetById(string id)

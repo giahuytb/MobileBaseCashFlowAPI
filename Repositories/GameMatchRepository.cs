@@ -84,7 +84,7 @@ namespace MobileBasedCashFlowAPI.Repositories
 
             await _context.GameMatches.AddAsync(match);
             await _context.SaveChangesAsync();
-            return Constant.Success;
+            return match.MatchId;
 
         }
         public async Task<string> UpdateAsync(string matchId, GameMatchRequest request)

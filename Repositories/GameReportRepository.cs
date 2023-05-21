@@ -37,12 +37,12 @@ namespace MobileBasedCashFlowAPI.Repositories
             return report;
         }
 
-        public async Task<object?> GetAsync(int reportId)
+        public async Task<object?> MyReport(int userId)
         {
             var report = await (from gr in _context.GameReports
                                 join user in _context.UserAccounts on gr.UserId equals user.UserId
                                 join match in _context.GameMatches on gr.MatchId equals match.MatchId
-                                where gr.ReportId == reportId
+                                where gr.UserId == userId
                                 select new
                                 {
                                     gr.ReportId,
@@ -78,36 +78,6 @@ namespace MobileBasedCashFlowAPI.Repositories
             _context.GameReports.Add(gameReport);
             await _context.SaveChangesAsync();
             return Constant.Success;
-        }
-
-        public async Task<string> UpdateAsync(int reportId, GameReportRequest request)
-        {
-
-            var oldGameReport = await _context.GameReports.Where(g => g.ReportId == reportId).FirstOrDefaultAsync();
-            if (oldGameReport != null)
-            {
-                oldGameReport.ChildrenAmount = request.ChildrenAmount;
-                oldGameReport.TotalStep = request.TotalStep;
-                oldGameReport.TotalMoney = request.TotalMoney;
-                oldGameReport.IsWin = request.IsWin;
-                oldGameReport.Score = request.Score;
-                oldGameReport.IncomePerMonth = request.IncomePerMonth;
-                oldGameReport.ExpensePerMonth = request.ExpensePerMonth;
-                await _context.SaveChangesAsync();
-                return Constant.Success;
-            };
-            return "Can not found this game report";
-        }
-
-        public async Task<string> DeleteAsync(int reportId)
-        {
-            var gameReport = await _context.GameReports.Where(g => g.ReportId == reportId).FirstOrDefaultAsync();
-            if (gameReport != null)
-            {
-                _context.GameReports.Remove(gameReport);
-                await _context.SaveChangesAsync();
-            }
-            return "Can not found this game report";
         }
 
 

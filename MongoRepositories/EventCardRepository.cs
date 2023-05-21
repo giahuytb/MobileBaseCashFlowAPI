@@ -246,7 +246,5 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             return Constant.NotFound;
         }
 
-
-
     }
 }
