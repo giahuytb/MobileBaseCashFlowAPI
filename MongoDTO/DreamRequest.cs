@@ -10,5 +10,6 @@ namespace MobileBasedCashFlowAPI.MongoDTO
         [Required(ErrorMessage = "Please enter this dream's cost")]
         [Range(0, int.MaxValue, ErrorMessage = "Cost must be mumber and bigger than 0")]
         public double Cost { get; set; } = 0;
+        public int Game_mod_id { get; set; } = int.MaxValue;
     }
 }
