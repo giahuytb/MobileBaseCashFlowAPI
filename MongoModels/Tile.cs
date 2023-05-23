@@ -11,5 +11,6 @@ namespace MobileBasedCashFlowAPI.MongoModels
         public string Tile_type { get; set; } = string.Empty;
         public List<int> Positions { get; set; } = new List<int>();
         public string Race_type { get; set; } = string.Empty;
+        public int Game_mod_id { get; set; } = 0;
     }
 }

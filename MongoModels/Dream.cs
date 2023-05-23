@@ -11,6 +11,7 @@ namespace MobileBasedCashFlowAPI.MongoModels
         public string Name { get; set; } = string.Empty;
         public double Cost { get; set; } = double.MaxValue;
         public bool Status { get; set; }
+        public int Game_mod_id { get; set; } = int.MaxValue;
 
     }
 }

@@ -50,6 +50,23 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("Can not found this dream");
         }
 
+        //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("mod-id/{id}")]
+        [SwaggerOperation(Summary = "Get list dream by dream id")]
+        public async Task<ActionResult<Dream>> GetDreamByGameModId(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _dreamService.GetDreamByGameModId(id);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("Can not found this dream");
+        }
+
         //[Authorize(Roles = "Admin")]
         [HttpPost]
         [SwaggerOperation(Summary = "Create new dream")]

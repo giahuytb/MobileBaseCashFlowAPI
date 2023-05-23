@@ -18,17 +18,15 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
     public class DreamRepository : IDreamRepository
     {
         private readonly IMongoCollection<Dream> _collection;
-        private readonly IDistributedCache _distributedCache;
         private readonly IMemoryCache _cache;
 
-        public DreamRepository(MongoDbSettings settings, IMemoryCache cache, IDistributedCache distributedCache)
+        public DreamRepository(MongoDbSettings settings, IMemoryCache cache)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<Dream>("Dream");
 
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            _distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
         }
 
         public async Task<IEnumerable<Dream>> GetAsync()
@@ -47,6 +45,16 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             return dream;
         }
 
+        public async Task<IEnumerable<Dream>> GetDreamByGameModId(int modId)
+        {
+            if (!_cache.TryGetValue(CacheKeys.Dreams + modId, out IEnumerable<Dream> dreamList))
+            {
+                dreamList = await _collection.Find(dream => dream.Game_mod_id == modId).ToListAsync();
+                _cache.Set(CacheKeys.Dreams + modId, dreamList, CacheEntryOption.MemoryCacheEntryOption());
+            }
+            return dreamList;
+        }
+
         public async Task<string> CreateAsync(DreamRequest request)
         {
             var checkDreamExist = await _collection.Find(dream => dream.Name == request.Name).FirstOrDefaultAsync();
@@ -59,19 +67,20 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 Name = request.Name,
                 Cost = request.Cost,
                 Status = true,
+                Game_mod_id = request.Game_mod_id,
             };
             await _collection.InsertOneAsync(dream);
 
-            var dreamListInMemory = _cache.Get(CacheKeys.Dreams) as List<Dream>;
+            var dreamListInMemory = _cache.Get(CacheKeys.Dreams + request.Game_mod_id) as List<Dream>;
             // check if the cache have value or not
             if (dreamListInMemory != null)
             {
                 // add new object for this list
                 dreamListInMemory.Add(dream);
                 // remove all value from this cache key
-                _cache.Remove(CacheKeys.Dreams);
+                _cache.Remove(CacheKeys.Dreams + request.Game_mod_id);
                 // set new list for this cache by using the list above
-                _cache.Set(CacheKeys.Dreams, dreamListInMemory);
+                _cache.Set(CacheKeys.Dreams + request.Game_mod_id, dreamListInMemory);
             }
             return Constant.Success;
         }
@@ -91,10 +100,11 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
 
                 oldDream.Name = request.Name;
                 oldDream.Cost = request.Cost;
+                oldDream.Game_mod_id = request.Game_mod_id;
 
                 await _collection.ReplaceOneAsync(x => x.id == id, oldDream);
 
-                var dreamListInMemory = _cache.Get(CacheKeys.Dreams) as List<Dream>;
+                var dreamListInMemory = _cache.Get(CacheKeys.Dreams + oldDream.Game_mod_id) as List<Dream>;
                 // check if the cache have value or not
                 if (dreamListInMemory != null)
                 {
@@ -111,9 +121,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         dreamListInMemory.Insert(oldDreamInMemoryIndex, oldDream);
 
                         // remove all value from this cache key
-                        _cache.Remove(CacheKeys.Dreams);
+                        _cache.Remove(CacheKeys.Dreams + oldDream.Game_mod_id);
                         // set new list for this cache by using the list above
-                        _cache.Set(CacheKeys.Dreams, dreamListInMemory);
+                        _cache.Set(CacheKeys.Dreams + oldDream.Game_mod_id, dreamListInMemory);
 
                     }
                 }
@@ -134,7 +144,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 Dream.Status = false;
                 await _collection.ReplaceOneAsync(x => x.id == id, Dream);
 
-                var DreamListInMemory = _cache.Get(CacheKeys.Dreams) as List<Dream>;
+                var DreamListInMemory = _cache.Get(CacheKeys.Dreams + Dream.Game_mod_id) as List<Dream>;
                 // check if the cache have value or not
                 if (DreamListInMemory != null)
                 {
@@ -146,9 +156,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         // Remove old cache and set new cache that deleted the event card we choice
                         DreamListInMemory.Remove(DreamToDelete);
                         // remove all value from this cache key
-                        _cache.Remove(CacheKeys.Dreams);
+                        _cache.Remove(CacheKeys.Dreams + Dream.Game_mod_id);
                         // set new list for this cache by using the list above
-                        _cache.Set(CacheKeys.Dreams, DreamListInMemory);
+                        _cache.Set(CacheKeys.Dreams + Dream.Game_mod_id, DreamListInMemory);
                     }
                 }
                 return Constant.Success;
@@ -163,7 +173,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             {
                 await _collection.DeleteOneAsync(x => x.id == id);
 
-                var dreamListInMemory = _cache.Get(CacheKeys.Dreams) as List<Dream>;
+                var dreamListInMemory = _cache.Get(CacheKeys.Dreams + dreamExist.Game_mod_id) as List<Dream>;
                 // check if the cache have value or not
                 if (dreamListInMemory != null)
                 {
@@ -176,9 +186,9 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                         dreamListInMemory.Remove(dreamToDelete);
 
                         // remove all value from this cache key
-                        _cache.Remove(CacheKeys.Dreams);
+                        _cache.Remove(CacheKeys.Dreams + dreamExist.Game_mod_id);
                         // set new list for this cache by using the list above
-                        _cache.Set(CacheKeys.Dreams, dreamListInMemory);
+                        _cache.Set(CacheKeys.Dreams + dreamExist.Game_mod_id, dreamListInMemory);
                     }
                 }
                 return Constant.Success;
