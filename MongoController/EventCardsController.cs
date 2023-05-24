@@ -34,23 +34,6 @@ namespace MobileBasedCashFlowAPI.MongoController
             return NotFound("list is empty");
         }
 
-        [HttpGet]
-        [SwaggerOperation(Summary = "Get list event card by paging and search")]
-        public async Task<ActionResult<List<EventCard>>> GetByPaging([FromQuery] PaginationFilter filter, double? from, double? to)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var validFilter = new PaginationFilter(filter.PageIndex, filter.PageSize);
-            var result = await _eventCardService.GetAsync(validFilter, from, to);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound("list is empty");
-        }
-
         [HttpGet("type/{id}")]
         [SwaggerOperation(Summary = "Get list event card by event card type id")]
         public async Task<ActionResult<EventCard>> GetByTypeId(string id)
@@ -91,7 +74,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             {
                 return BadRequest(ModelState);
             }
-            var eventCard = await _eventCardService.GetAsync(id);
+            var eventCard = await _eventCardService.GetByIdAsync(id);
             if (eventCard != null)
             {
                 return Ok(eventCard);
@@ -101,7 +84,7 @@ namespace MobileBasedCashFlowAPI.MongoController
 
         [HttpPost]
         [SwaggerOperation(Summary = "Create new event card")]
-        public async Task<IActionResult> PostEvent(EventCardRequest request)
+        public async Task<IActionResult> CreateEventCard(EventCardRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -117,7 +100,7 @@ namespace MobileBasedCashFlowAPI.MongoController
 
         [HttpPut("{id:length(24)}")]
         [SwaggerOperation(Summary = "Update an existing event card")]
-        public async Task<IActionResult> UpdateEvent(string id, EventCardRequest request)
+        public async Task<IActionResult> UpdateEventCard(string id, EventCardRequest request)
         {
             var result = await _eventCardService.UpdateAsync(id, request);
             if (result.Equals(Constant.Success))
