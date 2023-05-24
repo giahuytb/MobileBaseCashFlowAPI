@@ -45,33 +45,6 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             return eventCardList;
         }
 
-        public async Task<object?> GetAsync(PaginationFilter filter, double? from, double? to)
-        {
-            var AllEventCard = _collection.AsQueryable();
-            #region Filter
-            if (from.HasValue)
-            {
-                AllEventCard = AllEventCard.Where(evt => evt.Cost >= from);
-            }
-            if (to.HasValue)
-            {
-                AllEventCard = AllEventCard.Where(evt => evt.Cost <= to);
-            }
-            #endregion
-
-            #region Paging
-            var PagedData = await AllEventCard.ToPagedListAsync(filter.PageIndex, filter.PageSize);
-            var TotalPage = ValidateInput.totaPage(PagedData.TotalItemCount, filter.PageSize);
-            #endregion
-            return new
-            {
-                filter.PageIndex,
-                filter.PageSize,
-                totalPage = TotalPage,
-                data = PagedData,
-            };
-        }
-
         public async Task<IEnumerable> GetByTypeIdAsync(string typeId)
         {
             var eventCards = await _collection.Find(evt => evt.Event_type == typeId && evt.Status.Equals(true)).ToListAsync();
@@ -94,7 +67,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             return eventCardList;
         }
 
-        public async Task<EventCard?> GetAsync(string id)
+        public async Task<EventCard?> GetByIdAsync(string id)
         {
             var eventCard = await _collection.Find(evt => evt.id == id && evt.Status.Equals(true)).FirstOrDefaultAsync();
             return eventCard;

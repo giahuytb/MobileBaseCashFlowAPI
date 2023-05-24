@@ -53,9 +53,9 @@ namespace MobileBasedCashFlowAPI.Repositories
                                     gr.Score,
                                     gr.IncomePerMonth,
                                     gr.ExpensePerMonth,
-                                    gr.CreateAt,
                                     user.NickName,
                                     match.MatchId,
+                                    MatchTime = match.EndTime - match.StartTime,
                                 }).AsNoTracking().ToListAsync();
             return report;
         }
