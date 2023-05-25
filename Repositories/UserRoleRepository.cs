@@ -14,7 +14,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var result = await (from role in _context.UserRoles
                                 select new
@@ -25,7 +25,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             return result;
         }
 
-        public async Task<object?> GetAsync(int roleId)
+        public async Task<object?> GetByIdAsync(int roleId)
         {
             var result = await (from role in _context.UserRoles
                                 where role.RoleId == roleId

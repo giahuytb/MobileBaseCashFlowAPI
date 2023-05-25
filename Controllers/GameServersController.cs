@@ -22,11 +22,11 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet]
+        [HttpGet("all")]
         [SwaggerOperation(Summary = "Get all game")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _gameRepository.GetAsync();
+            var result = await _gameRepository.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -43,7 +43,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameRepository.GetAsync(id);
+            var result = await _gameRepository.GetByIdAsync(id);
             if (result != null)
             {
                 return Ok(result);

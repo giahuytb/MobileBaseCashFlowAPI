@@ -15,7 +15,7 @@ namespace MobileBasedCashFlowAPI.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var mode = await (from gm in _context.GameMods
                               select new
@@ -31,7 +31,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             return mode;
         }
 
-        public async Task<object?> GetAsync(int gameModId)
+        public async Task<object?> GetByIdAsync(int gameModId)
         {
             var mode = await (from gm in _context.GameMods
                               where gm.GameModId == gameModId

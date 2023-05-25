@@ -17,7 +17,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var game = await (from g in _context.GameServers
                               select new
@@ -28,7 +28,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             return game;
         }
 
-        public async Task<object?> GetAsync(int gameServerId)
+        public async Task<object?> GetByIdAsync(int gameServerId)
         {
             var game = await (from g in _context.GameServers
                               where g.GameServerId == gameServerId

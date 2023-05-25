@@ -5,7 +5,7 @@ namespace MobileBasedCashFlowAPI.IRepositories
 {
     public interface IAssetRepository
     {
-        public Task<IEnumerable> GetAsync();
+        public Task<IEnumerable> GetAllAsync();
         public Task<IEnumerable> GetAssetInShop(int userId);
         public Task<object?> GetByIdAsync(int assetId);
         public Task<string> CreateAsync(int userId, AssetRequest request);

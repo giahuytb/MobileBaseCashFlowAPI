@@ -23,11 +23,23 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet]
+        [HttpGet("all")]
         [SwaggerOperation(Summary = "Get all participant")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _participantRepository.GetAsync();
+            var result = await _participantRepository.GetAllAsync();
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound("List is empty");
+        }
+
+        [HttpGet("total-user-play-game-today")]
+        [SwaggerOperation(Summary = "Get total player play game today")]
+        public async Task<ActionResult<IEnumerable>> TotalOfUserPlayGameInToday()
+        {
+            var result = await _participantRepository.GetTotalUserPlayGameInDay();
             if (result != null)
             {
                 return Ok(result);
@@ -44,7 +56,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await _participantRepository.GetAsync(userId, matchId);
+            var result = await _participantRepository.GetByIdAsync(userId, matchId);
             if (result != null)
             {
                 return Ok(result);

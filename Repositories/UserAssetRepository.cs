@@ -16,7 +16,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var inventory = await (from userAsset in _context.UserAssets
                                    join user in _context.UserAccounts on userAsset.UserId equals user.UserId
@@ -31,7 +31,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             return inventory;
         }
 
-        public async Task<object?> GetAsync(int userId)
+        public async Task<object?> GetByIdAsync(int userId)
         {
             var inventory = await (from userAsset in _context.UserAssets
                                    join user in _context.UserAccounts on userAsset.UserId equals user.UserId

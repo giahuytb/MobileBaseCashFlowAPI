@@ -16,7 +16,7 @@ namespace MobileBasedCashFlowAPI.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var assetType = await (from at in _context.AssetTypes
                                    select new
@@ -27,7 +27,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             return assetType;
         }
 
-        public async Task<object?> GetAsync(int assetTypeId)
+        public async Task<object?> GetByIdAsync(int assetTypeId)
         {
             var assetType = await (from at in _context.AssetTypes
                                    where at.AssetTypeId == assetTypeId

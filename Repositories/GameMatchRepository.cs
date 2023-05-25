@@ -15,7 +15,7 @@ namespace MobileBasedCashFlowAPI.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var gameMatch = await (from match in _context.GameMatches
                                    select new
@@ -32,18 +32,24 @@ namespace MobileBasedCashFlowAPI.Repositories
                                    }).AsNoTracking().ToListAsync();
             return gameMatch;
         }
-        public Task<int> TotalMatchInDay()
+        public async Task<int> TotalMatchInDay()
         {
-            throw new NotImplementedException();
+            var total = await _context.GameMatches.Where(gm => gm.StartTime >= DateTime.Today && gm.StartTime <= DateTime.Today.AddDays(1)).CountAsync();
+            return total;
         }
 
-        public Task<int> TotalMatchInWeek()
+        public async Task<int> TotalMatchInWeek()
         {
-            throw new NotImplementedException();
+            DateTime currentDate = DateTime.Today;
+            DateTime startOfWeek = currentDate.AddDays(-(int)(currentDate.DayOfWeek - 1));
+            DateTime endOfWeek = startOfWeek.AddDays(7);
+
+            var total = await _context.GameMatches.Where(gm => gm.StartTime >= startOfWeek && gm.StartTime <= endOfWeek).CountAsync();
+            return total;
         }
 
 
-        public async Task<object?> GetAsync(string matchId)
+        public async Task<object?> GetByIdAsync(string matchId)
         {
             var gameMatch = await (from match in _context.GameMatches
                                    where match.MatchId == matchId

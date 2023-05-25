@@ -15,7 +15,7 @@ namespace MobileBasedCashFlowAPI.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var report = await (from gr in _context.GameReports
                                 join user in _context.UserAccounts on gr.UserId equals user.UserId

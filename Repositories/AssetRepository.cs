@@ -19,7 +19,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var asset = await (from a in _context.Assets
                                select new
