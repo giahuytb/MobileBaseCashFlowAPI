@@ -37,11 +37,11 @@ namespace MobileBasedCashFlowAPI.Controllers
         //    return NotFound("List is empty");
         //}
 
-        [HttpGet]
+        [HttpGet("all")]
         [SwaggerOperation(Summary = "Get all game report")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _gameReportService.GetAsync();
+            var result = await _gameReportService.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);

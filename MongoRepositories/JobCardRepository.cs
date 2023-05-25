@@ -57,11 +57,6 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 Image_url = request.Image_url,
                 Game_accounts = request.Game_accounts,
                 Status = true,
-                Create_at = DateTime.Now,
-                Update_at = DateTime.Now,
-                Update_by = 0,
-                Create_by = userId,
-
             };
             await _collection.InsertOneAsync(jobCard);
 
@@ -94,8 +89,6 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
                 oldJobCard.Job_card_name = request.Job_card_name;
                 oldJobCard.Children_cost = request.Children_cost;
                 oldJobCard.Image_url = request.Image_url;
-                oldJobCard.Update_at = DateTime.Now;
-                oldJobCard.Update_by = userId;
                 oldJobCard.Game_accounts = request.Game_accounts;
 
                 await _collection.ReplaceOneAsync(x => x.id == id, oldJobCard);

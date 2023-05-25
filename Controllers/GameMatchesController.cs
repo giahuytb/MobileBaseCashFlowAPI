@@ -23,16 +23,34 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet]
+        [HttpGet("all")]
         [SwaggerOperation(Summary = "Get all game match")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _gameMatchService.GetAsync();
+            var result = await _gameMatchService.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);
             }
             return NotFound("List is empty");
+        }
+
+        //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("total-match-today")]
+        [SwaggerOperation(Summary = "Count total game match in today")]
+        public async Task<ActionResult<IEnumerable>> TotalMatchInDay()
+        {
+            var result = await _gameMatchService.TotalMatchInDay();
+            return Ok(result);
+        }
+
+        //[Authorize(Roles = "Player, Admin")]
+        [HttpGet("total-match-this-week")]
+        [SwaggerOperation(Summary = "Count total game match in this Week")]
+        public async Task<ActionResult<IEnumerable>> TotalMatchInWeek()
+        {
+            var result = await _gameMatchService.TotalMatchInWeek();
+            return Ok(result);
         }
 
         //[Authorize(Roles = "Player, Admin")]
@@ -44,7 +62,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameMatchService.GetAsync(id);
+            var result = await _gameMatchService.GetByIdAsync(id);
             if (result != null)
             {
                 return Ok(result);

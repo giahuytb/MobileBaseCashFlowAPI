@@ -20,10 +20,10 @@ namespace MobileBasedCashFlowAPI.Controllers
             _userRoleServicecs = userRoleServicecs;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _userRoleServicecs.GetAsync();
+            var result = await _userRoleServicecs.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -34,7 +34,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetById(int id)
         {
-            var result = await _userRoleServicecs.GetAsync(id);
+            var result = await _userRoleServicecs.GetByIdAsync(id);
             if (result != null)
             {
                 return Ok(result);

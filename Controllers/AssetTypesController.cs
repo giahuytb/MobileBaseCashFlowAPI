@@ -21,11 +21,11 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpGet]
+        [HttpGet("all")]
         [SwaggerOperation(Summary = "Get all asset type")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _assetTypeRepository.GetAsync();
+            var result = await _assetTypeRepository.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -42,7 +42,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await _assetTypeRepository.GetAsync(id);
+            var result = await _assetTypeRepository.GetByIdAsync(id);
             if (result != null)
             {
                 return Ok(result);

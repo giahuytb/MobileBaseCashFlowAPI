@@ -16,7 +16,7 @@ namespace MobileBasedCashFlowAPI.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var gameRoom = await (from g in _context.Games
                                   select new
@@ -28,7 +28,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                   }).AsNoTracking().ToListAsync();
             return gameRoom;
         }
-        public async Task<object?> GetAsync(int id)
+        public async Task<object?> GetByIdAsync(int id)
         {
             var gameRoom = await _context.Games
                 .Select(g => new

@@ -27,7 +27,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         [SwaggerOperation(Summary = "Get all asset")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _assetRepository.GetAsync();
+            var result = await _assetRepository.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);

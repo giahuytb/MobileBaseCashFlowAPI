@@ -22,11 +22,11 @@ namespace MobileBasedCashFlowAPI.Controllers
             _gameModRepository = gameModeRepository;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         [SwaggerOperation(Summary = "Get all game mod")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _gameModRepository.GetAsync();
+            var result = await _gameModRepository.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -42,7 +42,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameModRepository.GetAsync(id);
+            var result = await _gameModRepository.GetByIdAsync(id);
             if (result != null)
             {
                 return Ok(result);

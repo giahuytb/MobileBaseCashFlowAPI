@@ -16,7 +16,7 @@ namespace MobileBasedCashFlowAPI.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
             var participant = await (from p in _context.Participants
                                      join u in _context.UserAccounts on p.UserId equals u.UserId
@@ -29,7 +29,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             return participant;
         }
 
-        public async Task<object?> GetAsync(int userId, string matchId)
+        public async Task<object?> GetByIdAsync(int userId, string matchId)
         {
             var participant = await (from p in _context.Participants
                                      join u in _context.UserAccounts on p.UserId equals u.UserId
@@ -41,6 +41,18 @@ namespace MobileBasedCashFlowAPI.Repositories
                                          p.CreateAt,
                                      }).AsNoTracking().ToListAsync();
             return participant;
+        }
+
+        public async Task<int> GetTotalUserPlayGameInDay()
+        {
+            var total = await (from p in _context.Participants
+                               join gm in _context.GameMatches on p.MatchId equals gm.MatchId
+                               where gm.StartTime >= DateTime.Today && gm.StartTime <= DateTime.Today.AddDays(1)
+                               select new
+                               {
+                                   p.UserId
+                               }).Distinct().CountAsync();
+            return total;
         }
 
         public async Task<string> CreateAsync(ParticipantRequest request)
@@ -66,6 +78,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             }
             return Constant.NotFound;
         }
+
 
     }
 }
