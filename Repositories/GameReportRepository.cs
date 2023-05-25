@@ -72,6 +72,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                 IncomePerMonth = request.IncomePerMonth,
                 ExpensePerMonth = request.ExpensePerMonth,
                 CreateAt = DateTime.Now,
+                MatchId = request.MatchId,
                 UserId = userId,
             };
 

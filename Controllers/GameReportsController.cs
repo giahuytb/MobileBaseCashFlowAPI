@@ -8,6 +8,7 @@ using System.Collections;
 
 using System.Security.Claims;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -16,11 +17,25 @@ namespace MobileBasedCashFlowAPI.Controllers
     public class GameReportsController : ControllerBase
     {
         private readonly IGameReportRepository _gameReportService;
+        private readonly MobileBasedCashFlowGameContext _context;
 
-        public GameReportsController(IGameReportRepository gameReportService)
+        public GameReportsController(IGameReportRepository gameReportService, MobileBasedCashFlowGameContext context)
         {
             _gameReportService = gameReportService;
+            _context = context;
         }
+
+        //[HttpGet("test")]
+        //[SwaggerOperation(Summary = "Get all game report")]
+        //public async Task<ActionResult<IEnumerable>> Get()
+        //{
+        //    var result = await _context.GameReports.ToListAsync();
+        //    if (result != null)
+        //    {
+        //        return Ok(result);
+        //    }
+        //    return NotFound("List is empty");
+        //}
 
         [HttpGet]
         [SwaggerOperation(Summary = "Get all game report")]
@@ -68,6 +83,14 @@ namespace MobileBasedCashFlowAPI.Controllers
             return Ok(result);
         }
 
-
+        //[HttpDelete]
+        //[SwaggerOperation(Summary = "Create new game report")]
+        //public async Task<ActionResult> Delete(int id)
+        //{
+        //    var gameReport = await _context.GameReports.Where(gr => gr.ReportId == id).FirstOrDefaultAsync();
+        //    _context.GameReports.Remove(gameReport);
+        //    await _context.SaveChangesAsync();
+        //    return Ok();
+        //}
     }
 }

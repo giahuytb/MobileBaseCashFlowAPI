@@ -18,6 +18,7 @@ namespace MobileBasedCashFlowAPI.Dto
         public string? Phone { get; set; }
 
         [EmailAddress(ErrorMessage = "PLease Enter the correct Email Address")]
+        [MaxLength(50, ErrorMessage = "Max length is 50")]
         public string Email { get; set; } = string.Empty;
 
         [MaxLength(200, ErrorMessage = "Image url max length is 200 character")]

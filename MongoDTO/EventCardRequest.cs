@@ -5,11 +5,13 @@ namespace MobileBasedCashFlowAPI.MongoDTO
     public class EventCardRequest
     {
         [Required(ErrorMessage = "Please enter your event card name")]
+        [MaxLength(50, ErrorMessage = "Event Name is too long (max is 50)")]
         public string Event_name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Please choice image for this event card")]
         public string Image_url { get; set; } = string.Empty;
 
+        [MaxLength(50, ErrorMessage = "Account name is too long (max is 50)")]
         public string Account_Name { get; set; } = string.Empty;
 
         [Range(0, double.MaxValue, ErrorMessage = "Please enter number bigger than or equal to 0")]

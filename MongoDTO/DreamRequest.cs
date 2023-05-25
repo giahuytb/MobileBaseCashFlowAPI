@@ -5,6 +5,7 @@ namespace MobileBasedCashFlowAPI.MongoDTO
     public class DreamRequest
     {
         [Required(ErrorMessage = "Please enter dream name")]
+        [MaxLength(50, ErrorMessage = "Dream name is too long (max is 50)")]
         public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Please enter this dream's cost")]
