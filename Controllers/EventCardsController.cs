@@ -31,22 +31,6 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("list is empty");
         }
 
-        [HttpGet("type/{id}")]
-        [SwaggerOperation(Summary = "Get list event card by event card type id")]
-        public async Task<ActionResult<EventCard>> GetByTypeId(string id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var eventCard = await _eventCardService.GetByTypeIdAsync(id);
-            if (eventCard != null)
-            {
-                return Ok(eventCard);
-            }
-            return NotFound("can not find event card of this type");
-        }
-
         [HttpGet("mod-id/{id}")]
         [SwaggerOperation(Summary = "Get list event card by mod id")]
         public async Task<ActionResult<EventCard>> GetByModId(int id)
