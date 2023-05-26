@@ -1,19 +1,18 @@
 ﻿
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
-using MobileBasedCashFlowAPI.Cache;
-using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.MongoDTO;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.MongoModels;
-using MobileBasedCashFlowAPI.IMongoRepositories;
 using MobileBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
 using X.PagedList;
 using Microsoft.EntityFrameworkCore;
+using MobileBasedCashFlowAPI.IRepositories;
+using MobileBasedCashFlowAPI.Dto;
 
-namespace MobileBasedCashFlowAPI.MongoRepositories
+namespace MobileBasedCashFlowAPI.Repositories
 {
     public class DreamRepository : IDreamRepository
     {
@@ -29,23 +28,19 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public async Task<IEnumerable<Dream>> GetAsync()
+        public async Task<IEnumerable<Dream>> GetAllAsync()
         {
-            if (!_cache.TryGetValue(CacheKeys.Dreams, out IEnumerable<Dream> dreamList))
-            {
-                dreamList = await _collection.Find(_ => true).ToListAsync();
-                _cache.Set(CacheKeys.Dreams, dreamList, CacheEntryOption.MemoryCacheEntryOption());
-            }
+            var dreamList = await _collection.Find(_ => true).ToListAsync();
             return dreamList;
         }
 
-        public async Task<Dream?> GetAsync(string id)
+        public async Task<Dream?> GetByIdAsync(string id)
         {
             var dream = await _collection.Find(dream => dream.id == id).FirstOrDefaultAsync();
             return dream;
         }
 
-        public async Task<IEnumerable<Dream>> GetDreamByGameModId(int modId)
+        public async Task<IEnumerable<Dream>> GetDreamByModId(int modId)
         {
             if (!_cache.TryGetValue(CacheKeys.Dreams + modId, out IEnumerable<Dream> dreamList))
             {
@@ -168,7 +163,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
 
         public async Task<string> RemoveAsync(string id)
         {
-            var dreamExist = await GetAsync(id);
+            var dreamExist = await GetByIdAsync(id);
             if (dreamExist != null)
             {
                 await _collection.DeleteOneAsync(x => x.id == id);

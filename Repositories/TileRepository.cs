@@ -1,11 +1,10 @@
 ﻿using MongoDB.Driver;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
-using MobileBasedCashFlowAPI.IMongoRepositories;
-using MobileBasedCashFlowAPI.Common;
-using X.PagedList;
+using MobileBasedCashFlowAPI.Utils;
+using MobileBasedCashFlowAPI.IRepositories;
 
-namespace MobileBasedCashFlowAPI.MongoRepositories
+namespace MobileBasedCashFlowAPI.Repositories
 {
     public class TileRepository : ITileRepository
     {
@@ -16,12 +15,12 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             var database = client.GetDatabase(setting.DatabaseName);
             _collection = database.GetCollection<Tile>("Tile");
         }
-        public async Task<List<Tile>> GetAsync()
+        public async Task<List<Tile>> GetAllAsync()
         {
             return await _collection.Find(_ => true).ToListAsync();
         }
 
-        public async Task<Tile?> GetAsync(string id)
+        public async Task<Tile?> GetByIdAsync(string id)
         {
             return await _collection.Find(x => x.id == id).FirstOrDefaultAsync();
         }

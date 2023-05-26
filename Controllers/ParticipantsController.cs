@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.IRepositories;
@@ -37,14 +37,11 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         [HttpGet("total-user-play-game-today")]
         [SwaggerOperation(Summary = "Get total player play game today")]
-        public async Task<ActionResult<IEnumerable>> TotalOfUserPlayGameInToday()
+        public async Task<ActionResult<int>> TotalOfUserPlayGameInToday()
         {
             var result = await _participantRepository.GetTotalUserPlayGameInDay();
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound("List is empty");
+            return Ok(result);
+
         }
 
         //[Authorize(Roles = "Player, Admin")]

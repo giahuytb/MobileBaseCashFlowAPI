@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
 using System.Collections;

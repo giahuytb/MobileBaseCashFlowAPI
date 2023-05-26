@@ -5,7 +5,7 @@ using MobileBasedCashFlowAPI.Repositories;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.Collections;
 using System.Security.Claims;
-using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.Utils;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {

@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using MobileBasedCashFlowAPI.Cache;
-using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.IMongoRepositories;
-using MobileBasedCashFlowAPI.MongoDTO;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
 using MongoDB.Driver;
 using X.PagedList;
+using MobileBasedCashFlowAPI.IRepositories;
+using MobileBasedCashFlowAPI.Dto;
 
-namespace MobileBasedCashFlowAPI.MongoRepositories
+namespace MobileBasedCashFlowAPI.Repositories
 {
     public class GameAccountRepository : IGameAccountRepository
     {
@@ -23,7 +22,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public async Task<IEnumerable<GameAccount>> GetAsync()
+        public async Task<IEnumerable<GameAccount>> GetAllAsync()
         {
             // when call this method for the first time then using cache to store the list object
             if (!_cache.TryGetValue(CacheKeys.GameAccounts, out IEnumerable<GameAccount> gameAccountList))
@@ -35,7 +34,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             return gameAccountList;
         }
 
-        public async Task<GameAccount?> GetAsync(string id)
+        public async Task<GameAccount?> GetByIdAsync(string id)
         {
             var gameAccount = await _collection.Find(account => account.id == id && account.Status.Equals(true)).FirstOrDefaultAsync();
             return gameAccount;
@@ -151,7 +150,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
 
         public async Task<string> RemoveAsync(string id)
         {
-            var gameAccountExist = GetAsync(id);
+            var gameAccountExist = GetByIdAsync(id);
             if (gameAccountExist != null)
             {
                 await _collection.DeleteOneAsync(x => x.id == id);

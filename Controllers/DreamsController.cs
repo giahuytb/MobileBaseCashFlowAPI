@@ -1,14 +1,14 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.IMongoRepositories;
-using MobileBasedCashFlowAPI.MongoDTO;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.MongoModels;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
+using MobileBasedCashFlowAPI.IRepositories;
+using MobileBasedCashFlowAPI.Dto;
 
-namespace MobileBasedCashFlowAPI.MongoController
+namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -25,7 +25,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         [SwaggerOperation(Summary = "Get all dream")]
         public async Task<ActionResult<List<Dream?>>> GetAll()
         {
-            var result = await _dreamService.GetAsync();
+            var result = await _dreamService.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -42,7 +42,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             {
                 return BadRequest(ModelState);
             }
-            var result = await _dreamService.GetAsync(id);
+            var result = await _dreamService.GetByIdAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -53,13 +53,13 @@ namespace MobileBasedCashFlowAPI.MongoController
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("mod-id/{id}")]
         [SwaggerOperation(Summary = "Get list dream by dream id")]
-        public async Task<ActionResult<Dream>> GetDreamByGameModId(int id)
+        public async Task<ActionResult<Dream>> GetDreamByModId(int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _dreamService.GetDreamByGameModId(id);
+            var result = await _dreamService.GetDreamByModId(id);
             if (result != null)
             {
                 return Ok(result);

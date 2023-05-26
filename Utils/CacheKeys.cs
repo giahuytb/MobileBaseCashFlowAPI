@@ -1,4 +1,4 @@
-﻿namespace MobileBasedCashFlowAPI.Cache
+﻿namespace MobileBasedCashFlowAPI.Utils
 {
     public static class CacheKeys
     {

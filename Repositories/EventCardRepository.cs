@@ -2,25 +2,22 @@
 using Microsoft.EntityFrameworkCore;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
-using MobileBasedCashFlowAPI.IMongoRepositories;
-using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.MongoDTO;
+using MobileBasedCashFlowAPI.Utils;
 using System.Collections;
-using X.PagedList;
 using MongoDB.Driver.Linq;
 using Microsoft.Extensions.Caching.Memory;
-using MobileBasedCashFlowAPI.MongoController;
-using MobileBasedCashFlowAPI.Cache;
+using MobileBasedCashFlowAPI.IRepositories;
+using MobileBasedCashFlowAPI.Dto;
 
-namespace MobileBasedCashFlowAPI.MongoRepositories
+namespace MobileBasedCashFlowAPI.Repositories
 {
     public class EventCardRepository : IEventCardRepository
     {
         private readonly IMongoCollection<EventCard> _collection;
         private readonly IMemoryCache _cache;
-        private readonly ILogger<EventCardsController> _logger;
+        private readonly ILogger<EventCard> _logger;
 
-        public EventCardRepository(MongoDbSettings settings, ILogger<EventCardsController> logger, IMemoryCache cache)
+        public EventCardRepository(MongoDbSettings settings, ILogger<EventCard> logger, IMemoryCache cache)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
@@ -29,26 +26,11 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public async Task<IEnumerable<EventCard>> GetAsync()
+        public async Task<IEnumerable<EventCard>> GetAllAsync()
         {
-            _logger.Log(LogLevel.Information, "Trying to fetch the list of event card from cache.");
-            if (_cache.TryGetValue(CacheKeys.EventCards, out IEnumerable<EventCard> eventCardList))
-            {
-                _logger.Log(LogLevel.Information, "Event Card list found in cache.");
-            }
-            else
-            {
-                _logger.Log(LogLevel.Information, "Event Card list not found in cache. Fetching from database.");
-                eventCardList = await _collection.Find(evt => evt.Status.Equals(true)).ToListAsync();
-                _cache.Set(CacheKeys.EventCards, eventCardList, CacheEntryOption.MemoryCacheEntryOption());
-            }
-            return eventCardList;
-        }
+            var eventCardList = await _collection.Find(evt => evt.Status.Equals(true)).ToListAsync();
 
-        public async Task<IEnumerable> GetByTypeIdAsync(string typeId)
-        {
-            var eventCards = await _collection.Find(evt => evt.Event_type == typeId && evt.Status.Equals(true)).ToListAsync();
-            return eventCards;
+            return eventCardList;
         }
 
         public async Task<IEnumerable<EventCard>> GetByModIdAsync(int modId)

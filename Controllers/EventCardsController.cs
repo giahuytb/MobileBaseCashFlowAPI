@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using MobileBasedCashFlowAPI.Cache;
-using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.IMongoRepositories;
-using MobileBasedCashFlowAPI.MongoDTO;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.MongoModels;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Collections;
+using MobileBasedCashFlowAPI.IRepositories;
+using MobileBasedCashFlowAPI.Dto;
 
-namespace MobileBasedCashFlowAPI.MongoController
+namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -25,7 +22,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<EventCard>>> GetAll()
         {
-            var result = await _eventCardService.GetAsync();
+            var result = await _eventCardService.GetAllAsync();
             if (result != null)
             {
                 //throw new Exception("Exception while fetching all the students from the storage.");

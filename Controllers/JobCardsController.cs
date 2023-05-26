@@ -1,14 +1,14 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.IMongoRepositories;
-using MobileBasedCashFlowAPI.MongoDTO;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.MongoModels;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
+using MobileBasedCashFlowAPI.IRepositories;
+using MobileBasedCashFlowAPI.Dto;
 
-namespace MobileBasedCashFlowAPI.MongoController
+namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -25,7 +25,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         [SwaggerOperation(Summary = "Get all job card")]
         public async Task<ActionResult<JobCard>> GetAll()
         {
-            var result = await _jobCardService.GetAsync();
+            var result = await _jobCardService.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -38,7 +38,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         [SwaggerOperation(Summary = "Get list job card by job card id")]
         public async Task<ActionResult<JobCard>> GetById(string id)
         {
-            var jobCard = await _jobCardService.GetAsync(id);
+            var jobCard = await _jobCardService.GetByIdAsync(id);
             if (jobCard != null)
             {
                 return Ok(jobCard);
@@ -56,7 +56,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _jobCardService.CreateAsync(Int32.Parse(userId), request);
+            var result = await _jobCardService.CreateAsync(int.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -74,7 +74,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _jobCardService.UpdateAsync(id, Int32.Parse(userId), request);
+            var result = await _jobCardService.UpdateAsync(id, int.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);

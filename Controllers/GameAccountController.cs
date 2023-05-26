@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MobileBasedCashFlowAPI.Common;
-using MobileBasedCashFlowAPI.IMongoRepositories;
-using MobileBasedCashFlowAPI.MongoDTO;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.MongoModels;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections;
 using System.Security.Claims;
+using MobileBasedCashFlowAPI.IRepositories;
+using MobileBasedCashFlowAPI.Dto;
 
-namespace MobileBasedCashFlowAPI.MongoController
+namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,9 +22,9 @@ namespace MobileBasedCashFlowAPI.MongoController
 
         [HttpGet("all")]
         [SwaggerOperation(Summary = "Get all game account")]
-        public async Task<ActionResult<IEnumerable>> GetALl()
+        public async Task<ActionResult<IEnumerable>> GetAll()
         {
-            var result = await _gameAccountService.GetAsync();
+            var result = await _gameAccountService.GetAllAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -40,7 +40,7 @@ namespace MobileBasedCashFlowAPI.MongoController
             {
                 return BadRequest(ModelState);
             }
-            var result = await _gameAccountService.GetAsync(id);
+            var result = await _gameAccountService.GetByIdAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -85,7 +85,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         [Authorize(Roles = "Admin")]
         [HttpPut("inactive/{id:length(24)}")]
         [SwaggerOperation(Summary = "Inactive an existing game account")]
-        public async Task<ActionResult> InActiveDream(string id)
+        public async Task<ActionResult> InActiveGameAccount(string id)
         {
             // get user id from claim
             string userId = HttpContext.User.FindFirstValue("Id");

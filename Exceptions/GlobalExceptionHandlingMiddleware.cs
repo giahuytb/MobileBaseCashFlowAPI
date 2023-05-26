@@ -1,13 +1,11 @@
-﻿
-using MobileBasedCashFlowAPI.Exceptions;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
 
 using KeyNotFoundException = MobileBasedCashFlowAPI.Exceptions.KeyNotFoundException;
 using NotImplementedException = MobileBasedCashFlowAPI.Exceptions.NotImplementedException;
 using UnauthorizedAccessException = MobileBasedCashFlowAPI.Exceptions.UnauthorizedAccessException;
 
-namespace MobileBasedCashFlowAPI.Extensions
+namespace MobileBasedCashFlowAPI.Exceptions
 {
     public class GlobalExceptionHandlingMiddleware : IMiddleware
     {
@@ -34,7 +32,7 @@ namespace MobileBasedCashFlowAPI.Extensions
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             HttpStatusCode status;
-            var stackTrace = String.Empty;
+            var stackTrace = string.Empty;
             string message;
             var exceptionType = exception.GetType();
             if (exceptionType == typeof(BadRequestException))

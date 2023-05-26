@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Dto;
 using System.Collections;
-using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 using MobileBasedCashFlowAPI.Models;
 using System.Security.Claims;
@@ -144,7 +144,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _userService.GetUserAsset(Int32.Parse(userId));
+            var result = await _userService.GetUserAsset(int.Parse(userId));
             if (result != null)
             {
                 return Ok(result);
@@ -163,7 +163,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _userService.BuyAsset(assetId, Int32.Parse(userId));
+            var result = await _userService.BuyAsset(assetId, int.Parse(userId));
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -182,7 +182,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _userService.UpdateLastUsed(request, Int32.Parse(userId));
+            var result = await _userService.UpdateLastUsed(request, int.Parse(userId));
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
@@ -200,7 +200,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _userService.DeleteMyAsset(assetId, Int32.Parse(userId));
+            var result = await _userService.DeleteMyAsset(assetId, int.Parse(userId));
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);

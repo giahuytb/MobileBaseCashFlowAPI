@@ -4,16 +4,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-
-using MobileBasedCashFlowAPI.MongoRepositories;
-using MobileBasedCashFlowAPI.IMongoRepositories;
 using MobileBasedCashFlowAPI.Settings;
 
 using MobileBasedCashFlowAPI.Repositories;
 using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
-
-using MobileBasedCashFlowAPI.Extensions;
+using MobileBasedCashFlowAPI.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 var secretKey = builder.Configuration["Jwt:Key"];

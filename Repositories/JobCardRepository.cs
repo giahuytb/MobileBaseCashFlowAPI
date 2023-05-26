@@ -1,18 +1,14 @@
 ﻿
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-
-using MobileBasedCashFlowAPI.IMongoRepositories;
-using MobileBasedCashFlowAPI.MongoDTO;
 using MobileBasedCashFlowAPI.MongoModels;
 using MobileBasedCashFlowAPI.Settings;
-using MobileBasedCashFlowAPI.Common;
-using X.PagedList;
+using MobileBasedCashFlowAPI.Utils;
 using Microsoft.Extensions.Caching.Memory;
-using MobileBasedCashFlowAPI.Cache;
+using MobileBasedCashFlowAPI.IRepositories;
+using MobileBasedCashFlowAPI.Dto;
 
-
-namespace MobileBasedCashFlowAPI.MongoRepositories
+namespace MobileBasedCashFlowAPI.Repositories
 {
     public class JobCardRepository : IJobCardRepository
     {
@@ -27,7 +23,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public async Task<IEnumerable<JobCard>> GetAsync()
+        public async Task<IEnumerable<JobCard>> GetAllAsync()
         {
             if (!_cache.TryGetValue(CacheKeys.JobCards, out IEnumerable<JobCard> jobcardList))
             {
@@ -37,7 +33,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
             return jobcardList;
         }
 
-        public async Task<object?> GetAsync(string id)
+        public async Task<object?> GetByIdAsync(string id)
         {
             var result = await _collection.Find(x => x.id == id).ToListAsync();
             return result;
@@ -157,7 +153,7 @@ namespace MobileBasedCashFlowAPI.MongoRepositories
 
         public async Task<string> RemoveAsync(string id)
         {
-            var jobCardExist = GetAsync(id);
+            var jobCardExist = GetByIdAsync(id);
             if (jobCardExist != null)
             {
                 var result = await _collection.DeleteOneAsync(x => x.id == id);
