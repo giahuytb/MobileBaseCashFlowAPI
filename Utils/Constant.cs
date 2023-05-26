@@ -1,4 +1,4 @@
-﻿namespace MobileBasedCashFlowAPI.Common
+﻿namespace MobileBasedCashFlowAPI.Utils
 {
     public class Constant
     {

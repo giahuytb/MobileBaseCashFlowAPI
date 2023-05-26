@@ -1,7 +1,7 @@
 ﻿
 using System.Text.RegularExpressions;
 
-namespace MobileBasedCashFlowAPI.Common
+namespace MobileBasedCashFlowAPI.Utils
 {
     public class ValidateInput
     {

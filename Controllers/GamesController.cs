@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
@@ -66,7 +66,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameRoomRepository.CreateAsync(Int32.Parse(userId), request);
+            var result = await _gameRoomRepository.CreateAsync(int.Parse(userId), request);
 
             return Ok(result);
         }
@@ -85,7 +85,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameRoomRepository.UpdateAsync(id, Int32.Parse(userId), request);
+            var result = await _gameRoomRepository.UpdateAsync(id, int.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);

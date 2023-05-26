@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
-namespace MobileBasedCashFlowAPI.Cache
+namespace MobileBasedCashFlowAPI.Utils
 {
     public static class CacheEntryOption
     {

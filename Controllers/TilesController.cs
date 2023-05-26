@@ -1,10 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.MongoModels;
-using MobileBasedCashFlowAPI.IMongoRepositories;
 
-namespace MobileBasedCashFlowAPI.MongoController
+namespace MobileBasedCashFlowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -21,7 +20,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "User")]
         public async Task<ActionResult<List<Tile>>> GetAll()
         {
-            var tile = await _tileService.GetAsync();
+            var tile = await _tileService.GetAllAsync();
             if (tile != null)
             {
                 return Ok(tile);
@@ -32,7 +31,7 @@ namespace MobileBasedCashFlowAPI.MongoController
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Tile>> GetById(string id)
         {
-            var tile = await _tileService.GetAsync(id);
+            var tile = await _tileService.GetByIdAsync(id);
             if (tile != null)
             {
                 return Ok(tile);
@@ -44,14 +43,14 @@ namespace MobileBasedCashFlowAPI.MongoController
         public async Task<IActionResult> PostTile(Tile tile)
         {
             await _tileService.CreateAsync(tile);
-            return CreatedAtAction(nameof(GetById), new { id = tile.id }, tile);
+            return CreatedAtAction(nameof(GetById), new { tile.id }, tile);
 
         }
 
         [HttpPut("{id:length(24)}")]
         public async Task<IActionResult> UpdateTile(string id, Tile tile)
         {
-            var Tile = await _tileService.GetAsync(id);
+            var Tile = await _tileService.GetByIdAsync(id);
             if (Tile is null)
             {
                 return NotFound("can not find this tile");

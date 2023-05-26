@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MobileBasedCashFlowAPI.MongoDTO
+namespace MobileBasedCashFlowAPI.Dto
 {
     public class DreamRequest
     {

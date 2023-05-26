@@ -6,7 +6,7 @@ using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Repositories;
 using System.Collections;
 using System.Security.Claims;
-using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace MobileBasedCashFlowAPI.Controllers
@@ -85,7 +85,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameMatchService.CreateAsync(Int32.Parse(userId), request);
+            var result = await _gameMatchService.CreateAsync(int.Parse(userId), request);
 
             return Ok(result);
         }

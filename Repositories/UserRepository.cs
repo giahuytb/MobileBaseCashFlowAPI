@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Collections;
 
-using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Dto;
@@ -75,6 +75,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             var jwtToken = tokenHandler.WriteToken(token);
             var stringToken = tokenHandler.WriteToken(token);
 
+            // get last character is used by player
             var userAsset = await (from usAs in _context.UserAssets
                                    join Ast in _context.Assets on usAs.AssetId equals Ast.AssetId
                                    where Ast.AssetId == Ast.AssetId

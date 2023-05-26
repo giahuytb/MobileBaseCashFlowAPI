@@ -6,7 +6,7 @@ using System.Security.Claims;
 using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Dto;
-using MobileBasedCashFlowAPI.Common;
+using MobileBasedCashFlowAPI.Utils;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace MobileBasedCashFlowAPI.Controllers
@@ -46,7 +46,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _assetRepository.GetAssetInShop(Int32.Parse(userId));
+            var result = await _assetRepository.GetAssetInShop(int.Parse(userId));
             if (result != null)
             {
                 return Ok(result);
@@ -86,7 +86,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _assetRepository.CreateAsync(Int32.Parse(userId), request);
+            var result = await _assetRepository.CreateAsync(int.Parse(userId), request);
 
             return Ok(result);
         }
@@ -105,7 +105,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _assetRepository.UpdateAsync(id, Int32.Parse(userId), request);
+            var result = await _assetRepository.UpdateAsync(id, int.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
