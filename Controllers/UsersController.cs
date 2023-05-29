@@ -78,7 +78,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest(result);
             }
         }
 
@@ -90,7 +90,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await _userService.GetAsync();
+            var result = await _userService.GetAllAsync();
             if (result == null)
             {
                 return NotFound("List is empty");
@@ -113,7 +113,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             }
             else
             {
-                return BadRequest(Constant.Failed);
+                return BadRequest(result);
             }
         }
 

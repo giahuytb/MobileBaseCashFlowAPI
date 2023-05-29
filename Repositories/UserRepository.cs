@@ -214,16 +214,22 @@ namespace MobileBasedCashFlowAPI.Repositories
         }
 
 
-        public async Task<IEnumerable> GetAsync()
+        public async Task<IEnumerable> GetAllAsync()
         {
 
             var users = await (from user in _context.UserAccounts
                                join role in _context.UserRoles on user.RoleId equals role.RoleId
+                               where user.RoleId != 1
                                select new
                                {
-                                   userId = user.UserId,
-                                   userName = user.UserName,
-                                   userRole = role.RoleName,
+                                   user.UserId,
+                                   user.UserName,
+                                   user.NickName,
+                                   user.Gender,
+                                   user.Email,
+                                   user.Coin,
+                                   user.Point,
+                                   role.RoleName,
                                }).AsNoTracking().ToListAsync();
             return users;
         }
