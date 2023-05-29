@@ -7,7 +7,7 @@ namespace MobileBasedCashFlowAPI.IRepositories
     {
         Task<object> Authenticate(LoginRequest request);
         Task<string> Register(RegisterRequest request);
-        Task<IEnumerable> GetAsync();
+        Task<IEnumerable> GetAllAsync();
         public Task<string> EditProfile(int userId, EditProfileRequest request);
         public Task<object?> ViewProfile(int userId);
         public Task<string> UpdateCoin(int userId, EditRequest request);

@@ -82,9 +82,8 @@ builder.Services.AddStackExchangeRedisCache(redisOptions =>
 
 builder.Services.AddDistributedMemoryCache();
 
-// Register Global Exception Handler Midddleware
+// Register Global Exception Handler Middleware
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
-
 
 
 // Config Authentication
