@@ -53,6 +53,15 @@ namespace MobileBasedCashFlowAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("total-user-play-game-today")]
+        [SwaggerOperation(Summary = "Get total player play game today")]
+        public async Task<ActionResult<int>> TotalOfUserPlayGameInToday()
+        {
+            var result = await _gameMatchService.GetTotalUserPlayGameInDay();
+            return Ok(result);
+
+        }
+
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
         [SwaggerOperation(Summary = "Get game match by game match id")]

@@ -35,15 +35,6 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("List is empty");
         }
 
-        [HttpGet("total-user-play-game-today")]
-        [SwaggerOperation(Summary = "Get total player play game today")]
-        public async Task<ActionResult<int>> TotalOfUserPlayGameInToday()
-        {
-            var result = await _participantRepository.GetTotalUserPlayGameInDay();
-            return Ok(result);
-
-        }
-
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{userId}/{matchId}")]
         [SwaggerOperation(Summary = "Get the participant with user id and match id")]
