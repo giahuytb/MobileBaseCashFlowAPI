@@ -43,18 +43,6 @@ namespace MobileBasedCashFlowAPI.Repositories
             return participant;
         }
 
-        public async Task<int> GetTotalUserPlayGameInDay()
-        {
-            var total = await (from p in _context.Participants
-                               join gm in _context.GameMatches on p.MatchId equals gm.MatchId
-                               where gm.StartTime >= DateTime.Today && gm.StartTime <= DateTime.Today.AddDays(1)
-                               select new
-                               {
-                                   p.UserId
-                               }).Distinct().CountAsync();
-            return total;
-        }
-
         public async Task<string> CreateAsync(ParticipantRequest request)
         {
             var participant = new Participant()

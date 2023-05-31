@@ -8,6 +8,7 @@ namespace MobileBasedCashFlowAPI.IRepositories
         public Task<IEnumerable> GetAllAsync();
         public Task<int> TotalMatchInDay();
         public Task<int> TotalMatchInWeek();
+        public Task<int> GetTotalUserPlayGameInDay();
         public Task<object?> GetByIdAsync(string matchId);
         public Task<string> CreateAsync(int userId, GameMatchRequest request);
         public Task<string> UpdateAsync(string matchId, GameMatchRequest request);
