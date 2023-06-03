@@ -8,5 +8,6 @@ namespace MobileBasedCashFlowAPI.IRepositories
         public Task<IEnumerable> GetAllAsync();
         public Task<object?> MyReport(int userId);
         public Task<string> CreateAsync(int userId, GameReportRequest request);
+        public Task<string> DeleteAllRecord();
     }
 }

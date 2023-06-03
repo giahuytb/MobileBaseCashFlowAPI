@@ -62,7 +62,6 @@ namespace MobileBasedCashFlowAPI.Repositories
             return total;
         }
 
-
         public async Task<object?> GetByIdAsync(string matchId)
         {
             var gameMatch = await (from match in _context.GameMatches
@@ -135,6 +134,12 @@ namespace MobileBasedCashFlowAPI.Repositories
             return "Can not find this match";
         }
 
-
+        public async Task<string> DeleteAllRecord()
+        {
+            var allRecord = await _context.GameMatches.ToListAsync();
+            _context.GameMatches.RemoveRange(allRecord);
+            await _context.SaveChangesAsync();
+            return Constant.Success;
+        }
     }
 }

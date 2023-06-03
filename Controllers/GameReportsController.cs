@@ -50,7 +50,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpGet("my-report/{id}")]
-        [SwaggerOperation(Summary = "Get game report by game report id")]
+        [SwaggerOperation(Summary = "Get game report by user id")]
         public async Task<ActionResult<GameReport>> MyReport(int id)
         {
             if (!ModelState.IsValid)
@@ -83,14 +83,21 @@ namespace MobileBasedCashFlowAPI.Controllers
             return Ok(result);
         }
 
-        //[HttpDelete]
-        //[SwaggerOperation(Summary = "Create new game report")]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    var gameReport = await _context.GameReports.Where(gr => gr.ReportId == id).FirstOrDefaultAsync();
-        //    _context.GameReports.Remove(gameReport);
-        //    await _context.SaveChangesAsync();
-        //    return Ok();
-        //}
+        [HttpDelete("delete-all")]
+        [SwaggerOperation(Summary = "Delete all record in game report table")]
+        public async Task<ActionResult> DeleteAllReport()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _gameReportService.DeleteAllRecord();
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+        }
     }
 }

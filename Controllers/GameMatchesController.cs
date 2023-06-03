@@ -134,5 +134,22 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         }
 
+        [HttpDelete("delete-all")]
+        [SwaggerOperation(Summary = "Delete all record in game match table")]
+        public async Task<ActionResult> DeleteAllMatch()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _gameMatchService.DeleteAllRecord();
+            if (result.Equals(Constant.Success))
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+        }
+
     }
 }
