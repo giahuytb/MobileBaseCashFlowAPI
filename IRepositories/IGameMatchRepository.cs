@@ -13,5 +13,6 @@ namespace MobileBasedCashFlowAPI.IRepositories
         public Task<string> CreateAsync(int userId, GameMatchRequest request);
         public Task<string> UpdateAsync(string matchId, GameMatchRequest request);
         public Task<string> DeleteAsync(string matchId);
+        public Task<string> DeleteAllRecord();
     }
 }

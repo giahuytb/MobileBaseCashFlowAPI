@@ -8,6 +8,7 @@ using MobileBasedCashFlowAPI.Repositories;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -16,10 +17,12 @@ namespace MobileBasedCashFlowAPI.Controllers
     public class ParticipantsController : ControllerBase
     {
         private readonly IParticipantRepository _participantRepository;
+        private readonly MobileBasedCashFlowGameContext _context;
 
-        public ParticipantsController(IParticipantRepository participantRepository)
+        public ParticipantsController(IParticipantRepository participantRepository, MobileBasedCashFlowGameContext context)
         {
             _participantRepository = participantRepository;
+            _context = context;
         }
 
         //[Authorize(Roles = "Player, Admin")]
@@ -66,15 +69,14 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
 
-        //[HttpDelete("{userId}/{matchId}")]
-        //public async Task<ActionResult> DeleteAsset(int userId, int matchId)
-        //{
-        //    var result = await _participantRepository.DeleteAsync(userId, matchId);
-        //    if (result.Equals(Constant.Success))
-        //    {
-        //        return Ok(result);
-        //    }
-        //    return BadRequest(result);
-        //}
+        [HttpDelete("delete-all")]
+        public async Task<ActionResult> DeleteAsset()
+        {
+            var allRecord = await _context.Participants.ToListAsync();
+            _context.Participants.RemoveRange(allRecord);
+            await _context.SaveChangesAsync();
+
+            return Ok("Success");
+        }
     }
 }

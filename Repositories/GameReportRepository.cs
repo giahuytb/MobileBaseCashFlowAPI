@@ -56,6 +56,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                     user.NickName,
                                     match.MatchId,
                                     MatchTime = match.EndTime - match.StartTime,
+                                    match.StartTime
                                 }).AsNoTracking().ToListAsync();
             return report;
         }
@@ -81,6 +82,12 @@ namespace MobileBasedCashFlowAPI.Repositories
             return Constant.Success;
         }
 
-
+        public async Task<string> DeleteAllRecord()
+        {
+            var allRecord = await _context.GameReports.ToListAsync();
+            _context.GameReports.RemoveRange(allRecord);
+            await _context.SaveChangesAsync();
+            return Constant.Success;
+        }
     }
 }
