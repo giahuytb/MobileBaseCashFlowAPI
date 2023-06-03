@@ -8,6 +8,7 @@ using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Dto;
 using MobileBasedCashFlowAPI.Utils;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MobileBasedCashFlowAPI.Controllers
 {
@@ -71,7 +72,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("Can not found this asset");
         }
 
-        //[Authorize(Roles = "Admin, Moderator")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [SwaggerOperation(Summary = "Create new asset")]
         public async Task<ActionResult> PostAsset(AssetRequest request)
@@ -91,7 +92,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return Ok(result);
         }
 
-        //[Authorize(Roles = "Admin, Moderator")]
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update an existing asset")]
         public async Task<ActionResult> UpdateAsset(int id, AssetRequest request)
