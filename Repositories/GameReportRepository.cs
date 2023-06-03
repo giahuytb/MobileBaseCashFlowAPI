@@ -43,6 +43,7 @@ namespace MobileBasedCashFlowAPI.Repositories
                                 join user in _context.UserAccounts on gr.UserId equals user.UserId
                                 join match in _context.GameMatches on gr.MatchId equals match.MatchId
                                 where gr.UserId == userId
+                                orderby gr.CreateAt descending
                                 select new
                                 {
                                     gr.ReportId,
