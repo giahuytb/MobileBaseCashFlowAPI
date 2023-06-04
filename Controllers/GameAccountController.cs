@@ -48,7 +48,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return NotFound("Can not found this game account");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         [SwaggerOperation(Summary = "Create new game account")]
         public async Task<ActionResult> CreateGameAccount(AccountRequest request)
@@ -65,7 +65,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return BadRequest(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id:length(24)}")]
         [SwaggerOperation(Summary = "Update an existing game account")]
         public async Task<ActionResult> UpdateGameAccount(string id, AccountRequest request)
@@ -82,7 +82,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return BadRequest(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("inactive/{id:length(24)}")]
         [SwaggerOperation(Summary = "Inactive an existing game account")]
         public async Task<ActionResult> InActiveGameAccount(string id)
@@ -105,7 +105,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return BadRequest(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id:length(24)}")]
         [SwaggerOperation(Summary = "Delete an game account")]
         public async Task<ActionResult<List<GameAccount>>> DeleteGameAccount(string id)
