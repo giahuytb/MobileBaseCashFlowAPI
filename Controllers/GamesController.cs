@@ -23,7 +23,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("all")]
-        [SwaggerOperation(Summary = "Get all game room")]
+        [SwaggerOperation(Summary = "Get all game")]
         public async Task<ActionResult<IEnumerable>> GetAll()
         {
             var result = await _gameRoomRepository.GetAllAsync();
@@ -36,7 +36,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Player, Admin")]
         [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get game by game room id")]
+        [SwaggerOperation(Summary = "Get game by game id")]
         public async Task<ActionResult<Game>> GetById(int id)
         {
             if (!ModelState.IsValid)
@@ -48,13 +48,13 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Ok(result);
             }
-            return NotFound("Can not find this game room");
+            return NotFound("Can not find this game");
 
         }
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
-        [SwaggerOperation(Summary = "Create new game room")]
+        [SwaggerOperation(Summary = "Create new game")]
         public async Task<ActionResult> PostGame(GameRequest request)
         {
             if (!ModelState.IsValid)
@@ -73,7 +73,7 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         //[Authorize(Roles = "Admin, Moderator")]
         [HttpPut("{id}")]
-        [SwaggerOperation(Summary = "Update an existing game room")]
+        [SwaggerOperation(Summary = "Update an existing game")]
         public async Task<ActionResult> UpdateGame(int id, GameRequest request)
         {
             if (!ModelState.IsValid)
@@ -95,7 +95,7 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [SwaggerOperation(Summary = "Delete an existing game room")]
+        [SwaggerOperation(Summary = "Delete an existing game")]
         public async Task<ActionResult> DeleteGame(int id)
         {
             if (!ModelState.IsValid)
