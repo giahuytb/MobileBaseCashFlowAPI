@@ -34,14 +34,23 @@ namespace MobileBasedCashFlowAPI.Repositories
         }
         public async Task<int> TotalMatchInDay()
         {
-            var total = await _context.GameMatches.Where(gm => gm.StartTime >= DateTime.Today && gm.StartTime <= DateTime.Today.AddDays(1)).CountAsync();
+            var total = await _context.GameMatches.Where(gm => gm.StartTime >= DateTime.Today.AddDays(1)).CountAsync();
             return total;
         }
 
         public async Task<int> TotalMatchInWeek()
         {
             DateTime currentDate = DateTime.Today;
-            DateTime startOfWeek = currentDate.AddDays(-(int)(currentDate.DayOfWeek - 1));
+            int dayOfWeek = (int)currentDate.DayOfWeek;
+            DateTime startOfWeek;
+            if (dayOfWeek == 0)
+            {
+                startOfWeek = currentDate.AddDays(-6);
+            }
+            else
+            {
+                startOfWeek = currentDate.AddDays(-(int)(currentDate.DayOfWeek));
+            }
             DateTime endOfWeek = startOfWeek.AddDays(7);
 
             var total = await _context.GameMatches.Where(gm => gm.StartTime >= startOfWeek && gm.StartTime <= endOfWeek).CountAsync();
