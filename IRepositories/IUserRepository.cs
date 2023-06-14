@@ -14,7 +14,7 @@ namespace MobileBasedCashFlowAPI.IRepositories
         public Task<object?> FindUserById(int userId);
         public Task<object?> GetUserAsset(int userId);
         public Task<string> BuyAsset(int assetId, int userId);
-        public Task<string> UpdateLastUsed(LastUsedRequest request, int userId);
+        public Task<string> UpdateLastUsed(int userId, LastUsedRequest request);
         public Task<string> DeleteMyAsset(int assetId, int userId);
     }
 }

@@ -73,9 +73,9 @@ namespace MobileBasedCashFlowAPI.Controllers
 
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [SwaggerOperation(Summary = "Update an existing game mod")]
-        public async Task<ActionResult> UpdateGameMode(int gameModeId, GameModeRequest request)
+        public async Task<ActionResult> UpdateGameMode(int id, GameModeRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             {
                 return Unauthorized("User id not Found, please login");
             }
-            var result = await _gameModRepository.UpdateAsync(gameModeId, int.Parse(userId), request);
+            var result = await _gameModRepository.UpdateAsync(id, int.Parse(userId), request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);
