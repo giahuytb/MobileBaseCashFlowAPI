@@ -11,6 +11,7 @@ using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Dto;
 using NuGet.ContentModel;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 
 namespace MobileBasedCashFlowAPI.Repositories
@@ -361,7 +362,7 @@ namespace MobileBasedCashFlowAPI.Repositories
             return Constant.Success;
         }
 
-        public async Task<string> UpdateLastUsed(LastUsedRequest request, int userId)
+        public async Task<string> UpdateLastUsed(int userId, LastUsedRequest request)
         {
             var userAsset = await _context.UserAssets
                             .Where(i => i.UserId == userId && i.AssetId == request.AssetId)

@@ -66,7 +66,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPut("profile")]
+        [HttpPut("profile/{userId}")]
         [Authorize(Roles = "Player, Admin")]
         [SwaggerOperation(Summary = "Edit the profile")]
         public async Task<IActionResult> EditProfile(int userId, EditProfileRequest request)
@@ -98,7 +98,7 @@ namespace MobileBasedCashFlowAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPut("coin-point")]
+        [HttpPut("coin-point/{userId}")]
         [SwaggerOperation(Summary = "Update coin and point, coin, point input will be added to the existing coin, point)")]
         public async Task<IActionResult> AddCoinToUser(int userId, EditRequest request)
         {
@@ -172,17 +172,11 @@ namespace MobileBasedCashFlowAPI.Controllers
         }
 
         //[Authorize(Roles = "Player, Admin")]
-        [HttpPut("asset-last-used")]
+        [HttpPut("asset-last-used/{userId}")]
         [SwaggerOperation(Summary = "Update last use asset (Login require)")]
-        public async Task<ActionResult> UpdateAssetLastUsed(LastUsedRequest request)
+        public async Task<ActionResult> UpdateAssetLastUsed(int userId, LastUsedRequest request)
         {
-            // get the id of current user logging in system
-            string userId = HttpContext.User.FindFirstValue("Id");
-            if (userId == null)
-            {
-                return Unauthorized("User id not Found, please login");
-            }
-            var result = await _userService.UpdateLastUsed(request, int.Parse(userId));
+            var result = await _userService.UpdateLastUsed(userId, request);
             if (result.Equals(Constant.Success))
             {
                 return Ok(result);

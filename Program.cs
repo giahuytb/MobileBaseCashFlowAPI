@@ -12,6 +12,7 @@ using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var secretKey = builder.Configuration["Jwt:Key"];
 var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
