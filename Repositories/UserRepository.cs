@@ -3,15 +3,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
 using System.Collections;
 
 using MobileBasedCashFlowAPI.Utils;
 using MobileBasedCashFlowAPI.IRepositories;
 using MobileBasedCashFlowAPI.Models;
 using MobileBasedCashFlowAPI.Dto;
-using NuGet.ContentModel;
-using Org.BouncyCastle.Asn1.Ocsp;
+
 
 
 namespace MobileBasedCashFlowAPI.Repositories
@@ -73,7 +71,6 @@ namespace MobileBasedCashFlowAPI.Repositories
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: creds);
             var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.WriteToken(token);
             var stringToken = tokenHandler.WriteToken(token);
 
             // get last character is used by player
@@ -91,28 +88,6 @@ namespace MobileBasedCashFlowAPI.Repositories
                                    {
                                        Ast.ImageUrl,
                                    }).AsNoTracking().SingleOrDefaultAsync();
-            if (userAsset == null)
-            {
-                return new
-                {
-                    user = new
-                    {
-                        user.UserId,
-                        user.NickName,
-                        user.Email,
-                        user.Address,
-                        user.Coin,
-                        user.Point,
-                        user.ImageUrl,
-                        user.Phone,
-                        user.Gender,
-                        role.roleName,
-                        user.LastJobSelected,
-                    },
-                    token = stringToken,
-                };
-            }
-
             return new
             {
                 user = new
@@ -128,10 +103,11 @@ namespace MobileBasedCashFlowAPI.Repositories
                     user.Gender,
                     role.roleName,
                     user.LastJobSelected,
-                    lastCharacterSelected = userAsset.ImageUrl,
+                    lastCharacterSelected = userAsset != null ? userAsset.ImageUrl : null,
                 },
                 token = stringToken,
             };
+
         }
 
         public async Task<string> Register(RegisterRequest request)
